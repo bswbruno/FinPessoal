@@ -1,5 +1,5 @@
 /* ============================================================================
-   FinPessoal v4.8 – js/receipts.js
+   FinPessoal v4.9 – js/receipts.js
    ============================================================================
    Responsabilidade deste arquivo: tudo relacionado a comprovantes de
    pagamento anexados a uma despesa (módulos "A Pagar" e "Dívidas").

@@ -1,5 +1,5 @@
 /* ============================================================================
-   FinPessoal v4.8 – js/ui.js
+   FinPessoal v4.9 – js/ui.js
    ============================================================================
    Responsabilidade deste arquivo: apenas comportamento "de interface" que
    não depende de nenhuma regra de negócio (finanças, cartões, etc.):

@@ -514,7 +514,7 @@
     <button class="nav-item" onclick="goTo('relatorios',this)"><span class="ic"><i data-lucide="bar-chart-3"></i></span>Relatórios</button>
     <button class="nav-item" onclick="goTo('configuracoes',this)"><span class="ic"><i data-lucide="settings"></i></span>Configurações</button>
     <button class="nav-item" onclick="goTo('suporte',this)"><span class="ic"><i data-lucide="message-circle"></i></span>Suporte</button>
-    <div class="sidebar-footer" id="sidebar-footer">FinPessoal v4.8</div>
+    <div class="sidebar-footer" id="sidebar-footer">FinPessoal v4.9</div>
   </nav>
   <div class="main">
     <div class="topbar">
@@ -564,11 +564,23 @@
   // A guarda no <head> já redireciona pro login.html se ainda não houver
   // usuário identificado. Aqui só confirmamos (defesa extra) e registramos
   // mais um acesso na planilha antes de carregar os dados financeiros.
+  //
+  // IMPORTANTE (correção de bug): antes, essa inicialização chamava
+  // seedDemoData(true) — o "true" força a substituição dos dados TODA VEZ
+  // que a página carrega, apagando qualquer coisa que a pessoa tivesse
+  // cadastrado. Os dados fictícios agora só aparecem UMA VEZ (primeiro
+  // acesso deste navegador, via maybeShowWelcomeModal — ver js/ui.js), e
+  // "Apagar todos os dados" em Configurações passa a funcionar de verdade:
+  // depois de apagar, os dados continuam apagados mesmo recarregando.
   (function init() {
     if (!verificarAcessoOuRedirecionar()) return;
     ld();
-    seedDemoData(true);
-    return;
+    applyHideValuesIcon();
+    buildSwatches('#6366f1');
+    updMth();
+    if (ST.settings.name) document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
+    render();
+    maybeShowWelcomeModal();
   })();
 </script>
 <script>

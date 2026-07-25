@@ -1,5 +1,21 @@
-# FinPessoal v4.8
+# FinPessoal v4.9
 ## Sistema Financeiro Pessoal
+
+### 🚨 Correção crítica (v4.9)
+**Bug:** a inicialização do `index.html` estava chamando
+`seedDemoData(true)` a cada carregamento da página — o `true` força a
+substituição de TODOS os dados por dados fictícios, então qualquer
+lançamento real que alguém cadastrasse era apagado ao recarregar a página.
+
+**Corrigido.** Agora:
+- Os dados fictícios só aparecem **uma vez**, no primeiro acesso daquele
+  navegador (modal de boas-vindas, com opção de escolher "Explorar em
+  branco" ou "Ver com dados de exemplo").
+- Dados reais cadastrados pela pessoa **persistem normalmente** entre
+  recarregamentos da página.
+- "Apagar todos os dados" em Configurações agora funciona de verdade: depois
+  de apagar, os dados continuam apagados mesmo recarregando — não voltam
+  dados fictícios sozinhos.
 
 ### 🎓 Sobre este projeto (portfólio)
 Este é um projeto de portfólio pessoal. Ao abrir pela primeira vez, aparece
