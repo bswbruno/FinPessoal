@@ -202,12 +202,35 @@
     <div style="width:52px;height:52px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
       <i data-lucide="lock-keyhole" style="width:26px;height:26px"></i>
     </div>
-    <h2 style="font-size:17px;font-weight:700;margin-bottom:10px">Bem-vindo(a) ao FinPessoal 👋</h2>
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">Este é um projeto de portfólio — um sistema completo de controle financeiro pessoal.</p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px"><strong>Seus dados ficam só neste navegador</strong> (armazenamento local do próprio Chrome/Firefox/Edge). Nada é enviado pra nenhum servidor — ninguém mais tem acesso ao que você digitar aqui, nem o desenvolvedor.</p>
+
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:10px">
+      Bem-vindo(a) ao FinPessoal 👋
+    </h2>
+
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">
+      Um sistema completo para organizar suas finanças pessoais de forma simples, prática e segura.
+    </p>
+
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">
+      <strong>Seus dados permanecem somente neste dispositivo.</strong>
+      Nenhuma informação é enviada para servidores ou compartilhada com terceiros.
+    </p>
+
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">
+      📱 <strong>Instale como aplicativo:</strong><br>
+      <strong>Android:</strong> Menu (⋮) → <strong>Instalar aplicativo</strong> ou <strong>Adicionar à tela inicial</strong>.<br>
+      <strong>iPhone (Safari):</strong> <strong>Compartilhar (□↑)</strong> → <strong>Adicionar à Tela de Início</strong>.
+    </p>
+
     <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;">
-      <button class="btn" onclick="closeWelcomeModal()">Explorar sem dados</button>
-      <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();"><i data-lucide="sparkles" class="ic-lucide"></i> Ver com dados de exemplo</button>
+      <button class="btn" onclick="closeWelcomeModal()">
+        Explorar sem dados
+      </button>
+
+      <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();">
+        <i data-lucide="sparkles" class="ic-lucide"></i>
+        Ver com dados de exemplo
+      </button>
     </div>
   </div>
 </div>
