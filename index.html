@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinPessoal – Sistema Financeiro Pessoal</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FinPessoal">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/lib/lucide.min.js"></script>
+<script>
+  // Guarda de acesso: se este navegador ainda não se identificou
+  // (localStorage 'fp_usuario'), manda direto pro login antes de o
+  // conteúdo da página aparecer. Ver js/acesso.js.
+  if (!localStorage.getItem('fp_usuario')) {
+    window.location.href = 'login.html';
+  }
+</script>
+</head>
+<body>
+
+<div id="notif"></div>
+
+<!-- MODAL: DESPESA -->
+<div class="modal-overlay" id="modal-exp">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-exp-title">Nova Despesa</span>
+      <button class="modal-close" onclick="closeModal('modal-exp')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field form-full"><label>Descrição *</label><input type="text" id="exp-desc" placeholder="Ex: LIGHT, Riachuelo, IPVA, Netflix..."></div>
+      <div class="form-field"><label>Valor (R$) *</label><input type="number" id="exp-val" placeholder="0,00" step="0.01" min="0"></div>
+      <div class="form-field"><label>Vencimento *</label><input type="date" id="exp-date"></div>
+      <div class="form-field"><label>Tipo</label>
+        <select id="exp-type" onchange="toggleExpFields()">
+          <option value="fixa">Fixa</option>
+          <option value="parcelada">Parcelada</option>
+          <option value="variavel">Variável</option>
+        </select>
+      </div>
+      <div class="form-field" id="exp-parc-wrap" style="display:none"><label>Nº Parcelas</label><input type="number" id="exp-parc" min="2" max="120" value="2"></div>
+      <div class="form-field" id="exp-recorr-wrap"><label>Repetir mensalmente</label>
+        <select id="exp-recorrente">
+          <option value="nao">Não</option>
+          <option value="sim">Sim – gerar 12 meses</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Grupo</label>
+        <select id="exp-grp"></select>
+      </div>
+      <div class="form-field"><label>Cartão</label>
+        <select id="exp-card"><option value="">Sem cartão (dinheiro/débito)</option></select>
+      </div>
+      <div class="form-field"><label>Status</label>
+        <select id="exp-status"></select>
+      </div>
+      <div class="form-field"><label>Observação</label><input type="text" id="exp-obs" placeholder="Opcional..."></div>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:2px">💡 O comprovante de pagamento é anexado depois, no momento em que você clicar em "Pagar".</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-exp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveExp()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRMAR PAGAMENTO (aqui o recibo é anexado, no momento do pagamento) -->
+<div class="modal-overlay" id="modal-pay-confirm">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title">Confirmar Pagamento</span>
+      <button class="modal-close" onclick="closeModal('modal-pay-confirm')">×</button>
+    </div>
+    <p style="font-size:13px;font-weight:600;margin-bottom:4px" id="pay-modal-desc"></p>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:14px" id="pay-modal-remaining"></p>
+    <div class="form-field form-full" style="margin-bottom:12px">
+      <label>Valor a pagar (R$)</label>
+      <input type="number" id="pay-amount-input" step="0.01" min="0.01">
+      <p style="font-size:11px;color:var(--text3);margin-top:4px">💡 Preenchido com o valor total. Diminua se quiser fazer um pagamento parcial — o restante continua pendente pra pagar depois.</p>
+    </div>
+    <div class="form-field form-full" style="margin-bottom:12px">
+      <label>Pagar com qual conta? (opcional)</label>
+      <select id="pay-account-select"></select>
+    </div>
+    <div class="form-field form-full">
+      <label>Recibo / Comprovante (opcional)</label>
+      <input type="file" id="pay-receipt-input" accept="image/*,.pdf" onchange="handleReceiptUpload(event)">
+      <div id="pay-receipt-preview"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-pay-confirm')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmPayment()">&#10003; Confirmar Pagamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RECEITA -->
+<div class="modal-overlay" id="modal-inc">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-inc-title">Nova Receita</span>
+      <button class="modal-close" onclick="closeModal('modal-inc')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field form-full"><label>Descrição *</label><input type="text" id="inc-desc" placeholder="Ex: Salário Março, Projeto App, Mauro..."></div>
+      <div class="form-field"><label>Origem / Fonte</label><input type="text" id="inc-src" placeholder="Empresa, pessoa, cliente..."></div>
+      <div class="form-field"><label>Valor (R$) *</label><input type="number" id="inc-val" placeholder="0,00" step="0.01" min="0"></div>
+      <div class="form-field"><label>Tipo</label>
+        <select id="inc-type">
+          <option>Salário</option><option>Freelance/Projeto</option>
+          <option>Recebimento de Pessoa</option><option>Aluguel</option>
+          <option>Investimentos</option><option>Bônus</option><option>Outros</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Recorrência</label>
+        <select id="inc-rec" onchange="toggleIncFields()">
+          <option value="unico">Único</option>
+          <option value="parcelada">Parcelado</option>
+          <option value="mensal">Mensal (12 meses)</option>
+        </select>
+      </div>
+      <div class="form-field" id="inc-parc-wrap" style="display:none"><label>Nº Parcelas</label><input type="number" id="inc-parc" min="2" max="120" value="2"></div>
+      <div class="form-field"><label>Data *</label><input type="date" id="inc-date"></div>
+      <div class="form-field"><label>Status</label>
+        <select id="inc-status"></select>
+      </div>
+      <div class="form-field form-full"><label>Observação</label><input type="text" id="inc-obs" placeholder="Opcional..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-inc')">Cancelar</button>
+      <button class="btn btn-success" onclick="saveInc()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CARTÃO -->
+<div class="modal-overlay" id="modal-card">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-card-title">Novo Cartão</span>
+      <button class="modal-close" onclick="closeModal('modal-card')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field"><label>Nome do Cartão *</label><input type="text" id="card-name" placeholder="Nubank, Itaú, C6..." oninput="updateCardPreview()"></div>
+      <div class="form-field"><label>Bandeira</label>
+        <select id="card-brand" onchange="updateCardPreview()">
+          <option>Visa</option><option>Mastercard</option><option>Elo</option>
+          <option>Amex</option><option>Hipercard</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Últimos 4 dígitos</label><input type="text" id="card-digits" maxlength="4" placeholder="0000" oninput="updateCardPreview()"></div>
+      <div class="form-field"><label>Limite (R$) *</label><input type="number" id="card-limit" placeholder="0,00" step="0.01" min="0" oninput="updateCardPreview()"></div>
+      <div class="form-field"><label>Dia de Fechamento</label><input type="number" id="card-fech" min="1" max="31" placeholder="Ex: 15"></div>
+      <div class="form-field"><label>Dia de Vencimento</label><input type="number" id="card-venc" min="1" max="31" placeholder="Ex: 22"></div>
+      <div class="form-field form-full">
+        <label>Cor do Cartão</label>
+        <div id="color-swatches" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px;"></div>
+      </div>
+    </div>
+    <div id="card-preview" class="credit-card" style="background:linear-gradient(135deg,#6366f1ee,#6366f188);">
+      <div style="font-size:9px;opacity:.75;letter-spacing:1.5px;margin-bottom:12px;">CARTÃO DE CRÉDITO</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px;" id="prev-name">Nome do Cartão</div>
+      <div style="font-size:12px;opacity:.8;letter-spacing:2px;margin-bottom:12px;" id="prev-digits">•••• •••• •••• 0000</div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;">
+        <span id="prev-limit">Limite: R$ 0,00</span>
+        <span id="prev-brand">Visa</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-card')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCard()">Salvar Cartão</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: FATURA ATUAL DO CARTÃO -->
+<div class="modal-overlay" id="modal-card-invoice">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="card-invoice-title">Fatura Atual</span>
+      <button class="modal-close" onclick="closeModal('modal-card-invoice')">×</button>
+    </div>
+    <div id="card-invoice-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeModal('modal-card-invoice')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: BEM-VINDO / AVISO DE PRIVACIDADE (aparece só na primeira visita neste navegador) -->
+<div class="modal-overlay" id="modal-welcome">
+  <div class="modal" style="max-width:440px;text-align:center;">
+    <div style="width:52px;height:52px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <i data-lucide="lock-keyhole" style="width:26px;height:26px"></i>
+    </div>
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:10px">Bem-vindo(a) ao FinPessoal 👋</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">Este é um projeto de portfólio — um sistema completo de controle financeiro pessoal.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px"><strong>Seus dados ficam só neste navegador</strong> (armazenamento local do próprio Chrome/Firefox/Edge). Nada é enviado pra nenhum servidor — ninguém mais tem acesso ao que você digitar aqui, nem o desenvolvedor.</p>
+    <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;">
+      <button class="btn" onclick="closeWelcomeModal()">Explorar sem dados</button>
+      <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();"><i data-lucide="sparkles" class="ic-lucide"></i> Ver com dados de exemplo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRMAR -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-header">
+      <span class="modal-title">Confirmar</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
+    </div>
+    <p id="confirm-msg" style="color:var(--text2);font-size:13px;margin-bottom:18px;"></p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--red);border-color:var(--red);" id="confirm-ok-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PARCELAS -->
+<div class="modal-overlay" id="modal-parcelas">
+  <div class="modal" style="max-width:620px;">
+    <div class="modal-header">
+      <span class="modal-title" id="parc-modal-title">Parcelas</span>
+      <button class="modal-close" onclick="closeModal('modal-parcelas')">×</button>
+    </div>
+    <div id="parc-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-parcelas')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VISUALIZAR RECIBO -->
+<div class="modal-overlay" id="modal-receipt">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <span class="modal-title">Comprovante</span>
+      <button class="modal-close" onclick="closeModal('modal-receipt')">×</button>
+    </div>
+    <div id="receipt-view"></div>
+    <div class="modal-actions">
+      <button class="btn" id="receipt-download-btn"><i data-lucide="download"></i> Baixar</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-receipt')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRMAR RECEBIMENTO -->
+<div class="modal-overlay" id="modal-receive-confirm">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title">Confirmar Recebimento</span>
+      <button class="modal-close" onclick="closeModal('modal-receive-confirm')">×</button>
+    </div>
+    <p style="font-size:13px;font-weight:600;margin-bottom:14px" id="receive-modal-desc"></p>
+    <div class="form-field form-full">
+      <label>Em qual conta o dinheiro entrou? (opcional)</label>
+      <select id="receive-account-select"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-receive-confirm')">Cancelar</button>
+      <button class="btn btn-success" onclick="confirmReceive()">&#10003; Confirmar Recebimento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONTA BANCÁRIA -->
+<div class="modal-overlay" id="modal-acc">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-acc-title">Nova Conta Bancária</span>
+      <button class="modal-close" onclick="closeModal('modal-acc')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field form-full"><label>Nome da conta *</label><input type="text" id="acc-name" placeholder="Ex: Conta Principal, Poupança..."></div>
+      <div class="form-field"><label>Banco</label><input type="text" id="acc-bank" placeholder="Nubank, Itaú, Bradesco..."></div>
+      <div class="form-field"><label>Tipo</label>
+        <select id="acc-type">
+          <option value="corrente">Conta Corrente</option>
+          <option value="poupanca">Poupança</option>
+          <option value="carteira">Carteira (dinheiro físico)</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Agência</label><input type="text" id="acc-agency" placeholder="0000"></div>
+      <div class="form-field"><label>Número da conta</label><input type="text" id="acc-number" placeholder="00000-0"></div>
+      <div class="form-field"><label>Saldo inicial (R$)</label><input type="number" id="acc-initial" placeholder="0,00" step="0.01"></div>
+      <div class="form-field"><label>Status</label>
+        <select id="acc-status">
+          <option value="ativa">Ativa</option>
+          <option value="inativa">Inativa</option>
+        </select>
+      </div>
+      <div class="form-field form-full"><label>Código PIX (opcional)</label><input type="text" id="acc-pix" placeholder="CPF, e-mail, telefone ou chave aleatória"></div>
+      <div class="form-field form-full">
+        <label>Cor</label>
+        <div id="acc-color-swatches" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px;"></div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:2px">💡 O saldo atual é calculado automaticamente (saldo inicial + movimentações) e é independente das suas despesas pendentes.</p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-acc')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAcc()">Salvar Conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MOVIMENTAÇÃO -->
+<div class="modal-overlay" id="modal-mov">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-mov-title">Nova Movimentação</span>
+      <button class="modal-close" onclick="closeModal('modal-mov')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field form-full"><label>Descrição *</label><input type="text" id="mov-desc" placeholder="Ex: Transferência, ajuste, saque..."></div>
+      <div class="form-field"><label>Valor (R$) *</label><input type="number" id="mov-value" placeholder="0,00" step="0.01" min="0"></div>
+      <div class="form-field"><label>Data *</label><input type="date" id="mov-date"></div>
+      <div class="form-field"><label>Tipo</label>
+        <select id="mov-type" onchange="toggleMovFields()">
+          <option value="saida">Saída</option>
+          <option value="entrada">Entrada</option>
+          <option value="transferencia">Transferência entre contas</option>
+        </select>
+      </div>
+      <div class="form-field"><label id="mov-account-label">Conta</label>
+        <select id="mov-account"></select>
+      </div>
+      <div class="form-field" id="mov-to-wrap" style="display:none"><label>Conta destino</label>
+        <select id="mov-to-account"></select>
+      </div>
+      <div class="form-field form-full"><label>Categoria</label><input type="text" id="mov-category" placeholder="Opcional..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-mov')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveMov()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: OBJETIVO (Patrimônio) -->
+<div class="modal-overlay" id="modal-obj">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-obj-title">Novo Objetivo</span>
+      <button class="modal-close" onclick="closeModal('modal-obj')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field form-full"><label>Nome *</label><input type="text" id="obj-name" placeholder="Ex: Reserva de Emergência, Viagem, Comprar carro..."></div>
+      <div class="form-field"><label>Meta (R$, opcional)</label><input type="number" id="obj-target" placeholder="Deixe em branco se não tiver meta definida" step="0.01" min="0"></div>
+      <div class="form-field form-full">
+        <label>Cor</label>
+        <div id="obj-color-swatches" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px;"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-obj')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveObj()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: APORTE/RETIRADA (Patrimônio) -->
+<div class="modal-overlay" id="modal-obj-entry">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-obj-entry-title">Guardar dinheiro</span>
+      <button class="modal-close" onclick="closeModal('modal-obj-entry')">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field"><label>Valor (R$) *</label><input type="number" id="obj-entry-value" placeholder="0,00" step="0.01" min="0"></div>
+      <div class="form-field"><label>Data *</label><input type="date" id="obj-entry-date"></div>
+      <div class="form-field form-full"><label id="obj-entry-account-label">Conta (opcional)</label><select id="obj-entry-account"></select></div>
+      <div class="form-field form-full"><label>Descrição</label><input type="text" id="obj-entry-desc" placeholder="Opcional..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-obj-entry')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveObjEntry()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: HISTÓRICO DO OBJETIVO -->
+<div class="modal-overlay" id="modal-obj-history">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="obj-history-title">Histórico</span>
+      <button class="modal-close" onclick="closeModal('modal-obj-history')">×</button>
+    </div>
+    <div id="obj-history-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeModal('modal-obj-history')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETALHES DO DIA (Agenda Financeira) -->
+<div class="modal-overlay" id="modal-agenda-day">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="agenda-day-title">Detalhes do dia</span>
+      <button class="modal-close" onclick="closeModal('modal-agenda-day')">×</button>
+    </div>
+    <div id="agenda-day-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeModal('modal-agenda-day')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CALCULADORA -->
+<div class="modal-overlay" id="modal-calc">
+  <div class="modal" style="max-width:300px;padding:18px;">
+    <div class="modal-header" style="margin-bottom:12px;">
+      <span class="modal-title">Calculadora</span>
+      <button class="modal-close" onclick="closeModal('modal-calc')">×</button>
+    </div>
+    <div id="calc-display" class="calc-display">0</div>
+    <div class="calc-grid">
+      <button class="calc-btn calc-btn-op" onclick="calcClear()">C</button>
+      <button class="calc-btn calc-btn-op" onclick="calcBackspace()">&#9003;</button>
+      <button class="calc-btn calc-btn-op" onclick="calcPercent()">%</button>
+      <button class="calc-btn calc-btn-op" onclick="calcOp('÷')">÷</button>
+
+      <button class="calc-btn" onclick="calcDigit('7')">7</button>
+      <button class="calc-btn" onclick="calcDigit('8')">8</button>
+      <button class="calc-btn" onclick="calcDigit('9')">9</button>
+      <button class="calc-btn calc-btn-op" onclick="calcOp('×')">×</button>
+
+      <button class="calc-btn" onclick="calcDigit('4')">4</button>
+      <button class="calc-btn" onclick="calcDigit('5')">5</button>
+      <button class="calc-btn" onclick="calcDigit('6')">6</button>
+      <button class="calc-btn calc-btn-op" onclick="calcOp('-')">−</button>
+
+      <button class="calc-btn" onclick="calcDigit('1')">1</button>
+      <button class="calc-btn" onclick="calcDigit('2')">2</button>
+      <button class="calc-btn" onclick="calcDigit('3')">3</button>
+      <button class="calc-btn calc-btn-op" onclick="calcOp('+')">+</button>
+
+      <button class="calc-btn" style="grid-column:span 2" onclick="calcDigit('0')">0</button>
+      <button class="calc-btn" onclick="calcDot()">,</button>
+      <button class="calc-btn calc-btn-eq" onclick="calcEquals()">=</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: GASTO RÁPIDO DO DIA A DIA -->
+<div class="modal-overlay" id="modal-quick-exp">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">&#9889; Gasto Rápido</span>
+      <button class="modal-close" onclick="closeModal('modal-quick-exp')">×</button>
+    </div>
+
+    <label style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">O que foi?</label>
+    <div id="quick-exp-categories" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>
+
+    <div class="form-field" style="margin-bottom:12px;">
+      <label>Descrição</label>
+      <input type="text" id="qexp-desc" placeholder="Escolha acima ou digite...">
+    </div>
+    <div class="form-field" style="margin-bottom:14px;">
+      <label>Valor (R$) *</label>
+      <input type="number" id="qexp-value" placeholder="0,00" step="0.01" min="0" style="font-size:20px;font-weight:700;">
+    </div>
+
+    <label style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Forma de pagamento</label>
+    <div id="quick-exp-payment" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>
+
+    <div class="form-field form-full" style="margin-bottom:6px;">
+      <label>Conta bancária (opcional)</label>
+      <select id="qexp-account"></select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('modal-quick-exp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveQuickExpense()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fundo escurecido atrás do menu lateral quando aberto no tablet/celular -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- APP LAYOUT -->
+<div class="app">
+  <nav class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">FP</div>
+      <div class="logo-text">Fin<span>Pessoal</span></div>
+    </div>
+    <div class="nav-sec">Visão Geral</div>
+    <button class="nav-item active" onclick="goTo('dashboard',this)"><span class="ic"><i data-lucide="layout-dashboard"></i></span>Dashboard</button>
+    <button class="nav-item" onclick="goTo('contas',this)"><span class="ic"><i data-lucide="landmark"></i></span>Contas Bancárias</button>
+    <div class="nav-sec">Financeiro</div>
+    <button class="nav-item" onclick="goTo('pagar',this)" id="nav-pagar"><span class="ic"><i data-lucide="arrow-up-circle"></i></span>A Pagar</button>
+    <button class="nav-item" onclick="goTo('receber',this)"><span class="ic"><i data-lucide="arrow-down-circle"></i></span>A Receber</button>
+    <button class="nav-item" onclick="goTo('dividas',this)"><span class="ic"><i data-lucide="layers"></i></span>Dívidas</button>
+    <button class="nav-item" onclick="goTo('movimentacoes',this)"><span class="ic"><i data-lucide="arrow-left-right"></i></span>Movimentações</button>
+    <button class="nav-item" onclick="goTo('patrimonio',this)"><span class="ic"><i data-lucide="target"></i></span>Patrimônio</button>
+    <button class="nav-item" onclick="goTo('agenda',this)"><span class="ic"><i data-lucide="calendar-days"></i></span>Agenda</button>
+    <div class="nav-sec">Gestão</div>
+    <button class="nav-item" onclick="goTo('cartoes',this)"><span class="ic"><i data-lucide="credit-card"></i></span>Cartões</button>
+    <button class="nav-item" onclick="goTo('relatorios',this)"><span class="ic"><i data-lucide="bar-chart-3"></i></span>Relatórios</button>
+    <button class="nav-item" onclick="goTo('configuracoes',this)"><span class="ic"><i data-lucide="settings"></i></span>Configurações</button>
+    <button class="nav-item" onclick="goTo('suporte',this)"><span class="ic"><i data-lucide="message-circle"></i></span>Suporte</button>
+    <div class="sidebar-footer" id="sidebar-footer">FinPessoal v4.9</div>
+  </nav>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu"><i data-lucide="menu"></i></button>
+        <div class="page-title" id="page-title">Dashboard</div>
+      </div>
+      <div class="month-nav">
+        <button class="month-btn" onclick="prevMonth()"><i data-lucide="chevron-left"></i></button>
+        <span class="month-label" id="month-label"></span>
+        <button class="month-btn" onclick="nextMonth()"><i data-lucide="chevron-right"></i></button>
+        <button class="btn-today" id="btn-today" onclick="goToday()" style="display:none">Hoje</button>
+        <button class="theme-toggle" id="hide-values-btn" onclick="toggleHideValues()" aria-label="Ocultar/mostrar valores" title="Ocultar/mostrar valores"><i data-lucide="eye"></i></button>
+        <button class="theme-toggle" id="quick-exp-btn" onclick="openQuickExpenseModal()" aria-label="Gasto rápido" title="Gasto rápido do dia a dia"><i data-lucide="zap"></i></button>
+        <button class="theme-toggle" id="calc-btn" onclick="openCalculator()" aria-label="Calculadora" title="Calculadora"><i data-lucide="calculator"></i></button>
+        <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro"><i data-lucide="moon"></i></button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- SCRIPTS (ordem importa!) -->
+<script src="js/acesso.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/categorias.js"></script>
+<script src="js/contas.js"></script>
+<script src="js/receipts.js"></script>
+<script src="js/movimentacoes.js"></script>
+<script src="js/patrimonio.js"></script>
+<script src="js/agenda.js"></script>
+<script src="js/calculadora.js"></script>
+<script src="js/gastorapido.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/pagar.js"></script>
+<script src="js/receber.js"></script>
+<script src="js/dividas.js"></script>
+<script src="js/cartoes.js"></script>
+<script src="js/relatorios.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/suporte.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  // INICIALIZAÇÃO
+  // A guarda no <head> já redireciona pro login.html se ainda não houver
+  // usuário identificado. Aqui só confirmamos (defesa extra) e registramos
+  // mais um acesso na planilha antes de carregar os dados financeiros.
+  //
+  // IMPORTANTE (correção de bug): antes, essa inicialização chamava
+  // seedDemoData(true) — o "true" força a substituição dos dados TODA VEZ
+  // que a página carrega, apagando qualquer coisa que a pessoa tivesse
+  // cadastrado. Os dados fictícios agora só aparecem UMA VEZ (primeiro
+  // acesso deste navegador, via maybeShowWelcomeModal — ver js/ui.js), e
+  // "Apagar todos os dados" em Configurações passa a funcionar de verdade:
+  // depois de apagar, os dados continuam apagados mesmo recarregando.
+  (function init() {
+    if (!verificarAcessoOuRedirecionar()) return;
+    ld();
+    applyHideValuesIcon();
+    buildSwatches('#6366f1');
+    updMth();
+    if (ST.settings.name) document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
+    render();
+    maybeShowWelcomeModal();
+  })();
+</script>
+<script>
+  // Registra o Service Worker (PWA: cache offline + instalação no celular)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').catch(function(err) {
+        console.warn('Falha ao registrar service worker:', err);
+      });
+    });
+  }
+</script>
+</body>
+</html>

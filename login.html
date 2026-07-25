@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinPessoal — Identificação</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FinPessoal">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/lib/lucide.min.js"></script>
+</head>
+<body>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="width:100%;max-width:380px;">
+
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;">
+      <div class="logo-icon" style="width:42px;height:42px;font-size:16px;">FP</div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:-.3px;">Fin<span style="color:var(--purple)">Pessoal</span></div>
+    </div>
+
+    <div class="settings-card" style="max-width:none;">
+      <h3 style="margin-bottom:4px;">Antes de começar</h3>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:18px;line-height:1.6;">
+        Este é um projeto de portfólio em fase de testes. Preencha seus dados
+        uma única vez — não pedimos senha, é só pra sabermos quem está
+        testando o sistema.
+      </p>
+
+      <form id="form-login" onsubmit="return handleLogin(event)">
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>Nome</label>
+          <input type="text" id="login-nome" placeholder="Como podemos te chamar?" required autocomplete="name">
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>E-mail</label>
+          <input type="email" id="login-email" placeholder="voce@email.com" required autocomplete="email">
+        </div>
+        <div class="form-field" style="margin-bottom:18px;">
+          <label>Telefone</label>
+          <input type="tel" id="login-telefone" placeholder="(00) 00000-0000" required autocomplete="tel">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:11px;" id="login-submit-btn">Entrar</button>
+      </form>
+    </div>
+
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;">
+      <i data-lucide="lock-keyhole" style="width:14px;height:14px;vertical-align:-2px"></i>
+      Seus dados financeiros ficam só neste navegador — nunca são enviados a lugar nenhum.
+    </p>
+  </div>
+</div>
+
+<!-- POPUP: aviso exibido logo após o cadastro, antes de abrir o sistema -->
+<div id="modal-aviso-teste" class="modal-overlay">
+
+    <div class="modal" style="max-width:400px; padding:20px;">
+
+        <div class="modal-header">
+            <span class="modal-title">Antes de continuar</span>
+        </div>
+
+        <div style="font-size:14px; line-height:1.45;">
+
+            <p style="margin:0 0 10px;">
+                Este sistema está em <strong>fase de testes</strong>, mas já pode
+                ser utilizado normalmente para controlar suas finanças pessoais.
+            </p>
+
+            <p style="margin:0 0 10px;">
+                Seus dados ficam armazenados
+                <strong>somente neste navegador e dispositivo</strong>.
+                Ao trocar de aparelho, navegador ou limpar os dados do site,
+                suas informações não serão transferidas.
+            </p>
+
+            <p style="margin:0 0 10px;">
+                O sistema inicia com <strong>dados de exemplo</strong> para
+                demonstração das funcionalidades. Esses dados são fictícios.
+            </p>
+
+            <p style="margin:0 0 10px;">
+                Para começar a usar seus próprios dados, acesse
+                <strong>Configurações</strong>, vá até o final da página e clique em
+                <strong>Apagar todos os dados</strong>.
+            </p>
+
+            <p style="margin:0;">
+                💡 <strong>Dica:</strong> Após a limpeza, cadastre suas receitas e
+                despesas e utilize o sistema normalmente para acompanhar sua
+                organização financeira.
+            </p>
+
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" style="width:100%;" onclick="fecharAvisoEEntrar()">
+                Entendi, continuar
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/acesso.js"></script>
+<script>
+  // Se este navegador já tem um usuário identificado, não faz sentido
+  // pedir de novo — manda direto pro sistema.
+  (function redirecionarSeJaIdentificado() {
+    if (getUsuario()) window.location.href = 'index.html';
+  })();
+
+  function handleLogin(event) {
+    event.preventDefault();
+    const nome = document.getElementById('login-nome').value.trim();
+    const email = document.getElementById('login-email').value.trim();
+    const telefone = document.getElementById('login-telefone').value.trim();
+    if (!nome || !email || !telefone) return false;
+
+    const btn = document.getElementById('login-submit-btn');
+    btn.disabled = true; btn.textContent = 'Entrando...';
+
+    const dados = {
+      nome: nome,
+      email: email,
+      telefone: telefone,
+      navegador: detectarNavegador(),
+      sistema: detectarSistema(),
+      versao: VERSAO_APP
+    };
+
+    salvarUsuario(dados);
+    registrarAcesso(dados);
+    document.getElementById('modal-aviso-teste').classList.add('open');
+    return false;
+  }
+
+  function fecharAvisoEEntrar() {
+    window.location.href = 'index.html';
+  }
+
+  if (window.lucide) lucide.createIcons();
+</script>
+<script>
+  // Registra o Service Worker (PWA: cache offline + instalação no celular)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').catch(function(err) {
+        console.warn('Falha ao registrar service worker:', err);
+      });
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+/* ============================================================================
+   FinPessoal v3.0 – Estilos Principais
+   ============================================================================
+   ÍNDICE deste arquivo (use Ctrl+F para navegar pelas âncoras "# NOME"):
+
+   # 1. FONTE & RESET
+   # 2. TEMA (variáveis claro/escuro)
+   # 3. LAYOUT BASE (app, sidebar, main, topbar)
+   # 4. NAVEGAÇÃO MOBILE (hamburguer + overlay)
+   # 5. BOTÕES
+   # 6. KPIs (cartões de indicador do dashboard)
+   # 7. TOOLBAR / FILTROS / BUSCA
+   # 8. TABELAS
+   # 9. PILLS (badges de status)
+   # 10. MODAIS
+   # 11. FORMULÁRIOS
+   # 12. GRÁFICOS (barras / pizza)
+   # 13. CARTÃO DE CRÉDITO (visual)
+   # 14. PROGRESS BAR
+   # 15. DÍVIDAS
+   # 16. CONFIGURAÇÕES / RESUMOS
+   # 17. ALERTAS
+   # 18. NOTIFICAÇÃO (toast)
+   # 19. SCROLLBAR
+   # 20. RECIBOS / COMPROVANTES (anexo em despesas)
+   # 21. RESPONSIVO (tablet e celular)
+   # 22. CALCULADORA
+   # 23. OCULTAR VALORES
+
+   COMO FUNCIONA O TEMA CLARO/ESCURO
+   ----------------------------------
+   Todas as cores usadas na interface vêm de variáveis CSS (custom properties)
+   definidas dentro de ":root" (tema claro, padrão) e reescritas dentro de
+   "html[data-theme='dark']" (tema escuro). O JavaScript (js/ui.js) apenas
+   adiciona/remove o atributo "data-theme" na tag <html> — ele NUNCA precisa
+   saber quais são as cores, só troca o atributo. Isso significa que, para
+   ajustar uma cor do tema escuro no futuro, basta mexer neste arquivo, sem
+   tocar em nenhum .js.
+
+   COMO FUNCIONA O RESPONSIVO
+   ----------------------------------
+   Breakpoints usados neste projeto:
+     - Acima de 1024px  → Desktop: sidebar fixa, tudo lado a lado.
+     - 701px a 1024px   → Tablet: sidebar vira menu retrátil (off-canvas),
+                           grids se reorganizam em menos colunas.
+     - Até 700px        → Celular: mesmo comportamento do tablet, porém com
+                           espaçamentos, fontes e tabelas ainda mais compactos.
+   Prefira sempre ajustar valores dentro dos blocos @media já existentes na
+   seção "# 21. RESPONSIVO" em vez de criar novos breakpoints soltos.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   # 1. FONTE & RESET
+--------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+
+/* Ícones (biblioteca Lucide) — tamanho/alinhamento padrão em qualquer lugar
+   do sistema. Botões e títulos podem sobrescrever o tamanho via CSS local. */
+.ic-lucide{width:15px;height:15px;stroke-width:2.2;vertical-align:-3px;flex-shrink:0;}
+button .ic-lucide, .btn .ic-lucide, .btn-sm .ic-lucide, .fpill .ic-lucide{margin-right:4px;}
+.ic-lucide.ic-inline{margin-right:3px;}
+
+/* ---------------------------------------------------------------------------
+   # 2. TEMA (variáveis claro/escuro)
+   Para criar um tema novo (ex: "azul"), copie o bloco abaixo, troque o
+   seletor para html[data-theme='azul'] e ajuste os valores.
+--------------------------------------------------------------------------- */
+:root, html[data-theme="light"]{
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#eef0f5;--bg-hover:#f8f9fc;
+  --text:#1a1d23;--text2:#666c7a;--text3:#9aa0ac;
+  --border:#e7e9ef;--border2:#d6d9e1;
+  --purple:#6366f1;--purple-hover:#5457e0;--purple-light:#eef0ff;--purple-dark:#4f46e5;
+  --green:#10b981;--green-light:#e7f9f3;
+  --red:#ef4444;--red-light:#fdeeee;
+  --amber:#f59e0b;--amber-light:#fff8ea;
+  --blue:#3b82f6;--blue-light:#eaf2ff;
+
+  --radius:10px;--radius-lg:14px;--radius-xl:18px;
+
+  --shadow-sm:0 1px 2px rgba(20,22,30,.05);
+  --shadow:0 2px 8px rgba(20,22,30,.06),0 1px 2px rgba(20,22,30,.04);
+  --shadow-md:0 8px 24px rgba(20,22,30,.10);
+  --shadow-lg:0 16px 40px rgba(20,22,30,.14);
+
+  --overlay:rgba(15,17,23,.5);
+  --scrollbar-thumb:#d6d9e1;
+  --scrollbar-track:transparent;
+
+  color-scheme:light;
+}
+
+html[data-theme="dark"]{
+  --bg:#0f1115;--bg2:#171a21;--bg3:#1e222b;--bg-hover:#242833;
+  --text:#eef0f5;--text2:#a0a6b3;--text3:#6b7180;
+  --border:#2a2e38;--border2:#363b47;
+  --purple:#818cf8;--purple-hover:#9499fb;--purple-light:#242648;--purple-dark:#a5b4fc;
+  --green:#34d399;--green-light:#123529;
+  --red:#f87171;--red-light:#3a1e20;
+  --amber:#fbbf24;--amber-light:#3a2e12;
+  --blue:#60a5fa;--blue-light:#132a4a;
+
+  --shadow-sm:0 1px 2px rgba(0,0,0,.35);
+  --shadow:0 2px 10px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.25);
+  --shadow-md:0 8px 26px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 46px rgba(0,0,0,.55);
+
+  --overlay:rgba(0,0,0,.65);
+  --scrollbar-thumb:#363b47;
+  --scrollbar-track:transparent;
+
+  color-scheme:dark;
+}
+
+body{
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;
+  transition:background .25s ease,color .25s ease;
+}
+
+/* Transição suave ao trocar de tema em qualquer elemento com cor/fundo */
+*{transition:background-color .2s ease,border-color .2s ease,color .2s ease;}
+
+/* ---------------------------------------------------------------------------
+   # 3. LAYOUT BASE (app, sidebar, main, topbar)
+--------------------------------------------------------------------------- */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:230px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;
+  transition:transform .25s ease,background .25s ease;
+}
+.logo{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.logo-icon{
+  width:34px;height:34px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);
+}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.2px;}
+.logo-text span{color:var(--purple);}
+.nav-sec{padding:18px 14px 6px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;
+  border-radius:var(--radius);margin:2px 8px;color:var(--text2);font-size:13px;
+  font-family:inherit;border:none;background:none;width:calc(100% - 16px);
+  text-align:left;position:relative;transition:background .15s ease,color .15s ease;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--purple-light);color:var(--purple);font-weight:600;}
+.nav-item .ic{width:18px;height:18px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;}
+.nav-item .ic svg{width:17px;height:17px;stroke-width:2;}
+.nav-badge{position:absolute;right:10px;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:20px;font-weight:700;}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sidebar-footer a{text-decoration:none;font-size:15px;color:var(--text3);line-height:1;}
+.sidebar-footer a:hover{color:var(--red);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{
+  padding:12px 22px;border-bottom:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.page-title{font-size:16px;font-weight:700;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.month-nav{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.month-btn{width:28px;height:28px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text2);}
+.month-btn:hover{background:var(--bg3);}
+.month-label{font-size:13px;font-weight:600;min-width:120px;text-align:center;}
+.btn-today{padding:4px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);font-size:11px;cursor:pointer;color:var(--text2);}
+.content{flex:1;overflow-y:auto;padding:20px 22px;}
+
+/* Botão de alternância de tema (sol/lua) — usado na topbar */
+.theme-toggle{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);
+  background:var(--bg2);color:var(--text2);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+}
+.theme-toggle:hover{background:var(--bg3);color:var(--text);}
+
+/* ---------------------------------------------------------------------------
+   # 4. NAVEGAÇÃO MOBILE (hamburguer + overlay)
+   Em telas largas (desktop) esse botão fica escondido; ele só aparece nos
+   breakpoints definidos na seção "# 21. RESPONSIVO". O overlay escurece o
+   conteúdo atrás do menu quando ele está aberto no celular/tablet.
+--------------------------------------------------------------------------- */
+.menu-toggle{
+  display:none;width:34px;height:34px;border-radius:var(--radius);border:1px solid var(--border2);
+  background:var(--bg2);color:var(--text);cursor:pointer;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.menu-toggle:hover{background:var(--bg3);}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:var(--overlay);z-index:900;
+}
+.sidebar-overlay.open{display:block;}
+
+/* ---------------------------------------------------------------------------
+   # 5. BOTÕES
+--------------------------------------------------------------------------- */
+.btn{
+  padding:8px 15px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600;
+  border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-family:inherit;
+}
+.btn:hover{background:var(--bg3);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:var(--shadow-sm);}
+.btn-primary:hover{background:var(--purple-hover);border-color:var(--purple-hover);}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green);}
+.btn-success:hover{opacity:.9;}
+.btn-sm{padding:4px 9px;font-size:11px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;color:var(--text2);font-family:inherit;}
+.btn-sm:hover{background:var(--bg3);}
+.btn-sm.mark{color:var(--green);border-color:var(--green);}
+.btn-sm.marked{background:var(--green-light);color:var(--green);border-color:var(--green);}
+.btn-sm.edit{color:var(--blue);}
+.btn-sm.del{color:var(--red);}
+
+/* ---------------------------------------------------------------------------
+   # 6. KPIs (cartões de indicador do dashboard)
+--------------------------------------------------------------------------- */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.kpi{
+  background:var(--bg2);border-radius:var(--radius-lg);padding:16px 18px;
+  box-shadow:var(--shadow);border-left:4px solid;
+}
+.kpi-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;font-weight:600;}
+.kpi-value{font-size:19px;font-weight:800;letter-spacing:-.3px;}
+.kpi-sub{font-size:10.5px;color:var(--text3);margin-top:3px;}
+
+/* ---------------------------------------------------------------------------
+   # 7. TOOLBAR / FILTROS / BUSCA
+--------------------------------------------------------------------------- */
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.fpill{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);font-size:12px;cursor:pointer;color:var(--text2);font-family:inherit;}
+.fpill:hover{background:var(--bg3);}
+.fpill.on{background:var(--purple);border-color:var(--purple);color:#fff;}
+.search-box{padding:7px 11px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;background:var(--bg2);color:var(--text);width:180px;font-family:inherit;}
+.search-box:focus{outline:none;border-color:var(--purple);}
+
+/* ---------------------------------------------------------------------------
+   # 8. TABELAS
+   Em telas pequenas, .table-wrap ganha overflow-x para permitir rolagem
+   horizontal em vez de quebrar o layout (ver seção 20 – RESPONSIVO).
+--------------------------------------------------------------------------- */
+.table-wrap{background:var(--bg2);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px;}
+thead th{padding:10px 12px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;background:var(--bg3);border-bottom:1px solid var(--border);white-space:nowrap;text-align:left;}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr{transition:background .12s ease;}
+tbody tr:hover td{background:var(--bg-hover);}
+
+/* ---------------------------------------------------------------------------
+   # 9. PILLS (badges de status)
+--------------------------------------------------------------------------- */
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+.pill-pend{background:var(--amber-light);color:var(--amber);}
+.pill-pago{background:var(--green-light);color:var(--green);}
+.pill-late{background:var(--red-light);color:var(--red);}
+.pill-info{background:var(--blue-light);color:var(--blue);}
+.pill-gray{background:var(--bg3);color:var(--text2);}
+.pill-purple{background:var(--purple-light);color:var(--purple);}
+.pill-green{background:var(--green-light);color:var(--green);}
+
+/* ---------------------------------------------------------------------------
+   # 10. MODAIS
+--------------------------------------------------------------------------- */
+.modal-overlay{display:none;position:fixed;inset:0;background:var(--overlay);z-index:1000;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+/* Modais que podem ser abertas por cima de outra modal (ex: confirmar
+   pagamento ou ver recibo, disparadas de dentro de "Ver parcelas") precisam
+   de um z-index maior, senão a modal de baixo intercepta os cliques. */
+#modal-pay-confirm, #modal-receipt{z-index:1100;}
+.modal{
+  background:var(--bg2);border-radius:var(--radius-lg);padding:24px 26px;width:520px;
+  max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);
+  animation:modalIn .18s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(8px) scale(.98);}to{opacity:1;transform:none;}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);line-height:1;padding:0 4px;}
+.modal-close:hover{color:var(--red);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
+
+/* ---------------------------------------------------------------------------
+   # 11. FORMULÁRIOS
+--------------------------------------------------------------------------- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-full{grid-column:span 2;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+.form-field input,.form-field select{
+  padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius);
+  font-size:13px;background:var(--bg2);color:var(--text);font-family:inherit;
+}
+.form-field input:focus,.form-field select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-light);}
+
+/* ---------------------------------------------------------------------------
+   # 12. GRÁFICOS (barras / pizza)
+--------------------------------------------------------------------------- */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.chart-card{background:var(--bg2);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow);}
+.chart-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar-label{font-size:9px;color:var(--text3);white-space:nowrap;}
+.pie-wrap{display:flex;align-items:center;gap:14px;}
+.pie-legend{flex:1;font-size:10px;color:var(--text2);}
+.pie-legend-item{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.pie-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* ---------------------------------------------------------------------------
+   # 13. CARTÃO DE CRÉDITO (visual)
+--------------------------------------------------------------------------- */
+.credit-card{border-radius:14px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-md);}
+
+/* ---------------------------------------------------------------------------
+   # 14. PROGRESS BAR
+--------------------------------------------------------------------------- */
+.progress{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+/* ---------------------------------------------------------------------------
+   # 15. DÍVIDAS
+--------------------------------------------------------------------------- */
+.div-card{background:var(--bg2);border-radius:var(--radius-lg);border:1px solid var(--border);padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);}
+
+/* ---------------------------------------------------------------------------
+   # 16. CONFIGURAÇÕES / RESUMOS
+--------------------------------------------------------------------------- */
+.settings-card{background:var(--bg2);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px;max-width:520px;}
+.settings-card h3{font-size:13px;font-weight:700;margin-bottom:16px;}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px solid var(--border);}
+.sum-row:last-of-type{border-bottom:none;}
+
+/* ---------------------------------------------------------------------------
+   # 17. ALERTAS
+--------------------------------------------------------------------------- */
+.alert-box{border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;}
+.alert-box h4{font-size:12px;font-weight:700;margin-bottom:6px;}
+.alert-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(128,128,128,.15);}
+.alert-row:last-child{border-bottom:none;}
+.alert-danger{background:var(--red-light);border:1px solid var(--red);color:var(--red);}
+.alert-warning{background:var(--amber-light);border:1px solid var(--amber);color:var(--amber);}
+
+/* ---------------------------------------------------------------------------
+   # 18. NOTIFICAÇÃO (toast)
+--------------------------------------------------------------------------- */
+#notif{position:fixed;top:16px;right:16px;z-index:2000;padding:11px 18px;border-radius:var(--radius-lg);font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:var(--shadow-md);}
+#notif.ok{background:var(--green-light);color:var(--green);border:1px solid var(--green);}
+#notif.err{background:var(--red-light);color:var(--red);border:1px solid var(--red);}
+#notif.info{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);}
+.empty{text-align:center;padding:48px 20px;color:var(--text3);font-size:13px;}
+
+/* ---------------------------------------------------------------------------
+   # 19. SCROLLBAR
+   Estiliza a barra de rolagem (Chrome/Edge/Safari) para acompanhar o tema.
+--------------------------------------------------------------------------- */
+*::-webkit-scrollbar{width:9px;height:9px;}
+*::-webkit-scrollbar-track{background:var(--scrollbar-track);}
+*::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:20px;}
+*{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) var(--scrollbar-track);}
+
+/* ---------------------------------------------------------------------------
+   # 20. RECIBOS / COMPROVANTES (anexo em despesas — módulo A Pagar)
+   Ver js/receipts.js para a lógica de upload, compressão e visualização.
+--------------------------------------------------------------------------- */
+.form-field input[type="file"]{
+  padding:8px 10px;border:1px dashed var(--border2);border-radius:var(--radius);
+  font-size:12px;background:var(--bg2);color:var(--text2);cursor:pointer;
+}
+.receipt-preview{
+  display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px 10px;
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--bg3);
+}
+.receipt-preview img{width:44px;height:44px;object-fit:cover;border-radius:7px;flex-shrink:0;}
+.receipt-preview .receipt-icon{
+  width:44px;height:44px;border-radius:7px;background:var(--red-light);color:var(--red);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.receipt-preview .receipt-name{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.receipt-remove{background:none;border:none;color:var(--red);cursor:pointer;font-size:17px;line-height:1;padding:0 4px;}
+.btn-sm.receipt{color:var(--purple);border-color:var(--purple-light);}
+
+/* Chips de Grupos/Status cadastrados em Configurações (ver js/categorias.js) */
+.cat-chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.cat-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 12px;border-radius:20px;
+  background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;
+}
+.cat-chip button{
+  background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;line-height:1;
+  padding:2px 6px;border-radius:50%;
+}
+.cat-chip button:hover{background:var(--red-light);color:var(--red);}
+.cat-chip button:disabled{visibility:hidden;}
+.cat-add-row{display:flex;gap:8px;}
+.cat-add-row input{
+  flex:1;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius);
+  font-size:13px;background:var(--bg2);color:var(--text);font-family:inherit;
+}
+.cat-add-row input:focus{outline:none;border-color:var(--purple);}
+.cat-add-row .btn{white-space:nowrap;}
+
+/* ---------------------------------------------------------------------------
+   # 21. RESPONSIVO (tablet e celular)
+   IMPORTANTE: a sidebar não é escondida (display:none) como na v2.0 — agora
+   ela vira um menu "off-canvas" (fora da tela) que desliza para dentro com
+   transform:translateX(). Isso é controlado pela classe ".sidebar-open" no
+   elemento .app, alternada pelo botão hamburguer (ver js/ui.js).
+--------------------------------------------------------------------------- */
+
+/* Tablets e telas médias */
+@media(max-width:1024px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .chart-row{grid-template-columns:1fr;}
+  .menu-toggle{display:flex;}
+
+  .sidebar{
+    position:fixed;top:0;left:0;height:100vh;z-index:950;
+    transform:translateX(-100%);box-shadow:var(--shadow-lg);
+  }
+  .app.sidebar-open .sidebar{transform:translateX(0);}
+}
+
+/* Celulares */
+@media(max-width:700px){
+  .content{padding:14px;}
+  .topbar{padding:10px 14px;}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .kpi{padding:12px 14px;}
+  .kpi-value{font-size:16px;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-full{grid-column:span 1;}
+  .modal{padding:18px;width:100%;}
+  .search-box{width:100%;}
+  .toolbar{flex-direction:column;align-items:stretch;}
+  .toolbar > div{flex-wrap:wrap;}
+  .page-title{font-size:14px;}
+  .month-label{min-width:96px;font-size:12px;}
+  table{min-width:560px;} /* mantém colunas legíveis; a rolagem horizontal cuida do resto */
+}
+
+/* Telas muito pequenas (celulares estreitos) */
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr;}
+  .calc-grid{gap:6px;}
+  .calc-btn{padding:12px 0;font-size:14px;}
+  .agenda-grid{gap:3px;}
+  .agenda-cell{min-height:38px;padding:3px;}
+  .agenda-daynum{font-size:10px;}
+  .agenda-dot{min-width:13px;height:13px;font-size:8px;}
+}
+
+/* Ajustes de toque e usabilidade mobile (PWA/instalado) */
+@media(max-width:700px){
+  button,.btn,.calc-btn,.menu-toggle,a.sidebar-footer,.cat-chip button{min-height:38px;}
+  input,select,textarea{font-size:16px;} /* evita zoom automático no iOS ao focar campo */
+  .modal{max-height:90vh;overflow-y:auto;}
+}
+
+/* Modo standalone (app instalado): dá espaço pra área segura (notch/status bar) */
+@media(display-mode:standalone){
+  .topbar{padding-top:calc(10px + env(safe-area-inset-top));}
+  body{padding-bottom:env(safe-area-inset-bottom);}
+}
+
+/* ---------------------------------------------------------------------------
+   # 22. CALCULADORA
+   Modal simples, acessada pelo ícone 🧮 na topbar (ver js/calculadora.js).
+--------------------------------------------------------------------------- */
+.calc-display{
+  background:var(--bg3);border-radius:var(--radius);padding:16px 14px;text-align:right;
+  font-size:28px;font-weight:700;margin-bottom:12px;overflow-x:auto;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.calc-btn{
+  padding:14px 0;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2);
+  font-size:16px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;
+}
+.calc-btn:hover{background:var(--bg3);}
+.calc-btn:active{transform:scale(.96);}
+.calc-btn-op{background:var(--purple-light);color:var(--purple);border-color:transparent;}
+.calc-btn-op:hover{background:var(--purple);color:#fff;}
+.calc-btn-eq{background:var(--purple);color:#fff;border-color:var(--purple);grid-row:span 1;}
+.calc-btn-eq:hover{background:var(--purple-hover);}
+
+/* ---------------------------------------------------------------------------
+   # 23. OCULTAR VALORES
+   O botão 👁️ na topbar chama toggleHideValues() (js/ui.js), que só alterna
+   ST.settings.hideValues e chama render() de novo — a máscara em si acontece
+   dentro da função fmt() (js/utils.js), então qualquer lugar do sistema que
+   já usa fmt() pra mostrar dinheiro já fica protegido automaticamente, sem
+   precisar mexer em cada tela individualmente.
+--------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   # 24. AGENDA FINANCEIRA (calendário)
+   Ver js/agenda.js. Usa o mesmo mês/ano navegado na topbar (ST.vm/ST.vy).
+--------------------------------------------------------------------------- */
+.agenda-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;color:var(--text2);}
+.agenda-legend span{display:inline-flex;align-items:center;gap:5px;}
+.agenda-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.agenda-grid-header{margin-bottom:6px;}
+.agenda-weekday{text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding-bottom:4px;}
+.agenda-cell{
+  min-height:64px;border:1px solid var(--border);border-radius:var(--radius);padding:6px;
+  background:var(--bg2);display:flex;flex-direction:column;gap:4px;
+}
+.agenda-cell-empty{background:transparent;border:none;}
+.agenda-cell[onclick]{cursor:pointer;}
+.agenda-cell[onclick]:hover{background:var(--bg-hover);border-color:var(--purple);}
+.agenda-cell-today{border-color:var(--purple);border-width:2px;}
+.agenda-cell-late{background:var(--red-light);}
+.agenda-daynum{font-size:12px;font-weight:700;color:var(--text2);}
+.agenda-cell-today .agenda-daynum{color:var(--purple);}
+.agenda-dots{display:flex;flex-wrap:wrap;gap:3px;}
+.agenda-dot{
+  display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;
+  border-radius:20px;color:#fff;font-size:9px;font-weight:700;padding:0 4px;
+}
+@media(max-width:700px){
+  .agenda-cell{min-height:46px;padding:4px;}
+  .agenda-daynum{font-size:11px;}
+  .agenda-weekday{font-size:9px;}
+}
+
