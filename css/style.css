@@ -134,11 +134,23 @@ body{
   display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;
   transition:transform .25s ease,background .25s ease;
 }
-.logo{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.logo {
+  padding:20px 16px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid var(--border);}
+
+
 .logo-icon{
-  width:34px;height:34px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));
-  border-radius:10px;display:flex;align-items:center;justify-content:center;
-  color:#fff;font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);
+  width:34px;
+  height:34px;
+  background:linear-gradient(135deg,var(--purple),var(--purple-dark));
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;
+  font-size:14px;
+  box-shadow:var(--shadow-sm);
 }
 .logo-text{font-size:15px;font-weight:700;letter-spacing:-.2px;}
 .logo-text span{color:var(--purple);}
