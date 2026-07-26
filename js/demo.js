@@ -1,5 +1,5 @@
 
-// FinPessoal v4.9 – Dados de Demonstração
+// FinPessoal v5.0 – Dados de Demonstração
 //
 // Preenche o app inteiro com dados FICTÍCIOS realistas (contas, cartões,
 // despesas, receitas, patrimônio, orçamentos, movimentações), pensado pra

@@ -1,5 +1,5 @@
 
-// FinPessoal v4.9 – A Receber
+// FinPessoal v5.0 – A Receber
 let iF='todos', iS='';
 let iSort='venc-asc';  // venc-asc (padrão) | venc-desc | valor-asc | valor-desc | desc-az
 let iView='junto';     // 'junto' | 'separado'
@@ -75,7 +75,7 @@ function setIF(f){iF=f;renderReceber();}
 // - Ainda NÃO recebida: abre a modal de confirmação (js/movimentacoes.js →
 //   openReceiveModal), onde se pode escolher em qual conta o dinheiro entrou.
 // - Já recebida: desfaz direto e reverte a movimentação bancária vinculada,
-//   se houver (bug corrigido na v4.9 — mesma lógica de toggleE em js/pagar.js).
+//   se houver (bug corrigido na v5.0 — mesma lógica de toggleE em js/pagar.js).
 function toggleI(id){
   const x=ST.incomes.find(i=>i.id===id);if(!x)return;
   if(x.status==='recebido'){x.status='pendente';removeLinkedMovement(id);sv();render();}

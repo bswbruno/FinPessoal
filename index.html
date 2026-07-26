@@ -202,35 +202,12 @@
     <div style="width:52px;height:52px;border-radius:50%;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
       <i data-lucide="lock-keyhole" style="width:26px;height:26px"></i>
     </div>
-
-    <h2 style="font-size:17px;font-weight:700;margin-bottom:10px">
-      Bem-vindo(a) ao FinPessoal 👋
-    </h2>
-
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">
-      Um sistema completo para organizar suas finanças pessoais de forma simples, prática e segura.
-    </p>
-
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">
-      <strong>Seus dados permanecem somente neste dispositivo.</strong>
-      Nenhuma informação é enviada para servidores ou compartilhada com terceiros.
-    </p>
-
-    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">
-      📱 <strong>Instale como aplicativo:</strong><br>
-      <strong>Android:</strong> Menu (⋮) → <strong>Instalar aplicativo</strong> ou <strong>Adicionar à tela inicial</strong>.<br>
-      <strong>iPhone (Safari):</strong> <strong>Compartilhar (□↑)</strong> → <strong>Adicionar à Tela de Início</strong>.
-    </p>
-
+    <h2 style="font-size:17px;font-weight:700;margin-bottom:10px">Bem-vindo(a) ao FinPessoal 👋</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">Este é um projeto de portfólio — um sistema completo de controle financeiro pessoal.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px"><strong>Seus dados ficam só neste navegador</strong> (armazenamento local do próprio Chrome/Firefox/Edge). Nada é enviado pra nenhum servidor — ninguém mais tem acesso ao que você digitar aqui, nem o desenvolvedor.</p>
     <div class="modal-actions" style="justify-content:center;flex-wrap:wrap;">
-      <button class="btn" onclick="closeWelcomeModal()">
-        Explorar sem dados
-      </button>
-
-      <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();">
-        <i data-lucide="sparkles" class="ic-lucide"></i>
-        Ver com dados de exemplo
-      </button>
+      <button class="btn" onclick="closeWelcomeModal()">Explorar sem dados</button>
+      <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();"><i data-lucide="sparkles" class="ic-lucide"></i> Ver com dados de exemplo</button>
     </div>
   </div>
 </div>
@@ -515,11 +492,21 @@
 <!-- Fundo escurecido atrás do menu lateral quando aberto no tablet/celular -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
+<!-- BANNER DE ATUALIZAÇÃO DO APP (PWA) -->
+<!-- Só aparece quando: 1) o app está instalado (standalone), e 2) existe uma
+     versão nova do Service Worker esperando pra assumir. Não fica preso na
+     tela — tem botão de fechar, e também some sozinho depois de atualizar. -->
+<div id="update-banner" style="display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:3000;background:var(--bg2);border:1px solid var(--purple);box-shadow:var(--shadow-lg);border-radius:var(--radius-lg);padding:12px 14px;align-items:center;gap:12px;max-width:92vw;">
+  <span style="font-size:13px;font-weight:600;white-space:nowrap">🔄 Nova versão disponível</span>
+  <button class="btn btn-primary" style="padding:6px 14px;font-size:12px;white-space:nowrap" onclick="applyAppUpdate()">Atualizar agora</button>
+  <button class="modal-close" style="font-size:18px" onclick="dismissUpdateBanner()" title="Fechar">×</button>
+</div>
+
 <!-- APP LAYOUT -->
 <div class="app">
   <nav class="sidebar">
     <div class="logo">
-      <img class="logo-icon" src="icons/icon-192.png" alt="FinPessoal">
+      <div class="logo-icon">FP</div>
       <div class="logo-text">Fin<span>Pessoal</span></div>
     </div>
     <div class="nav-sec">Visão Geral</div>
@@ -537,7 +524,7 @@
     <button class="nav-item" onclick="goTo('relatorios',this)"><span class="ic"><i data-lucide="bar-chart-3"></i></span>Relatórios</button>
     <button class="nav-item" onclick="goTo('configuracoes',this)"><span class="ic"><i data-lucide="settings"></i></span>Configurações</button>
     <button class="nav-item" onclick="goTo('suporte',this)"><span class="ic"><i data-lucide="message-circle"></i></span>Suporte</button>
-    <div class="sidebar-footer" id="sidebar-footer">FinPessoal v4.9</div>
+    <div class="sidebar-footer" id="sidebar-footer">FinPessoal v5.0</div>
   </nav>
   <div class="main">
     <div class="topbar">
@@ -608,25 +595,70 @@
 </script>
 <script>
   // Registra o Service Worker (PWA: cache offline + instalação no celular)
-  // if ('serviceWorker' in navigator) {
-  //   window.addEventListener('load', function() {
-  //     navigator.serviceWorker.register('service-worker.js').catch(function(err) {
-  //       console.warn('Falha ao registrar service worker:', err);
-  //     });
-  //   });
-  // }
-  // Não registra o Service Worker durante o desenvolvimento (Live Server)
-const isDevelopment =
-    location.hostname === "127.0.0.1" ||
-    location.hostname === "localhost";
+  // e cuida do aviso de "nova versão disponível".
+  //
+  // Regra pedida: o banner só aparece se o app estiver INSTALADO (rodando
+  // em modo standalone — "adicionado à tela"/"instalado", tanto no celular
+  // quanto no computador). Quem só está usando pelo navegador normal (aba
+  // comum) não vê esse aviso.
+  function appIsInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: fullscreen)').matches
+      || window.matchMedia('(display-mode: minimal-ui)').matches
+      || window.navigator.standalone === true; // Safari/iOS
+  }
 
-if (!isDevelopment && 'serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('service-worker.js').catch(function (err) {
-      console.warn('Falha ao registrar service worker:', err);
+  let _waitingWorker = null;
+
+  function showUpdateBanner(worker) {
+    if (!appIsInstalled()) return; // só avisa quem tem o app instalado
+    _waitingWorker = worker;
+    document.getElementById('update-banner').style.display = 'flex';
+  }
+  function dismissUpdateBanner() {
+    document.getElementById('update-banner').style.display = 'none';
+  }
+  // Botão "Atualizar agora": manda o SW novo assumir, e recarrega sozinho
+  // assim que ele assumir de verdade (evento controllerchange) — não
+  // precisa a pessoa apertar F5 nem Ctrl+F5.
+  function applyAppUpdate() {
+    const btn = document.querySelector('#update-banner button.btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Atualizando...'; }
+    if (_waitingWorker) _waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+  }
+
+  if ('serviceWorker' in navigator) {
+    let refreshedOnce = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (refreshedOnce) return; // alguns navegadores disparam esse evento mais de uma vez
+      refreshedOnce = true;
+      dismissUpdateBanner();
+      window.location.reload();
     });
-  });
-}
+
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+        // Se já existir um SW novo esperando (ex: pessoa abriu o app de novo
+        // depois que a atualização já tinha sido baixada em segundo plano)
+        if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
+
+        // Se uma atualização começar a ser baixada AGORA, com o app aberto
+        reg.addEventListener('updatefound', function() {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', function() {
+            // "installed" + já existe um controller ativo = é uma ATUALIZAÇÃO
+            // (não a primeira instalação, que não deve mostrar aviso nenhum)
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner(newWorker);
+            }
+          });
+        });
+      }).catch(function(err) {
+        console.warn('Falha ao registrar service worker:', err);
+      });
+    });
+  }
 </script>
 </body>
 </html>

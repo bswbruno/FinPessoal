@@ -1,5 +1,5 @@
 
-// FinPessoal v4.9 – Patrimônio (objetivos e reservas)
+// FinPessoal v5.0 – Patrimônio (objetivos e reservas)
 //
 // Lembrete importante: este app NÃO é um banco digital, é um controle
 // financeiro pessoal. "Guardar dinheiro" aqui não move dinheiro de verdade

@@ -1,5 +1,5 @@
 
-// FinPessoal v4.9 – Configurações e Modais
+// FinPessoal v5.0 – Configurações e Modais
 function renderConfig(){
   const dp = ST.settings.dashDefaultPeriodo || 'mes';
   const showContas = ST.settings.showAccountsSection !== false;
@@ -61,7 +61,7 @@ function renderConfig(){
     <button class="btn btn-primary" onclick="seedDemoData()">${icon('sparkles')} Preencher com dados fictícios</button>
   </div>
 
-  <div class="settings-card" style="border:1px dashed var(--border)"><h3 style="color:var(--text3)">FinPessoal v4.9</h3><p style="font-size:12px;color:var(--text3);line-height:1.8">Sistema financeiro pessoal · Uso local neste navegador<br>Todos os dados ficam salvos apenas neste dispositivo<br>Sem servidor, sem internet obrigatória</p></div>`;
+  <div class="settings-card" style="border:1px dashed var(--border)"><h3 style="color:var(--text3)">FinPessoal v5.0</h3><p style="font-size:12px;color:var(--text3);line-height:1.8">Sistema financeiro pessoal · Uso local neste navegador<br>Todos os dados ficam salvos apenas neste dispositivo<br>Sem servidor, sem internet obrigatória</p></div>`;
 }
 function saveBudgets(){
   ST.groups.forEach((g,idx)=>{
@@ -90,7 +90,7 @@ function saveDashPrefs(){
   if (typeof _dashPrefsApplied !== 'undefined') _dashPrefsApplied = false;
   notify('Preferências do Dashboard salvas!');
 }
-function saveSettings(){ST.settings.name=document.getElementById('cfg-name').value;ST.settings.meta=document.getElementById('cfg-meta').value;ST.settings.alertDays=+document.getElementById('cfg-alert').value||3;sv();notify('Configurações salvas!');document.getElementById('sidebar-footer').textContent=ST.settings.name?'Olá, '+ST.settings.name:'FinPessoal v4.9';}
+function saveSettings(){ST.settings.name=document.getElementById('cfg-name').value;ST.settings.meta=document.getElementById('cfg-meta').value;ST.settings.alertDays=+document.getElementById('cfg-alert').value||3;sv();notify('Configurações salvas!');document.getElementById('sidebar-footer').textContent=ST.settings.name?'Olá, '+ST.settings.name:'FinPessoal v5.0';}
 function clearAll(){confirm2('ATENÇÃO: Isso apagará TODOS os dados permanentemente!',()=>{ST.expenses=[];ST.incomes=[];ST.cards=[];ST.accounts=[];ST.movements=[];ST.objectives=[];ST.objectiveEntries=[];ST.budgets={};sv();notify('Dados apagados','err');render();});}
 
 /* ----------------------------------------------------------------------

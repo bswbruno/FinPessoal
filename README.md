@@ -1,5 +1,30 @@
-# FinPessoal v4.9
+# FinPessoal v5.0
 ## Sistema Financeiro Pessoal
+
+### 🔄 Novidade v5.0: aviso de atualização do app (PWA)
+Quem **instalou o app** (celular ou computador, "Adicionar à tela inicial"/
+"Instalar app") agora recebe um aviso quando você publica uma versão nova:
+um banner discreto no rodapé — "🔄 Nova versão disponível" — com um botão
+**"Atualizar agora"**. Ao clicar, o app atualiza e recarrega sozinho,
+**sem precisar de F5 nem perder os dados cadastrados** (os dados ficam no
+`localStorage`, que é completamente separado do cache do Service Worker).
+Quem só acessa pelo navegador normal (sem instalar) não vê esse aviso.
+
+**Como isso funciona por baixo dos panos**, pra quando for mexer de novo:
+- `service-worker.js`: o SW novo não assume sozinho mais — ele fica
+  "esperando" até a página mandar a mensagem `SKIP_WAITING` (isso é
+  proposital, pra não interromper a pessoa no meio do uso).
+- `index.html` (final do arquivo): registra o SW e fica de olho em
+  `updatefound`/`statechange`. Se detectar uma atualização **e** o app
+  estiver rodando em modo instalado (`display-mode: standalone`), mostra o
+  banner. O botão manda `SKIP_WAITING` pro SW novo, e o evento
+  `controllerchange` dispara o reload automático.
+- **Toda vez que você alterar algo em CSS/JS/HTML**, lembre de subir
+  também o número do `CACHE_NAME` em `service-worker.js` (ex: de
+  `'finpessoal-cache-v3'` pra `'finpessoal-cache-v4'`) — é esse número
+  mudando que faz o navegador perceber que existe uma versão nova pra
+  baixar. Sem isso, o Service Worker acha que nada mudou e ninguém recebe
+  o aviso.
 
 ### 🚨 Correção crítica (v4.9)
 **Bug:** a inicialização do `index.html` estava chamando

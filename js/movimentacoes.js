@@ -1,5 +1,5 @@
 
-// FinPessoal v4.9 – Movimentações (extrato das contas bancárias)
+// FinPessoal v5.0 – Movimentações (extrato das contas bancárias)
 //
 // Uma "movimentação" é qualquer entrada/saída/transferência ligada a uma
 // conta bancária. Elas podem ser:
@@ -22,7 +22,7 @@ function addMovement({date,desc,accountId,category,value,type,toAccountId,linked
 // Remove a movimentação gerada automaticamente para uma despesa/receita,
 // quando o pagamento/recebimento é desfeito (ex: usuário desmarca "Pago").
 // Sem isso, o saldo da conta ficaria descontado/creditado pra sempre mesmo
-// depois de desfazer o pagamento — bug corrigido na v4.9.
+// depois de desfazer o pagamento — bug corrigido na v5.0.
 function removeLinkedMovement(linkedId){
   const before = ST.movements.length;
   ST.movements = ST.movements.filter(m => m.linkedId !== linkedId);
