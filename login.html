@@ -152,14 +152,21 @@
   if (window.lucide) lucide.createIcons();
 </script>
 <script>
-  // Registra o Service Worker (PWA: cache offline + instalação no celular)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js').catch(function(err) {
-        console.warn('Falha ao registrar service worker:', err);
-      });
+const isDevelopment =
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1';
+
+if (!isDevelopment && 'serviceWorker' in navigator) {
+
+  window.addEventListener('load', function() {
+
+    navigator.serviceWorker.register('service-worker.js').catch(function(err) {
+      console.warn('Falha ao registrar service worker:', err);
     });
-  }
+
+  });
+
+}
 </script>
 </body>
 </html>

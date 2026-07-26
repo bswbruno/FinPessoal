@@ -506,7 +506,7 @@
 <div class="app">
   <nav class="sidebar">
     <div class="logo">
-      <div class="logo-icon">FP</div>
+      <img class="logo-icon" src="icons/icon-192.png" alt="FinPessoal">
       <div class="logo-text">Fin<span>Pessoal</span></div>
     </div>
     <div class="nav-sec">Visão Geral</div>
@@ -636,29 +636,46 @@
       window.location.reload();
     });
 
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js').then(function(reg) {
-        // Se já existir um SW novo esperando (ex: pessoa abriu o app de novo
-        // depois que a atualização já tinha sido baixada em segundo plano)
-        if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
+const isDevelopment =
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1';
 
-        // Se uma atualização começar a ser baixada AGORA, com o app aberto
-        reg.addEventListener('updatefound', function() {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-          newWorker.addEventListener('statechange', function() {
-            // "installed" + já existe um controller ativo = é uma ATUALIZAÇÃO
-            // (não a primeira instalação, que não deve mostrar aviso nenhum)
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              showUpdateBanner(newWorker);
-            }
-          });
+if (!isDevelopment && 'serviceWorker' in navigator) {
+
+  window.addEventListener('load', function() {
+
+    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+
+      // Se já existir um SW novo esperando
+      if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
+
+      // Se uma atualização começar a ser baixada
+      reg.addEventListener('updatefound', function() {
+
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener('statechange', function() {
+
+          if (
+            newWorker.state === 'installed' &&
+            navigator.serviceWorker.controller
+          ) {
+            showUpdateBanner(newWorker);
+          }
+
         });
-      }).catch(function(err) {
-        console.warn('Falha ao registrar service worker:', err);
+
       });
+
+    }).catch(function(err) {
+      console.warn('Falha ao registrar service worker:', err);
     });
-  }
+
+  });
+
+}
+}
 </script>
 </body>
 </html>
