@@ -1,4 +1,4 @@
-// Service Worker do FinPessoal
+logo// Service Worker do FinPessoal
 // Cuida do cache dos arquivos estáticos para o app funcionar offline
 // e poder ser instalado no celular (PWA).
 
