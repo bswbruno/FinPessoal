@@ -202,7 +202,7 @@ body{
   position:fixed;
   left:0;
   right:0;
-  bottom:2%;
+  bottom:0%;
   padding:10px 20px 6px;
   background:var(--bg2);
   border-top:1px solid var(--border);
