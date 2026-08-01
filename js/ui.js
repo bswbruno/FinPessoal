@@ -119,7 +119,6 @@ function updateMobileBottomNav() {
   const items = [
     {page:'dashboard', setting:'mobileNavDashboard'},
     {page:'contas', setting:'mobileNavContas'},
-<<<<<<< HEAD
     {page:'pagar', setting:'mobileNavPagar'},
     {page:'receber', setting:'mobileNavReceber'},
     {page:'dividas', setting:'mobileNavDividas'},
@@ -130,15 +129,10 @@ function updateMobileBottomNav() {
     {page:'relatorios', setting:'mobileNavRelatorios'},
     {page:'configuracoes', setting:'mobileNavConfiguracoes'},
     {page:'suporte', setting:'mobileNavSuporte'}
-=======
-    {page:'patrimonio', setting:'mobileNavPatrimonio'},
-    {page:'cartoes', setting:'mobileNavCartoes'}
->>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
   ];
   const enabled = items.filter(i => ST.settings[i.setting] !== false);
   if (!enabled.length) {
     ST.settings.mobileNavDashboard = true;
-<<<<<<< HEAD
     ST.settings.mobileNavContas = true;
     ST.settings.mobileNavPatrimonio = true;
     ST.settings.mobileNavCartoes = true;
@@ -161,15 +155,6 @@ function updateMobileBottomNav() {
   if (moreBtn) moreBtn.style.display = 'flex';
   const addBtn = document.querySelector('.mobile-add-center');
   if (addBtn) addBtn.style.display = 'flex';
-=======
-    sv();
-  }
-  items.forEach(({page,setting}) => {
-    const btn = document.querySelector(`[data-menu-item="${page}"]`);
-    if (!btn) return;
-    btn.style.display = ST.settings[setting] !== false ? 'flex' : 'none';
-  });
->>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
 }
 
 /* ----------------------------------------------------------------------

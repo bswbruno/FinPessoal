@@ -39,11 +39,7 @@ const ST = {
   objectives: [],       // objetivos/reservas de patrimônio (js/patrimonio.js)
   objectiveEntries: [], // aportes/retiradas ligados a cada objetivo (js/patrimonio.js)
   budgets: {},           // orçamento mensal por grupo: { "Alimentação": 800, ... }
-<<<<<<< HEAD
   settings: { name:'', meta:'', alertDays:3, mobileNavDashboard:true, mobileNavContas:true, mobileNavPagar:false, mobileNavReceber:false, mobileNavDividas:false, mobileNavMovimentacoes:false, mobileNavPatrimonio:true, mobileNavAgenda:false, mobileNavCartoes:true, mobileNavRelatorios:false, mobileNavConfiguracoes:false, mobileNavSuporte:false, dashboardCollapsed:{} },
-=======
-  settings: { name:'', meta:'', alertDays:3, mobileNavDashboard:true, mobileNavContas:true, mobileNavPatrimonio:true, mobileNavCartoes:true, dashboardCollapsed:{} },
->>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
   groups: [...DEFAULT_GROUPS],           // grupos de despesa (editável em Configurações)
   expStatuses: [...CORE_EXP_STATUSES],   // status de despesas (core + personalizados)
   incStatuses: [...CORE_INC_STATUSES],   // status de receitas (core + personalizados)
@@ -90,7 +86,6 @@ function ld() {
     if (d.settings) ST.settings = d.settings;
     if (typeof ST.settings.mobileNavDashboard === 'undefined') ST.settings.mobileNavDashboard = true;
     if (typeof ST.settings.mobileNavContas === 'undefined') ST.settings.mobileNavContas = true;
-<<<<<<< HEAD
     if (typeof ST.settings.mobileNavPagar === 'undefined') ST.settings.mobileNavPagar = false;
     if (typeof ST.settings.mobileNavReceber === 'undefined') ST.settings.mobileNavReceber = false;
     if (typeof ST.settings.mobileNavDividas === 'undefined') ST.settings.mobileNavDividas = false;
@@ -101,10 +96,6 @@ function ld() {
     if (typeof ST.settings.mobileNavRelatorios === 'undefined') ST.settings.mobileNavRelatorios = false;
     if (typeof ST.settings.mobileNavConfiguracoes === 'undefined') ST.settings.mobileNavConfiguracoes = false;
     if (typeof ST.settings.mobileNavSuporte === 'undefined') ST.settings.mobileNavSuporte = false;
-=======
-    if (typeof ST.settings.mobileNavPatrimonio === 'undefined') ST.settings.mobileNavPatrimonio = true;
-    if (typeof ST.settings.mobileNavCartoes === 'undefined') ST.settings.mobileNavCartoes = true;
->>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
     if (!ST.settings.dashboardCollapsed || typeof ST.settings.dashboardCollapsed !== 'object') ST.settings.dashboardCollapsed = {};
     // Compatibilidade com dados salvos antes da v3.2 (sem essas listas ainda)
     if (d.groups && d.groups.length)       ST.groups = d.groups;
