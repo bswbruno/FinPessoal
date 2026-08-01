@@ -41,6 +41,10 @@ function renderConfig(){
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-cartoes" ${showCartoes?'checked':''}> Meus Cartões</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-graf6" ${showGraf6meses?'checked':''}> Gráfico "Últimos 6 meses"</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>    <p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Botões do menu inferior (mobile)</p>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 473bc5be8b5b86aeda999e125eeeeb34907e3d4b
     <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Você pode marcar até 4 itens. O botão de + fica sempre no centro.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px">
       <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-dashboard" ${ST.settings.mobileNavDashboard!==false?'checked':''}> Dashboard</label>
@@ -57,6 +61,12 @@ function renderConfig(){
       <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-suporte" ${mobileNavSuporte?'checked':''}> Suporte</label>
     </div>
     <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
+=======
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-dashboard" ${ST.settings.mobileNavDashboard!==false?'checked':''}> Dashboard</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-contas" ${ST.settings.mobileNavContas!==false?'checked':''}> Contas</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-patrimonio" ${ST.settings.mobileNavPatrimonio!==false?'checked':''}> Metas</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-mobile-cartoes" ${ST.settings.mobileNavCartoes!==false?'checked':''}> Cartões</label>    <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
+>>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
   </div>
 
   initMobileNavOptionLimit();
@@ -110,6 +120,10 @@ function saveDashPrefs(){
   ST.settings.showAlertsSection = document.getElementById('cfg-show-alertas').checked;
   ST.settings.mobileNavDashboard = document.getElementById('cfg-mobile-dashboard').checked;
   ST.settings.mobileNavContas = document.getElementById('cfg-mobile-contas').checked;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 473bc5be8b5b86aeda999e125eeeeb34907e3d4b
   ST.settings.mobileNavPagar = document.getElementById('cfg-mobile-pagar').checked;
   ST.settings.mobileNavReceber = document.getElementById('cfg-mobile-receber').checked;
   ST.settings.mobileNavDividas = document.getElementById('cfg-mobile-dividas').checked;
@@ -120,6 +134,13 @@ function saveDashPrefs(){
   ST.settings.mobileNavRelatorios = document.getElementById('cfg-mobile-relatorios').checked;
   ST.settings.mobileNavConfiguracoes = document.getElementById('cfg-mobile-configuracoes').checked;
   ST.settings.mobileNavSuporte = document.getElementById('cfg-mobile-suporte').checked;
+<<<<<<< HEAD
+=======
+=======
+  ST.settings.mobileNavPatrimonio = document.getElementById('cfg-mobile-patrimonio').checked;
+  ST.settings.mobileNavCartoes = document.getElementById('cfg-mobile-cartoes').checked;
+>>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
+>>>>>>> 473bc5be8b5b86aeda999e125eeeeb34907e3d4b
   sv();
   if (typeof _dashPrefsApplied !== 'undefined') _dashPrefsApplied = false;
   if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
