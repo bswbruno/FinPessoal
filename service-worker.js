@@ -2,7 +2,7 @@ logo// Service Worker do FinPessoal
 // Cuida do cache dos arquivos estáticos para o app funcionar offline
 // e poder ser instalado no celular (PWA).
 
-const CACHE_NAME = 'finpessoal-cache-v6';
+const CACHE_NAME = 'finpessoal-cache-v7';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -34,6 +34,8 @@ const ASSETS_TO_CACHE = [
   './js/ui.js',
   './js/utils.js',
   './assets/logo.png',
+  './icons/favicon-32.ico',
+  './icons/icon-32.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png'
@@ -45,6 +47,7 @@ const ASSETS_TO_CACHE = [
 // (ver index.html). Assim a atualização só acontece quando a pessoa quer,
 // não no meio do uso.
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(ASSETS_TO_CACHE))

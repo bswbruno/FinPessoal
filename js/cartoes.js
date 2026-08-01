@@ -12,7 +12,7 @@ function renderCartoes(){
     const bestDay=hasCycle?cardBestPurchaseDay(c):null;
     const dueStr=invoice&&invoice.dueDate?dateToStr(invoice.dueDate):null;
 
-    return`<div style="flex:0 0 auto;width:280px">
+    return`<div class="card-shell">
       <div class="credit-card" style="background:linear-gradient(135deg,${c.color}ee,${c.color}88)">
         <div style="display:flex;justify-content:space-between;margin-bottom:12px"><div style="font-size:8px;opacity:.7;letter-spacing:1.5px">CRÉDITO</div><div style="font-size:11px;opacity:.8;font-weight:600">${c.brand||'Visa'}</div></div>
         <div style="font-size:17px;font-weight:700;margin-bottom:6px">${c.name}</div>
@@ -34,7 +34,7 @@ function renderCartoes(){
       </div>
     </div>`;
   }).join(''):'<div class="empty" style="padding:80px">Nenhum cartão. Clique em "+ Novo Cartão".</div>';
-  document.getElementById('content').innerHTML=`<div class="toolbar"><span style="font-size:12px;color:var(--text2)">${ST.cards.length} cartão${ST.cards.length!==1?'ões':''}</span><button class="btn btn-primary" onclick="openCardModal()">${icon('plus')} Novo Cartão</button></div><div style="display:flex;flex-wrap:wrap;gap:16px">${html}</div>`;
+  document.getElementById('content').innerHTML=`<div class="toolbar"><span style="font-size:12px;color:var(--text2)">${ST.cards.length} cartão${ST.cards.length!==1?'ões':''}</span><button class="btn btn-primary" onclick="openCardModal()">${icon('plus')} Novo Cartão</button></div><div class="card-list">${html}</div>`;
 }
 
 // Mostra os itens da fatura ATUAL (ciclo em aberto) daquele cartão.
