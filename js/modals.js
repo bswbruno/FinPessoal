@@ -32,8 +32,11 @@ function renderConfig(){
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-fatura" ${showFatura?'checked':''}> Próximo Vencimento de Fatura (cartões)</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-cartoes" ${showCartoes?'checked':''}> Meus Cartões</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-graf6" ${showGraf6meses?'checked':''}> Gráfico "Últimos 6 meses"</label>
-    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>
-    <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>    <p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Botões do menu inferior (mobile)</p>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-dashboard" ${ST.settings.mobileNavDashboard!==false?'checked':''}> Dashboard</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-contas" ${ST.settings.mobileNavContas!==false?'checked':''}> Contas</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-mobile-patrimonio" ${ST.settings.mobileNavPatrimonio!==false?'checked':''}> Metas</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-mobile-cartoes" ${ST.settings.mobileNavCartoes!==false?'checked':''}> Cartões</label>    <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
   </div>
 
   <div class="settings-card">
@@ -83,11 +86,13 @@ function saveDashPrefs(){
   ST.settings.showMonthlyChartSection = document.getElementById('cfg-show-graf6').checked;
   ST.settings.showGroupChartSection = document.getElementById('cfg-show-grafgrupo').checked;
   ST.settings.showAlertsSection = document.getElementById('cfg-show-alertas').checked;
+  ST.settings.mobileNavDashboard = document.getElementById('cfg-mobile-dashboard').checked;
+  ST.settings.mobileNavContas = document.getElementById('cfg-mobile-contas').checked;
+  ST.settings.mobileNavPatrimonio = document.getElementById('cfg-mobile-patrimonio').checked;
+  ST.settings.mobileNavCartoes = document.getElementById('cfg-mobile-cartoes').checked;
   sv();
-  // Sem isso, o período padrão só passaria a valer depois de recarregar a
-  // página inteira (ver _dashPrefsApplied em js/dashboard.js) — resetando
-  // aqui, a próxima vez que o Dashboard for aberto já usa a nova preferência.
   if (typeof _dashPrefsApplied !== 'undefined') _dashPrefsApplied = false;
+  if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
   notify('Preferências do Dashboard salvas!');
 }
 function saveSettings(){ST.settings.name=document.getElementById('cfg-name').value;ST.settings.meta=document.getElementById('cfg-meta').value;ST.settings.alertDays=+document.getElementById('cfg-alert').value||3;sv();notify('Configurações salvas!');document.getElementById('sidebar-footer').textContent=ST.settings.name?'Olá, '+ST.settings.name:'FinPessoal v5.0';}

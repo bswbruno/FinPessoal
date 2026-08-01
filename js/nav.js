@@ -4,7 +4,7 @@ let curPage = 'dashboard';
 
 function goTo(page, btn) {
   curPage = page;
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   const titles = {
     dashboard:'Dashboard', contas:'Contas Bancárias', pagar:'A Pagar', receber:'A Receber',
@@ -49,5 +49,6 @@ function render() {
   else if (curPage==='relatorios')    renderRelatorios();
   else if (curPage==='configuracoes') renderConfig();
   else if (curPage==='suporte')       renderSuporte();
+  if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
   refreshIcons();
 }

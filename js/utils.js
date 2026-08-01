@@ -39,7 +39,7 @@ const ST = {
   objectives: [],       // objetivos/reservas de patrimônio (js/patrimonio.js)
   objectiveEntries: [], // aportes/retiradas ligados a cada objetivo (js/patrimonio.js)
   budgets: {},           // orçamento mensal por grupo: { "Alimentação": 800, ... }
-  settings: { name:'', meta:'', alertDays:3 },
+  settings: { name:'', meta:'', alertDays:3, mobileNavDashboard:true, mobileNavContas:true, mobileNavPatrimonio:true, mobileNavCartoes:true, dashboardCollapsed:{} },
   groups: [...DEFAULT_GROUPS],           // grupos de despesa (editável em Configurações)
   expStatuses: [...CORE_EXP_STATUSES],   // status de despesas (core + personalizados)
   incStatuses: [...CORE_INC_STATUSES],   // status de receitas (core + personalizados)
@@ -84,6 +84,11 @@ function ld() {
     if (d.objectiveEntries) ST.objectiveEntries = d.objectiveEntries;
     if (d.budgets) ST.budgets = d.budgets;
     if (d.settings) ST.settings = d.settings;
+    if (typeof ST.settings.mobileNavDashboard === 'undefined') ST.settings.mobileNavDashboard = true;
+    if (typeof ST.settings.mobileNavContas === 'undefined') ST.settings.mobileNavContas = true;
+    if (typeof ST.settings.mobileNavPatrimonio === 'undefined') ST.settings.mobileNavPatrimonio = true;
+    if (typeof ST.settings.mobileNavCartoes === 'undefined') ST.settings.mobileNavCartoes = true;
+    if (!ST.settings.dashboardCollapsed || typeof ST.settings.dashboardCollapsed !== 'object') ST.settings.dashboardCollapsed = {};
     // Compatibilidade com dados salvos antes da v3.2 (sem essas listas ainda)
     if (d.groups && d.groups.length)       ST.groups = d.groups;
     if (d.expStatuses && d.expStatuses.length) ST.expStatuses = d.expStatuses;

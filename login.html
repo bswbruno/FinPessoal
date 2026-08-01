@@ -9,8 +9,10 @@
 <title>FinPessoal — Identificação</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6366f1">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="shortcut icon" href="icons/favicon-32.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FinPessoal">
@@ -152,20 +154,12 @@
   if (window.lucide) lucide.createIcons();
 </script>
 <script>
-const isDevelopment =
-  location.hostname === 'localhost' ||
-  location.hostname === '127.0.0.1';
-
-if (!isDevelopment && 'serviceWorker' in navigator) {
-
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-
     navigator.serviceWorker.register('service-worker.js').catch(function(err) {
       console.warn('Falha ao registrar service worker:', err);
     });
-
   });
-
 }
 </script>
 </body>

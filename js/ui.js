@@ -113,6 +113,24 @@ function applyHideValuesIcon() {
     refreshIcons();
   }
 }
+function updateMobileBottomNav() {
+  const items = [
+    {page:'dashboard', setting:'mobileNavDashboard'},
+    {page:'contas', setting:'mobileNavContas'},
+    {page:'patrimonio', setting:'mobileNavPatrimonio'},
+    {page:'cartoes', setting:'mobileNavCartoes'}
+  ];
+  const enabled = items.filter(i => ST.settings[i.setting] !== false);
+  if (!enabled.length) {
+    ST.settings.mobileNavDashboard = true;
+    sv();
+  }
+  items.forEach(({page,setting}) => {
+    const btn = document.querySelector(`[data-menu-item="${page}"]`);
+    if (!btn) return;
+    btn.style.display = ST.settings[setting] !== false ? 'flex' : 'none';
+  });
+}
 
 /* ----------------------------------------------------------------------
    4) MODAL DE BOAS-VINDAS / AVISO DE PRIVACIDADE
