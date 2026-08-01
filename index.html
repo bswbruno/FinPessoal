@@ -9,11 +9,12 @@
 <title>FinPessoal – Sistema Financeiro Pessoal</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6366f1">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="shortcut icon" href="icons/favicon-32.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/x-icon" href="icons/favicon-32.ico">
 <meta name="apple-mobile-web-app-title" content="FinPessoal">
 <link rel="stylesheet" href="css/style.css">
 <script src="js/lib/lucide.min.js"></script>
@@ -581,6 +582,7 @@
     <i data-lucide="credit-card"></i>
     <span>Cartões</span>
   </button>
+<<<<<<< HEAD
   <button class="mobile-nav-more" data-menu-item="more" onclick="toggleSidebar()">
     <i data-lucide="more-horizontal"></i>
     <span>Mais</span>
@@ -617,6 +619,12 @@
     <i data-lucide="message-circle"></i>
     <span>Suporte</span>
   </button>
+=======
+  <button class="mobile-nav-item" onclick="toggleSidebar()">
+    <i data-lucide="more-horizontal"></i>
+    <span>Mais</span>
+  </button>
+>>>>>>> e89ab57f64bd391547ff47662a8ac2c7ac1cb16c
 </nav>
 
 <!-- SCRIPTS (ordem importa!) -->
@@ -662,6 +670,7 @@
     updMth();
     if (ST.settings.name) document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
     render();
+    if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
     maybeShowWelcomeModal();
   })();
 </script>
@@ -708,46 +717,28 @@
       window.location.reload();
     });
 
-const isDevelopment =
-  location.hostname === 'localhost' ||
-  location.hostname === '127.0.0.1';
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+        if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
 
-if (!isDevelopment && 'serviceWorker' in navigator) {
+        reg.addEventListener('updatefound', function() {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
 
-  window.addEventListener('load', function() {
-
-    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
-
-      // Se já existir um SW novo esperando
-      if (reg.waiting && reg.active) showUpdateBanner(reg.waiting);
-
-      // Se uma atualização começar a ser baixada
-      reg.addEventListener('updatefound', function() {
-
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-
-        newWorker.addEventListener('statechange', function() {
-
-          if (
-            newWorker.state === 'installed' &&
-            navigator.serviceWorker.controller
-          ) {
-            showUpdateBanner(newWorker);
-          }
-
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner(newWorker);
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
         });
 
+        return reg.update();
+      }).catch(function(err) {
+        console.warn('Falha ao registrar service worker:', err);
       });
-
-    }).catch(function(err) {
-      console.warn('Falha ao registrar service worker:', err);
     });
-
-  });
-
-}
-}
+  }
 </script>
 </body>
 </html>
