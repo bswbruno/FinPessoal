@@ -535,7 +535,20 @@
       </div>
       <div class="month-nav">
         <button class="month-btn" onclick="prevMonth()"><i data-lucide="chevron-left"></i></button>
-        <span class="month-label" id="month-label"></span>
+        <select class="month-select" id="month-select" onchange="changeMonthBySelect(this.value)">
+          <option value="0">Janeiro</option>
+          <option value="1">Fevereiro</option>
+          <option value="2">Março</option>
+          <option value="3">Abril</option>
+          <option value="4">Maio</option>
+          <option value="5">Junho</option>
+          <option value="6">Julho</option>
+          <option value="7">Agosto</option>
+          <option value="8">Setembro</option>
+          <option value="9">Outubro</option>
+          <option value="10">Novembro</option>
+          <option value="11">Dezembro</option>
+        </select>
         <button class="month-btn" onclick="nextMonth()"><i data-lucide="chevron-right"></i></button>
         <button class="btn-today" id="btn-today" onclick="goToday()" style="display:none">Hoje</button>
         <button class="theme-toggle" id="hide-values-btn" onclick="toggleHideValues()" aria-label="Ocultar/mostrar valores" title="Ocultar/mostrar valores"><i data-lucide="eye"></i></button>
@@ -547,6 +560,64 @@
     <div class="content" id="content"></div>
   </div>
 </div>
+
+<nav class="mobile-bottom-nav" aria-label="Navegação principal">
+  <button class="mobile-nav-item active" data-menu-item="dashboard" onclick="goTo('dashboard', this)">
+    <i data-lucide="layout-dashboard"></i>
+    <span>Dashboard</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="contas" onclick="goTo('contas', this)">
+    <i data-lucide="landmark"></i>
+    <span>Contas</span>
+  </button>
+  <button class="mobile-add-center" onclick="openQuickExpenseModal()" aria-label="Adicionar gasto rápido">
+    <i data-lucide="plus"></i>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="patrimonio" onclick="goTo('patrimonio', this)">
+    <i data-lucide="target"></i>
+    <span>Metas</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="cartoes" onclick="goTo('cartoes', this)">
+    <i data-lucide="credit-card"></i>
+    <span>Cartões</span>
+  </button>
+  <button class="mobile-nav-more" data-menu-item="more" onclick="toggleSidebar()">
+    <i data-lucide="more-horizontal"></i>
+    <span>Mais</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="pagar" onclick="goTo('pagar', this)" style="display:none">
+    <i data-lucide="receipt"></i>
+    <span>A pagar</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="receber" onclick="goTo('receber', this)" style="display:none">
+    <i data-lucide="wallet"></i>
+    <span>A receber</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="dividas" onclick="goTo('dividas', this)" style="display:none">
+    <i data-lucide="layers"></i>
+    <span>Dívidas</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="movimentacoes" onclick="goTo('movimentacoes', this)" style="display:none">
+    <i data-lucide="arrow-left-right"></i>
+    <span>Moviment.</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="agenda" onclick="goTo('agenda', this)" style="display:none">
+    <i data-lucide="calendar-days"></i>
+    <span>Agenda</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="relatorios" onclick="goTo('relatorios', this)" style="display:none">
+    <i data-lucide="bar-chart-3"></i>
+    <span>Relatórios</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="configuracoes" onclick="goTo('configuracoes', this)" style="display:none">
+    <i data-lucide="settings"></i>
+    <span>Config.</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="suporte" onclick="goTo('suporte', this)" style="display:none">
+    <i data-lucide="message-circle"></i>
+    <span>Suporte</span>
+  </button>
+</nav>
 
 <!-- SCRIPTS (ordem importa!) -->
 <script src="js/acesso.js"></script>

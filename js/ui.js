@@ -109,9 +109,52 @@ function applyHideValuesIcon() {
   const btn = document.getElementById('hide-values-btn');
   if (btn) {
     btn.innerHTML = `<i data-lucide="${ST.settings.hideValues ? 'eye-off' : 'eye'}"></i>`;
-    btn.style.opacity = ST.settings.hideValues ? '.55' : '1';
+    btn.classList.toggle('active', ST.settings.hideValues);
+    btn.setAttribute('aria-pressed', ST.settings.hideValues ? 'true' : 'false');
+    btn.style.opacity = ST.settings.hideValues ? '.7' : '1';
     refreshIcons();
   }
+}
+function updateMobileBottomNav() {
+  const items = [
+    {page:'dashboard', setting:'mobileNavDashboard'},
+    {page:'contas', setting:'mobileNavContas'},
+    {page:'pagar', setting:'mobileNavPagar'},
+    {page:'receber', setting:'mobileNavReceber'},
+    {page:'dividas', setting:'mobileNavDividas'},
+    {page:'movimentacoes', setting:'mobileNavMovimentacoes'},
+    {page:'patrimonio', setting:'mobileNavPatrimonio'},
+    {page:'agenda', setting:'mobileNavAgenda'},
+    {page:'cartoes', setting:'mobileNavCartoes'},
+    {page:'relatorios', setting:'mobileNavRelatorios'},
+    {page:'configuracoes', setting:'mobileNavConfiguracoes'},
+    {page:'suporte', setting:'mobileNavSuporte'}
+  ];
+  const enabled = items.filter(i => ST.settings[i.setting] !== false);
+  if (!enabled.length) {
+    ST.settings.mobileNavDashboard = true;
+    ST.settings.mobileNavContas = true;
+    ST.settings.mobileNavPatrimonio = true;
+    ST.settings.mobileNavCartoes = true;
+    sv();
+  }
+
+  const priority = ['dashboard','contas','patrimonio','cartoes','pagar','receber','dividas','movimentacoes','agenda','relatorios','configuracoes','suporte'];
+  const visiblePages = priority.filter(page => {
+    const item = items.find(i => i.page === page);
+    return item && ST.settings[item.setting] !== false;
+  }).slice(0, 4);
+
+  if (!visiblePages.length) visiblePages.push('dashboard');
+
+  document.querySelectorAll('.mobile-nav-item').forEach(btn => {
+    const page = btn.getAttribute('data-menu-item');
+    btn.style.display = visiblePages.includes(page) ? 'flex' : 'none';
+  });
+  const moreBtn = document.querySelector('.mobile-nav-more');
+  if (moreBtn) moreBtn.style.display = 'flex';
+  const addBtn = document.querySelector('.mobile-add-center');
+  if (addBtn) addBtn.style.display = 'flex';
 }
 
 /* ----------------------------------------------------------------------

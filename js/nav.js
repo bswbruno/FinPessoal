@@ -4,7 +4,7 @@ let curPage = 'dashboard';
 
 function goTo(page, btn) {
   curPage = page;
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   const titles = {
     dashboard:'Dashboard', contas:'Contas Bancárias', pagar:'A Pagar', receber:'A Receber',
@@ -20,10 +20,12 @@ function goTo(page, btn) {
 
 function prevMonth() { if(ST.vm===0){ST.vm=11;ST.vy--;}else ST.vm--; updMth(); render(); }
 function nextMonth() { if(ST.vm===11){ST.vm=0;ST.vy++;}else ST.vm++; updMth(); render(); }
+function changeMonthBySelect(value) { ST.vm = +value; updMth(); render(); }
 function goToday()   { ST.vm=today.getMonth(); ST.vy=today.getFullYear(); updMth(); render(); }
 
 function updMth() {
-  document.getElementById('month-label').textContent = MONTHS[ST.vm] + ' ' + ST.vy;
+  const monthSelect = document.getElementById('month-select');
+  if (monthSelect) monthSelect.value = ST.vm;
   const isCurr = ST.vm===today.getMonth() && ST.vy===today.getFullYear();
   document.getElementById('btn-today').style.display = isCurr ? 'none' : 'block';
   // Badge de atrasados
@@ -49,5 +51,6 @@ function render() {
   else if (curPage==='relatorios')    renderRelatorios();
   else if (curPage==='configuracoes') renderConfig();
   else if (curPage==='suporte')       renderSuporte();
+  if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
   refreshIcons();
 }

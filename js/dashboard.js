@@ -54,6 +54,25 @@ function clearDashFilters(){
   dashPeriodo='mes';dashFiltAccount='';dashFiltCard='';dashFiltGrupo='';dashFiltStatus='';
   renderDashboard();
 }
+function sectionIsCollapsed(key){
+  return ST.settings.dashboardCollapsed && ST.settings.dashboardCollapsed[key];
+}
+function toggleDashboardSection(key){
+  if(!ST.settings.dashboardCollapsed || typeof ST.settings.dashboardCollapsed !== 'object') ST.settings.dashboardCollapsed={};
+  ST.settings.dashboardCollapsed[key] = !ST.settings.dashboardCollapsed[key];
+  sv();
+  renderDashboard();
+}
+function renderDashboardSection(id,title,subtitle,body,style=''){
+  const collapsed = sectionIsCollapsed(id);
+  return `<div class="chart-card" style="${style}" data-dashboard-section="${id}">
+    <div class="chart-card-header">
+      <div><div class="chart-title">${title}${subtitle?` <span style="font-weight:400;color:var(--text3);font-size:10px">${subtitle}</span>`:''}</div></div>
+      <button class="chart-card-toggle" onclick="toggleDashboardSection('${id}')">${icon(collapsed?'chevron-down':'chevron-up','ic-inline')} ${collapsed?'Expandir':'Ocultar'}</button>
+    </div>
+    <div class="chart-card-body${collapsed?' collapsed':''}">${body}</div>
+  </div>`;
+}
 
 function renderDashboard(){
   // Aplica o período padrão salvo em Configurações → Preferências do
@@ -107,12 +126,15 @@ function renderDashboard(){
     ? `<div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Despesas</div><div class="kpi-value" style="color:var(--green);font-size:15px">&#127881; Você está em dia!</div><div class="kpi-sub">Total do período: ${fmt(tp)}</div></div>`
     : `<div class="kpi" style="border-left-color:var(--red)"><div class="kpi-label">Restante a Pagar</div><div class="kpi-value" style="color:var(--red)">${fmt(restante)}</div><div class="kpi-sub">Total: ${fmt(tp)} · Já pago: ${fmt(pg)}</div></div>`;
 
-  const cardsHTML=(ST.settings.showCardsSection!==false && ST.cards.length)?`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Meus Cartões</div><div style="display:flex;gap:10px;flex-wrap:wrap;">${ST.cards.map(c=>{const used=cardCommitted(c.id);const pct=c.limit>0?Math.min(100,(used/c.limit)*100):0;return`<div style="background:linear-gradient(135deg,${c.color}ee,${c.color}99);border-radius:10px;padding:12px 16px;color:#fff;min-width:160px;flex:1;max-width:220px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:600;font-size:13px">${c.name}</span><span style="font-size:10px;opacity:.7">${c.brand||''}</span></div><div style="font-size:11px;opacity:.7;margin-bottom:8px;letter-spacing:1px">•••• ${c.digits||'****'}</div><div style="background:rgba(0,0,0,.2);border-radius:2px;height:3px;margin-bottom:4px"><div style="background:rgba(255,255,255,.85);width:${pct}%;height:100%;border-radius:2px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px"><span>${fmt(c.limit)}</span><span>${Math.round(pct)}% comprometido</span></div></div>`;}).join('')}</div></div>`:'';
+  const cardsHTML=(ST.settings.showCardsSection!==false && ST.cards.length)?`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Meus Cartões</div><div class="scroll-row">${ST.cards.map(c=>{const used=cardCommitted(c.id);const pct=c.limit>0?Math.min(100,(used/c.limit)*100):0;return`<div style="background:linear-gradient(135deg,${c.color}ee,${c.color}99);border-radius:10px;padding:12px 16px;color:#fff;min-width:160px;flex:0 0 auto;max-width:220px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-weight:600;font-size:13px">${c.name}</span><span style="font-size:10px;opacity:.7">${c.brand||''}</span></div><div style="font-size:11px;opacity:.7;margin-bottom:8px;letter-spacing:1px">•••• ${c.digits||'****'}</div><div style="background:rgba(0,0,0,.2);border-radius:2px;height:3px;margin-bottom:4px"><div style="background:rgba(255,255,255,.85);width:${pct}%;height:100%;border-radius:2px"></div></div><div style="display:flex;justify-content:space-between;font-size:10px"><span>${fmt(c.limit)}</span><span>${Math.round(pct)}% comprometido</span></div></div>`;}).join('')}</div></div>`:'';
   const ativas=ST.accounts.filter(a=>a.status!=='inativa');
-  const accountsHTML=ST.settings.showAccountsSection===false?'':`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Contas Bancárias <span style="font-weight:400;color:var(--text3);font-size:10px">(saldo independente das dívidas)</span></div>${ativas.length?`<div style="display:flex;gap:10px;flex-wrap:wrap;">${ativas.map(a=>`<div style="background:linear-gradient(135deg,${a.color}ee,${a.color}99);border-radius:10px;padding:12px 16px;color:#fff;min-width:160px;flex:1;max-width:220px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px">${a.name}</div><div style="font-size:11px;opacity:.7;margin-bottom:8px">${a.bank||'—'}</div><div style="font-size:16px;font-weight:800">${fmt(accountBalance(a.id))}</div></div>`).join('')}</div><div style="text-align:right;margin-top:10px;font-size:12px;color:var(--text2)">Total: <strong style="color:var(--purple)">${fmt(totalSaldoContas())}</strong></div>`:`<div class="empty" style="padding:24px">Nenhuma conta cadastrada. <span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('contas')">Cadastrar agora</span></div>`}</div>`;
-  const patrimonioHTML=ST.settings.showPatrimonioSection===false?'':`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Patrimônio <span style="font-weight:400;color:var(--text3);font-size:10px">(objetivos e reservas)</span></div>${ST.objectives.length?`<div style="display:flex;gap:10px;flex-wrap:wrap;">${ST.objectives.slice(0,4).map(o=>{const g=objectiveBalance(o.id);const meta2=+o.targetValue||0;const pct=meta2>0?Math.min(100,(g/meta2)*100):0;return`<div style="background:${o.color}14;border:1px solid ${o.color}44;border-radius:10px;padding:12px 16px;min-width:160px;flex:1;max-width:220px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px;color:${o.color}">${o.name}</div><div style="font-size:16px;font-weight:800;color:var(--text)">${fmt(g)}</div>${meta2>0?`<div class="progress" style="margin-top:6px"><div class="progress-fill" style="background:${o.color};width:${pct}%"></div></div>`:''}</div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:12px;color:var(--text2)">Total guardado: <strong style="color:var(--purple)">${fmt(totalPatrimonio())}</strong></div>`:`<div class="empty" style="padding:24px">Nenhum objetivo cadastrado. <span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('patrimonio')">Cadastrar agora</span></div>`}</div>`;
+  const accountsBody = `${ativas.length?`<div style="display:flex;gap:10px;flex-wrap:wrap;">${ativas.map(a=>`<div style="background:linear-gradient(135deg,${a.color}ee,${a.color}99);border-radius:10px;padding:12px 16px;color:#fff;min-width:160px;flex:1;max-width:220px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px">${a.name}</div><div style="font-size:11px;opacity:.7;margin-bottom:8px">${a.bank||'—'}</div><div style="font-size:16px;font-weight:800">${fmt(accountBalance(a.id))}</div></div>`).join('')}</div><div style="text-align:right;margin-top:10px;font-size:12px;color:var(--text2)">Total: <strong style="color:var(--purple)">${fmt(totalSaldoContas())}</strong></div>`:`<div class="empty" style="padding:24px">Nenhuma conta cadastrada. <span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('contas')">Cadastrar agora</span></div>`}`;
+  const accountsHTML = ST.settings.showAccountsSection===false ? '' : renderDashboardSection('contas','Contas Bancárias','(saldo)',accountsBody,'grid-column:span 2');
+  const patrimonioBody = `${ST.objectives.length?`<div style="display:flex;gap:10px;flex-wrap:wrap;">${ST.objectives.slice(0,4).map(o=>{const g=objectiveBalance(o.id);const meta2=+o.targetValue||0;const pct=meta2>0?Math.min(100,(g/meta2)*100):0;return`<div style="background:${o.color}14;border:1px solid ${o.color}44;border-radius:10px;padding:12px 16px;min-width:160px;flex:1;max-width:220px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px;color:${o.color}">${o.name}</div><div style="font-size:16px;font-weight:800;color:var(--text)">${fmt(g)}</div>${meta2>0?`<div class="progress" style="margin-top:6px"><div class="progress-fill" style="background:${o.color};width:${pct}%"></div></div>`:''}</div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:12px;color:var(--text2)">Total guardado: <strong style="color:var(--purple)">${fmt(totalPatrimonio())}</strong></div>`:`<div class="empty" style="padding:24px">Nenhum objetivo cadastrado. <span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('patrimonio')">Cadastrar agora</span></div>`}`;
+  const patrimonioHTML = ST.settings.showPatrimonioSection===false ? '' : renderDashboardSection('patrimonio','Patrimônio','(objetivos e reservas)',patrimonioBody,'grid-column:span 2');
   // Orçamento por categoria: só aparece se pelo menos um grupo tiver limite definido em Configurações E a seção estiver habilitada.
-  const budgetHTML=(ST.settings.showBudgetSection!==false && budgets.length)?`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Orçamento por Categoria <span style="font-weight:400;color:var(--text3);font-size:10px">(mês atual)</span></div><div style="display:flex;flex-direction:column;gap:10px">${budgets.map(b=>{const color=b.over?'var(--red)':b.warn?'var(--amber)':'var(--green)';return`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">${b.grp}</span><span style="color:${color};font-weight:600">${fmt(b.spent)} / ${fmt(b.limit)}</span></div><div class="progress"><div class="progress-fill" style="background:${color};width:${b.pct}%"></div></div></div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:11px;color:var(--text3)"><span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('configuracoes')">Gerenciar orçamentos</span></div></div>`:'';
+  const budgetBody = `<div style="display:flex;flex-direction:column;gap:10px">${budgets.map(b=>{const color=b.over?'var(--red)':b.warn?'var(--amber)':'var(--green)';return`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">${b.grp}</span><span style="color:${color};font-weight:600">${fmt(b.spent)} / ${fmt(b.limit)}</span></div><div class="progress"><div class="progress-fill" style="background:${color};width:${b.pct}%"></div></div></div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:11px;color:var(--text3)"><span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('configuracoes')">Gerenciar orçamentos</span></div>`;
+  const budgetHTML = (ST.settings.showBudgetSection!==false && budgets.length) ? renderDashboardSection('budget','Orçamento por Categoria','(mês atual)',budgetBody,'grid-column:span 2') : '';
 
   // Próximo Vencimento de Fatura: calcula a fatura de cada cartão para o
   // MÊS SELECIONADO na topbar (ST.vy/ST.vm) — não necessariamente o mês
@@ -130,48 +152,52 @@ function renderDashboard(){
       return {card:c,total,due};
     }).filter(Boolean).sort((a,b)=>(a.due&&b.due)?a.due-b.due:0);
     if(invoices.length){
-      invoiceHTML=`<div class="chart-card" style="grid-column:span 2"><div class="chart-title">Próximo Vencimento de Fatura <span style="font-weight:400;color:var(--text3);font-size:10px">(${MONTHS[ST.vm]}/${ST.vy})</span></div><div style="display:flex;flex-direction:column;gap:8px">${invoices.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.card.color}">${inv.card.name}</span><span style="font-size:11px;color:var(--text2)">Vence em ${inv.due?fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div></div>`;
+      const invoiceBody = `<div style="display:flex;flex-direction:column;gap:8px">${invoices.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.card.color}">${inv.card.name}</span><span style="font-size:11px;color:var(--text2)">Vence em ${inv.due?fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div>`;
+      invoiceHTML = renderDashboardSection('invoice','Próximo Vencimento',`(${MONTHS[ST.vm]}/${ST.vy})`,invoiceBody,'grid-column:span 2');
     }
   }
 
   // Barra de filtros do Dashboard
   const statusOptions=[...new Set([...ST.expStatuses,...ST.incStatuses,'atrasado'])];
-  const filtersHTML=`<div class="chart-card" style="margin-bottom:16px">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
-      <div class="form-field" style="min-width:120px"><label>Período</label>
-        <select onchange="setDashFilter('periodo',this.value)">
-          <option value="mes" ${dashPeriodo==='mes'?'selected':''}>Este mês</option>
-          <option value="ano" ${dashPeriodo==='ano'?'selected':''}>Este ano (${ST.vy})</option>
-          <option value="tudo" ${dashPeriodo==='tudo'?'selected':''}>Todos os períodos</option>
-        </select>
+  const filtersBody = `<div class="dashboard-filters">
+      <div class="dashboard-filter-grid">
+        <div class="form-field"><label>Período</label>
+          <select onchange="setDashFilter('periodo',this.value)">
+            <option value="mes" ${dashPeriodo==='mes'?'selected':''}>Este mês</option>
+            <option value="ano" ${dashPeriodo==='ano'?'selected':''}>Este ano (${ST.vy})</option>
+            <option value="tudo" ${dashPeriodo==='tudo'?'selected':''}>Todos os períodos</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Conta</label>
+          <select onchange="setDashFilter('conta',this.value)">
+            <option value="">Todas</option>
+            ${ST.accounts.map(a=>`<option value="${a.id}" ${dashFiltAccount===a.id?'selected':''}>${a.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-field"><label>Cartão</label>
+          <select onchange="setDashFilter('cartao',this.value)">
+            <option value="">Todos</option>
+            ${ST.cards.map(c=>`<option value="${c.id}" ${dashFiltCard===c.id?'selected':''}>${c.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-field"><label>Categoria</label>
+          <select onchange="setDashFilter('grupo',this.value)">
+            <option value="">Todas</option>
+            ${ST.groups.map(g=>`<option value="${g}" ${dashFiltGrupo===g?'selected':''}>${g}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-field"><label>Status</label>
+          <select onchange="setDashFilter('status',this.value)">
+            <option value="">Todos</option>
+            ${statusOptions.map(s=>`<option value="${s}" ${dashFiltStatus===s?'selected':''}>${cap(s)}</option>`).join('')}
+          </select>
+        </div>
       </div>
-      <div class="form-field" style="min-width:140px"><label>Conta</label>
-        <select onchange="setDashFilter('conta',this.value)">
-          <option value="">Todas</option>
-          ${ST.accounts.map(a=>`<option value="${a.id}" ${dashFiltAccount===a.id?'selected':''}>${a.name}</option>`).join('')}
-        </select>
+      <div class="dashboard-filter-actions">
+        <button class="btn" onclick="clearDashFilters()">Limpar filtros</button>
       </div>
-      <div class="form-field" style="min-width:140px"><label>Cartão</label>
-        <select onchange="setDashFilter('cartao',this.value)">
-          <option value="">Todos</option>
-          ${ST.cards.map(c=>`<option value="${c.id}" ${dashFiltCard===c.id?'selected':''}>${c.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-field" style="min-width:130px"><label>Categoria</label>
-        <select onchange="setDashFilter('grupo',this.value)">
-          <option value="">Todas</option>
-          ${ST.groups.map(g=>`<option value="${g}" ${dashFiltGrupo===g?'selected':''}>${g}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-field" style="min-width:120px"><label>Status</label>
-        <select onchange="setDashFilter('status',this.value)">
-          <option value="">Todos</option>
-          ${statusOptions.map(s=>`<option value="${s}" ${dashFiltStatus===s?'selected':''}>${cap(s)}</option>`).join('')}
-        </select>
-      </div>
-      <button class="btn" onclick="clearDashFilters()">Limpar filtros</button>
-    </div>
-  </div>`;
+    </div>`;
+  const filtersHTML = renderDashboardSection('filters','Filtros do Dashboard','',filtersBody,'margin-bottom:16px');
 
-  document.getElementById('content').innerHTML=(ST.settings.name?`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Olá, ${ST.settings.name}! &#128075;</p>`:'')+alerts+filtersHTML+`<div class="kpi-grid"><div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Receitas</div><div class="kpi-value" style="color:var(--green)">${fmt(tr)}</div><div class="kpi-sub">${fi.length} lançamentos</div></div>${despesasCard}<div class="kpi" style="border-left-color:${saldo>=0?'var(--purple)':'var(--red)'}"><div class="kpi-label">Saldo do Período</div><div class="kpi-value" style="color:${saldo>=0?'var(--purple)':'var(--red)'}">${fmt(saldo)}</div></div>${metaKPI}</div>${accountsHTML?`<div class="chart-row">${accountsHTML}</div>`:''}${patrimonioHTML?`<div class="chart-row">${patrimonioHTML}</div>`:''}${budgetHTML?`<div class="chart-row">${budgetHTML}</div>`:''}${invoiceHTML?`<div class="chart-row">${invoiceHTML}</div>`:''}${(ST.settings.showMonthlyChartSection!==false||ST.settings.showGroupChartSection!==false||cardsHTML)?`<div class="chart-row">${ST.settings.showMonthlyChartSection!==false?`<div class="chart-card"><div class="chart-title">Últimos 6 meses</div>${barChart(hist,'var(--green)','var(--red)')}</div>`:''}${ST.settings.showGroupChartSection!==false?`<div class="chart-card"><div class="chart-title">Gastos por grupo${dashPeriodo!=='mes'||dashFiltAccount||dashFiltCard||dashFiltGrupo||dashFiltStatus?' <span style="font-weight:400;color:var(--text3);font-size:10px">(filtrado)</span>':''}</div>${pieChart(pd)}</div>`:''}${cardsHTML}</div>`:''}`;
+  document.getElementById('content').innerHTML=(ST.settings.name?`<p style="font-size:12px;color:var(--text2);margin-bottom:12px">Olá, ${ST.settings.name}! &#128075;</p>`:'')+alerts+filtersHTML+`<div class="kpi-grid"><div class="kpi" style="border-left-color:var(--green)"><div class="kpi-label">Receitas</div><div class="kpi-value" style="color:var(--green)">${fmt(tr)}</div><div class="kpi-sub">${fi.length} lançamentos</div></div>${despesasCard}<div class="kpi" style="border-left-color:${saldo>=0?'var(--purple)':'var(--red)'}"><div class="kpi-label">Saldo do Período</div><div class="kpi-value" style="color:${saldo>=0?'var(--purple)':'var(--red)'}">${fmt(saldo)}</div></div>${metaKPI}</div>${accountsHTML?`<div class="chart-row">${accountsHTML}</div>`:''}${patrimonioHTML?`<div class="chart-row">${patrimonioHTML}</div>`:''}${budgetHTML?`<div class="chart-row">${budgetHTML}</div>`:''}${invoiceHTML?`<div class="chart-row">${invoiceHTML}</div>`:''}${(ST.settings.showMonthlyChartSection!==false||ST.settings.showGroupChartSection!==false||cardsHTML)?`<div class="chart-row">${ST.settings.showMonthlyChartSection!==false?renderDashboardSection('monthlyChart','Últimos 6 meses','',barChart(hist,'var(--green)','var(--red)')):''}${ST.settings.showGroupChartSection!==false?renderDashboardSection('groupChart','Gastos por grupo',dashPeriodo!=='mes'||dashFiltAccount||dashFiltCard||dashFiltGrupo||dashFiltStatus?`(filtrado)`:'',pieChart(pd)):''}${cardsHTML}</div>`:''}`;
 }
