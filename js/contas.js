@@ -15,7 +15,7 @@ function renderContas(){
   const html = ST.accounts.length ? ST.accounts.map(a=>{
     const bal = accountBalance(a.id);
     const inativa = a.status==='inativa';
-    return `<div style="flex:0 0 auto;width:260px;${inativa?'opacity:.5':''}">
+    return `<div class="card-shell" style="${inativa?'opacity:.5':''}">
       <div class="credit-card" style="background:linear-gradient(135deg,${a.color}ee,${a.color}88)">
         <div style="display:flex;justify-content:space-between;margin-bottom:12px">
           <div style="font-size:8px;opacity:.7;letter-spacing:1.5px">${(a.type||'CORRENTE').toUpperCase()}</div>
@@ -48,7 +48,7 @@ function renderContas(){
     </div>
     <p style="font-size:11px;color:var(--text3);margin-bottom:14px">💡 Esse saldo é independente das suas despesas pendentes — ele só muda quando você vincula um pagamento/recebimento a uma conta.</p>
     <div class="toolbar"><span style="font-size:12px;color:var(--text2)">${ST.accounts.length} conta${ST.accounts.length!==1?'s':''}</span><button class="btn btn-primary" onclick="openAccModal()">${icon('plus')} Nova Conta</button></div>
-    <div style="display:flex;flex-wrap:wrap;gap:16px">${html}</div>`;
+    <div class="card-list">${html}</div>`;
 }
 
 function openAccModal(){

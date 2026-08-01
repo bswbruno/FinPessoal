@@ -169,7 +169,7 @@ body{
 .month-nav{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .month-btn{width:28px;height:28px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--text2);}
 .month-btn:hover{background:var(--bg3);}
-.month-label{font-size:13px;font-weight:600;min-width:120px;text-align:center;}
+.month-select{padding:5px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:12px;font-weight:600;font-family:inherit;min-width:104px;}
 .btn-today{padding:4px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--bg2);font-size:11px;cursor:pointer;color:var(--text2);}
 .content{flex:1;overflow-y:auto;padding:20px 22px;}
 
@@ -178,8 +178,15 @@ body{
   width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);
   background:var(--bg2);color:var(--text2);cursor:pointer;display:flex;
   align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+  box-shadow:var(--shadow-sm);
 }
 .theme-toggle:hover{background:var(--bg3);color:var(--text);}
+.theme-toggle.active{
+  background:var(--purple-light);
+  color:var(--purple);
+  border-color:var(--purple);
+  box-shadow:inset 0 0 0 1px rgba(99,102,241,.18);
+}
 
 /* ---------------------------------------------------------------------------
    # 4. NAVEGAÇÃO MOBILE (hamburguer + overlay)
@@ -197,6 +204,99 @@ body{
   display:none;position:fixed;inset:0;background:var(--overlay);z-index:900;
 }
 .sidebar-overlay.open{display:block;}
+
+/* ---------------------------------------------------------------------------
+   # 4. NAVEGAÇÃO MOBILE (hamburguer + overlay)
+--------------------------------------------------------------------------- */
+.mobile-bottom-nav{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(10,12,18,.72);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-top:1px solid rgba(255,255,255,.08);
+  box-shadow:0 -12px 36px rgba(0,0,0,.28);
+  z-index:1000;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:24px 24px 0 0;
+}
+.mobile-bottom-nav .mobile-nav-item,
+.mobile-bottom-nav .mobile-nav-more,
+.mobile-bottom-nav .mobile-add-center{
+  border:none;
+  background:transparent;
+  color:var(--text2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:10px;
+  padding:8px 6px;
+  border-radius:14px;
+  cursor:pointer;
+  min-width:0;
+  width:100%;
+  max-width:72px;
+  transition:background .2s ease,color .2s ease;
+}
+.mobile-bottom-nav .mobile-nav-item{flex:1 1 0;max-width:72px;}
+.mobile-bottom-nav .mobile-nav-item.active,
+.mobile-bottom-nav .mobile-nav-item:hover{
+  background:rgba(255,255,255,.12);
+  color:var(--text);
+}
+.mobile-bottom-nav .mobile-nav-item i,
+.mobile-bottom-nav .mobile-nav-more i,
+.mobile-bottom-nav .mobile-add-center i{
+  width:22px;
+  height:22px;
+}
+.mobile-bottom-nav .mobile-add-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:58px;
+  height:58px;
+  margin:0;
+  border-radius:50%;
+  background:var(--purple);
+  color:#fff;
+  box-shadow:var(--shadow-lg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px solid rgba(10,12,18,.72);
+  flex-shrink:0;
+}
+.mobile-bottom-nav .mobile-add-center:hover{opacity:.95;}
+.mobile-bottom-nav .mobile-nav-more{
+  width:58px;
+  height:58px;
+  margin-left:auto;
+  border-radius:50%;
+  background:var(--purple);
+  color:#fff;
+  box-shadow:var(--shadow-lg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px solid rgba(10,12,18,.72);
+  flex-shrink:0;
+}
+.mobile-bottom-nav .mobile-nav-more:hover{opacity:.95;}
+.mobile-bottom-nav .mobile-nav-item span,
+.mobile-bottom-nav .mobile-nav-more span,
+.mobile-bottom-nav .mobile-add-center span{
+  white-space:nowrap;
+}
+@media(max-width:700px){.mobile-bottom-nav{display:flex;}}
 
 /* ---------------------------------------------------------------------------
    # 5. BOTÕES
@@ -229,6 +329,8 @@ body{
 .kpi-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;font-weight:600;}
 .kpi-value{font-size:19px;font-weight:800;letter-spacing:-.3px;}
 .kpi-sub{font-size:10.5px;color:var(--text3);margin-top:3px;}
+.card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;align-items:start;}
+.card-shell{display:flex;flex-direction:column;min-width:0;}
 
 /* ---------------------------------------------------------------------------
    # 7. TOOLBAR / FILTROS / BUSCA
@@ -304,8 +406,22 @@ tbody tr:hover td{background:var(--bg-hover);}
    # 12. GRÁFICOS (barras / pizza)
 --------------------------------------------------------------------------- */
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
-.chart-card{background:var(--bg2);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow);}
-.chart-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.chart-card{background:var(--bg2);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow);min-width:0;overflow:visible;}
+.chart-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.chart-card-toggle{border:none;background:transparent;color:var(--text2);display:inline-flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;padding:6px 10px;border-radius:12px;transition:background .2s ease,color .2s ease;}
+.chart-card-toggle:hover{background:var(--bg3);color:var(--text);}
+
+.chart-card-body{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x;
+  word-break:break-word;
+  padding-bottom:4px;
+  min-width:0;
+}
+
+.chart-card-body.collapsed{display:none;}
+.chart-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:0;}
 .bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;}
 .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .bar-label{font-size:9px;color:var(--text3);white-space:nowrap;}
@@ -318,6 +434,27 @@ tbody tr:hover td{background:var(--bg-hover);}
    # 13. CARTÃO DE CRÉDITO (visual)
 --------------------------------------------------------------------------- */
 .credit-card{border-radius:14px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-md);}
+.card-shell .credit-card{margin-bottom:0;}
+
+.scroll-row{
+  display:flex;
+  gap:10px;
+  padding:20px 2px 30px;
+  margin-bottom:12px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x;
+}
+.scroll-row::-webkit-scrollbar{display:none;}
+.scroll-row > div{
+  flex:0 0 min(82vw,220px);
+  max-width:220px;
+  scroll-snap-align:start;
+  min-width:0;
+}
 
 /* ---------------------------------------------------------------------------
    # 14. PROGRESS BAR
