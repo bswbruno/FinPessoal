@@ -198,6 +198,7 @@ body{
 }
 .sidebar-overlay.open{display:block;}
 .mobile-bottom-nav{
+  height: 90px;
   display:none;
   position:fixed;
   left:0;
