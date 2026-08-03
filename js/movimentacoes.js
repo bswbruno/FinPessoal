@@ -80,7 +80,12 @@ function editMov(id){
     // que já mantém a movimentação sincronizada (ver saveExp()/saveInc()).
     if(ST.expenses.some(x=>x.id===m.linkedId)){editE(m.linkedId);return;}
     if(ST.incomes.some(x=>x.id===m.linkedId)){editI(m.linkedId);return;}
-    notify('Lançamento de origem não encontrado (pode já ter sido excluído)','err');return;
+    // O lançamento de origem não existe mais (foi removido por outro
+    // caminho, ou os dados foram importados/editados manualmente) — em vez
+    // de travar a edição com um erro sem saída, avisa a pessoa, desfaz o
+    // vínculo quebrado e segue como uma movimentação avulsa normal.
+    notify('Lançamento de origem não encontrado — editando como movimentação avulsa','info');
+    m.linkedId=null;sv();
   }
   _editId=id;document.getElementById('modal-mov-title').textContent='Editar Movimentação';
   refreshAccountSelect('mov-account','Selecione a conta...');
@@ -92,11 +97,17 @@ function editMov(id){
   toggleMovFields();openModal('modal-mov');
 }
 function delMov(id){
-  const m=ST.movements.find(x=>x.id===id);
-  if(m&&m.linkedId){
+  const m=ST.movements.find(x=>x.id===id);if(!m)return;
+  if(m.linkedId){
     if(ST.expenses.some(x=>x.id===m.linkedId)){delE(m.linkedId);return;}
     if(ST.incomes.some(x=>x.id===m.linkedId)){delI(m.linkedId);return;}
-    notify('Lançamento de origem não encontrado (pode já ter sido excluído)','err');return;
+    // Órfã: o lançamento de origem não existe mais. Antes disso travava a
+    // exclusão com um erro sem saída ("pode já ter sido excluído") — agora
+    // mostra pra que conta ela aponta e deixa excluir só a movimentação.
+    confirmHTML(`<p>O lançamento de origem desta movimentação não existe mais — ela ficou <strong>órfã</strong>:</p><div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:8px 0"><span>${fmtD(m.date)} — ${m.desc} (${accName(m.accountId)})</span><span style="font-weight:600">${fmt(m.value)}</span></div><p style="margin-top:8px">Deseja excluir esta movimentação mesmo assim?</p>`,()=>{
+      ST.movements=ST.movements.filter(x=>x.id!==id);sv();notify('Removida','err');render();
+    });
+    return;
   }
   confirm2('Remover esta movimentação?',()=>{ST.movements=ST.movements.filter(x=>x.id!==id);sv();notify('Removida','err');render();});
 }

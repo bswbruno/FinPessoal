@@ -1,8 +1,8 @@
-logo// Service Worker do FinPessoal
+// Service Worker do FinPessoal
 // Cuida do cache dos arquivos estáticos para o app funcionar offline
 // e poder ser instalado no celular (PWA).
 
-const CACHE_NAME = 'finpessoal-cache-v7';
+const CACHE_NAME = 'finpessoal-cache-v8';
 
 const ASSETS_TO_CACHE = [
   './',

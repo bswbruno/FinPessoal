@@ -215,12 +215,12 @@
 
 <!-- MODAL: CONFIRMAR -->
 <div class="modal-overlay" id="modal-confirm">
-  <div class="modal" style="max-width:360px;">
+  <div class="modal" style="max-width:420px;">
     <div class="modal-header">
       <span class="modal-title">Confirmar</span>
       <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
     </div>
-    <p id="confirm-msg" style="color:var(--text2);font-size:13px;margin-bottom:18px;"></p>
+    <div id="confirm-msg" style="color:var(--text2);font-size:13px;margin-bottom:18px;max-height:340px;overflow-y:auto;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
       <button class="btn btn-primary" style="background:var(--red);border-color:var(--red);" id="confirm-ok-btn">Confirmar</button>

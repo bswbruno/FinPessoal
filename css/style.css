@@ -478,8 +478,10 @@ tbody tr:hover td{background:var(--bg-hover);}
 /* ---------------------------------------------------------------------------
    # 17. ALERTAS
 --------------------------------------------------------------------------- */
-.alert-box{border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;}
-.alert-box h4{font-size:12px;font-weight:700;margin-bottom:6px;}
+.alert-box{border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;position:relative;}
+.alert-box h4{font-size:12px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.alert-close{background:none;border:none;cursor:pointer;color:inherit;opacity:.6;padding:2px;line-height:1;display:flex;align-items:center;border-radius:4px;flex:0 0 auto;}
+.alert-close:hover{opacity:1;background:rgba(128,128,128,.15);}
 .alert-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(128,128,128,.15);}
 .alert-row:last-child{border-bottom:none;}
 .alert-danger{background:var(--red-light);border:1px solid var(--red);color:var(--red);}

@@ -74,10 +74,18 @@ function editAcc(id){
   openModal('modal-acc');
 }
 function delAcc(id){
-  const hasMov = ST.movements.some(m=>m.accountId===id||m.toAccountId===id);
-  confirm2(hasMov?'Esta conta possui movimentações. Removê-la NÃO apaga o histórico, mas ele passará a mostrar "Conta removida". Continuar?':'Remover esta conta?',()=>{
-    ST.accounts=ST.accounts.filter(a=>a.id!==id);sv();notify('Conta removida','err');render();
-  });
+  const a=ST.accounts.find(x=>x.id===id);if(!a)return;
+  const linked=ST.movements.filter(m=>m.accountId===id||m.toAccountId===id);
+  if(linked.length){
+    const total=linked.reduce((s,m)=>s+(+m.value||0),0);
+    const rows=linked.slice(0,8).map(m=>`<div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(128,128,128,.15)"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fmtD(m.date)} — ${m.desc}</span><span style="font-weight:600;flex:0 0 auto">${fmt(m.value)}</span></div>`).join('');
+    const more=linked.length>8?`<p style="font-size:11px;color:var(--text3);margin-top:6px">+ ${linked.length-8} outra${linked.length-8>1?'s':''} movimentaç${linked.length-8>1?'ões':'ão'}</p>`:'';
+    confirmHTML(`<p style="margin-bottom:8px"><strong>${a.name}</strong> tem <strong>${linked.length}</strong> movimentaç${linked.length>1?'ões':'ão'} vinculada${linked.length>1?'s':''} (total ${fmt(total)}):</p><div>${rows}</div>${more}<p style="margin-top:12px">Remover a conta <strong>NÃO apaga</strong> esse histórico — ele passa a mostrar "Conta removida" nas Movimentações. Continuar?</p>`,()=>{
+      ST.accounts=ST.accounts.filter(x=>x.id!==id);sv();notify('Conta removida','err');render();
+    });
+    return;
+  }
+  confirm2('Remover esta conta?',()=>{ST.accounts=ST.accounts.filter(x=>x.id!==id);sv();notify('Conta removida','err');render();});
 }
 function toggleAccStatus(id){
   const a=ST.accounts.find(x=>x.id===id);if(!a)return;

@@ -37,7 +37,7 @@ function renderConfig(){
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-contas" ${showContas?'checked':''}> Contas Bancárias</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-patrimonio" ${showPatrimonio?'checked':''}> Patrimônio</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-orcamento" ${showOrcamento?'checked':''}> Orçamento por Categoria (card + alertas de 80%/estourado)</label>
-    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-fatura" ${showFatura?'checked':''}> Próximo Vencimento de Fatura (cartões)</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-fatura" ${showFatura?'checked':''}> Próximos Vencimentos (faturas de cartão e contas a pagar)</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-cartoes" ${showCartoes?'checked':''}> Meus Cartões</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-graf6" ${showGraf6meses?'checked':''}> Gráfico "Últimos 6 meses"</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>    <p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Botões do menu inferior (mobile)</p>
@@ -58,8 +58,6 @@ function renderConfig(){
     </div>
     <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
   </div>
-
-  initMobileNavOptionLimit();
 
   <div class="settings-card">
     <h3>Privacidade</h3>
@@ -87,6 +85,7 @@ function renderConfig(){
   </div>
 
   <div class="settings-card" style="border:1px dashed var(--border)"><h3 style="color:var(--text3)">FinPessoal v5.0</h3><p style="font-size:12px;color:var(--text3);line-height:1.8">Sistema financeiro pessoal · Uso local neste navegador<br>Todos os dados ficam salvos apenas neste dispositivo<br>Sem servidor, sem internet obrigatória</p></div>`;
+  initMobileNavOptionLimit();
 }
 function saveBudgets(){
   ST.groups.forEach((g,idx)=>{

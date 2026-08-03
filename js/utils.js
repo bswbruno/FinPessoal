@@ -274,6 +274,14 @@ function confirm2(msg, cb) {
   document.getElementById('confirm-ok-btn').onclick  = () => { closeModal('modal-confirm'); cb(); };
   openModal('modal-confirm');
 }
+// Mesma modal de confirmação, mas aceita HTML no corpo — usada quando
+// precisamos listar itens vinculados (ex: movimentações de uma conta antes
+// de excluí-la) em vez de só uma frase genérica.
+function confirmHTML(html, cb) {
+  document.getElementById('confirm-msg').innerHTML = html;
+  document.getElementById('confirm-ok-btn').onclick = () => { closeModal('modal-confirm'); cb(); };
+  openModal('modal-confirm');
+}
 function openModal(id)  { document.getElementById(id).classList.add('open'); refreshIcons(); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); _editId = null; }
 

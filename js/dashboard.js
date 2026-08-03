@@ -10,6 +10,13 @@ let dashFiltCard = '';
 let dashFiltGrupo = '';
 let dashFiltStatus = '';
 
+// Alertas fechados pelo usuário (botão "×") nesta sessão — some da tela até
+// recarregar a página ou até o alerta "sumir sozinho" (ex: pagou a conta
+// atrasada). Guardado por chave fixa ('late','upcoming','budgetOver',
+// 'budgetWarn'), não por conteúdo, pra não precisar persistir no ST.
+let dashDismissedAlerts = new Set();
+function dismissAlert(key){ dashDismissedAlerts.add(key); renderDashboard(); }
+
 // Conjunto de despesas/receitas dentro do período escolhido (antes dos
 // demais filtros). "mes" usa o mês/ano navegado na topbar (mE()/mI()); "ano"
 // pega o ano inteiro navegado; "tudo" ignora período e pega o histórico todo.
@@ -87,8 +94,8 @@ function renderDashboard(){
   const upcoming=e.filter(x=>{if(x.status==='pago')return false;const d=toDate(x.date);if(!d)return false;return(d-today)/86400000>=0&&(d-today)/86400000<=ad;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
   let alerts='';
   if(ST.settings.showAlertsSection!==false){
-    if(late.length)alerts+=`<div class="alert-box alert-danger"><h4>${icon('alert-triangle','ic-inline')} ${late.length} item${late.length>1?'ns':''} em atraso</h4>${late.slice(0,4).map(x=>`<div class="alert-row"><span>${x.desc}</span><span>${fmt(x.value)}</span></div>`).join('')}</div>`;
-    if(upcoming.length)alerts+=`<div class="alert-box alert-warning"><h4>${icon('bell','ic-inline')} Vencendo nos próximos ${ad} dias</h4>${upcoming.slice(0,4).map(x=>`<div class="alert-row"><span>${x.desc} – ${fmtD(x.date)}</span><span>${fmt(x.value)}</span></div>`).join('')}</div>`;
+    if(late.length && !dashDismissedAlerts.has('late'))alerts+=`<div class="alert-box alert-danger"><h4><span>${icon('alert-triangle','ic-inline')} ${late.length} item${late.length>1?'ns':''} em atraso</span><button class="alert-close" onclick="dismissAlert('late')" title="Fechar alerta">${icon('x')}</button></h4>${late.slice(0,4).map(x=>`<div class="alert-row"><span>${x.desc}</span><span>${fmt(x.value)}</span></div>`).join('')}</div>`;
+    if(upcoming.length && !dashDismissedAlerts.has('upcoming'))alerts+=`<div class="alert-box alert-warning"><h4><span>${icon('bell','ic-inline')} Vencendo nos próximos ${ad} dias</span><button class="alert-close" onclick="dismissAlert('upcoming')" title="Fechar alerta">${icon('x')}</button></h4>${upcoming.slice(0,4).map(x=>`<div class="alert-row"><span>${x.desc} – ${fmtD(x.date)}</span><span>${fmt(x.value)}</span></div>`).join('')}</div>`;
   }
   // Orçamento por categoria: sempre calculado sobre o mês real navegado
   // (ST.vy/ST.vm), independente dos filtros do Dashboard — mesma lógica de
@@ -96,8 +103,8 @@ function renderDashboard(){
   const budgets=budgetStatusList();
   if(ST.settings.showBudgetSection!==false){
     const overBudgets=budgets.filter(b=>b.over), warnBudgets=budgets.filter(b=>b.warn);
-    if(overBudgets.length)alerts+=`<div class="alert-box alert-danger"><h4>${icon('alert-triangle','ic-inline')} Orçamento estourado</h4>${overBudgets.map(b=>`<div class="alert-row"><span>${b.grp}</span><span>${fmt(b.spent)} / ${fmt(b.limit)}</span></div>`).join('')}</div>`;
-    if(warnBudgets.length)alerts+=`<div class="alert-box alert-warning"><h4>${icon('bell','ic-inline')} Perto do limite do orçamento (80%+)</h4>${warnBudgets.map(b=>`<div class="alert-row"><span>${b.grp}</span><span>${fmt(b.spent)} / ${fmt(b.limit)}</span></div>`).join('')}</div>`;
+    if(overBudgets.length && !dashDismissedAlerts.has('budgetOver'))alerts+=`<div class="alert-box alert-danger"><h4><span>${icon('alert-triangle','ic-inline')} Orçamento estourado</span><button class="alert-close" onclick="dismissAlert('budgetOver')" title="Fechar alerta">${icon('x')}</button></h4>${overBudgets.map(b=>`<div class="alert-row"><span>${b.grp}</span><span>${fmt(b.spent)} / ${fmt(b.limit)}</span></div>`).join('')}</div>`;
+    if(warnBudgets.length && !dashDismissedAlerts.has('budgetWarn'))alerts+=`<div class="alert-box alert-warning"><h4><span>${icon('bell','ic-inline')} Perto do limite do orçamento (80%+)</span><button class="alert-close" onclick="dismissAlert('budgetWarn')" title="Fechar alerta">${icon('x')}</button></h4>${warnBudgets.map(b=>`<div class="alert-row"><span>${b.grp}</span><span>${fmt(b.spent)} / ${fmt(b.limit)}</span></div>`).join('')}</div>`;
   }
 
   // A partir daqui, tudo usa o conjunto FILTRADO (período + conta/cartão/categoria/status).
@@ -136,25 +143,43 @@ function renderDashboard(){
   const budgetBody = `<div style="display:flex;flex-direction:column;gap:10px">${budgets.map(b=>{const color=b.over?'var(--red)':b.warn?'var(--amber)':'var(--green)';return`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">${b.grp}</span><span style="color:${color};font-weight:600">${fmt(b.spent)} / ${fmt(b.limit)}</span></div><div class="progress"><div class="progress-fill" style="background:${color};width:${b.pct}%"></div></div></div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:11px;color:var(--text3)"><span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('configuracoes')">Gerenciar orçamentos</span></div>`;
   const budgetHTML = (ST.settings.showBudgetSection!==false && budgets.length) ? renderDashboardSection('budget','Orçamento por Categoria','(mês atual)',budgetBody,'grid-column:span 2') : '';
 
-  // Próximo Vencimento de Fatura: calcula a fatura de cada cartão para o
-  // MÊS SELECIONADO na topbar (ST.vy/ST.vm) — não necessariamente o mês
-  // corrente de "hoje" — usando o dia 15 daquele mês como referência pro
-  // cálculo do ciclo (ver cardCycleDates em js/utils.js).
+  // Próximos Vencimentos: junta a fatura de cada cartão (calculada para o
+  // MÊS SELECIONADO na topbar, ST.vy/ST.vm, usando o dia 15 daquele mês
+  // como referência pro cálculo do ciclo — ver cardCycleDates em
+  // js/utils.js) COM as demais contas a pagar (sem cartão) que ainda estão
+  // pendentes, não só as de cartão. Antes essa seção só existia quando
+  // havia fatura de cartão no período — quem não usa cartão via essa tela
+  // marcava a opção em Configurações e nunca via nada aqui. Agora, com a
+  // opção marcada, a seção sempre aparece (mesmo vazia, com uma mensagem),
+  // então "marquei e não aparece" deixa de acontecer.
   let invoiceHTML='';
   if(ST.settings.showNextInvoiceSection!==false){
     const refDate=new Date(ST.vy,ST.vm,15);
-    const invoices=ST.cards.filter(c=>c.fechamento).map(c=>{
+    const cardInvoices=ST.cards.filter(c=>c.fechamento).map(c=>{
       const cycle=cardCycleDates(c,refDate);
       if(!cycle) return null;
       const items=ST.expenses.filter(x=>{if(x.cardId!==c.id)return false;const d=toDate(x.date);return d&&d>=cycle.cycleStart&&d<=cycle.cycleEnd;});
       const total=items.reduce((s,x)=>s+(+x.value||0),0);
       const due=cardInvoiceDueDate(c,cycle.cycleEnd);
-      return {card:c,total,due};
-    }).filter(Boolean).sort((a,b)=>(a.due&&b.due)?a.due-b.due:0);
-    if(invoices.length){
-      const invoiceBody = `<div style="display:flex;flex-direction:column;gap:8px">${invoices.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.card.color}">${inv.card.name}</span><span style="font-size:11px;color:var(--text2)">Vence em ${inv.due?fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div>`;
-      invoiceHTML = renderDashboardSection('invoice','Próximo Vencimento',`(${MONTHS[ST.vm]}/${ST.vy})`,invoiceBody,'grid-column:span 2');
-    }
+      return {label:c.name,tag:'Fatura',color:c.color,due,total,late:due?due<today:false};
+    }).filter(Boolean);
+
+    // Contas a pagar sem cartão (ou de cartões sem dia de fechamento
+    // cadastrado) que ainda não foram pagas — mostra as que estão mais
+    // perto de vencer (incluindo as já atrasadas), até 8 itens pra não
+    // estourar o card.
+    const otherBills=ST.expenses.filter(x=>!x.cardId && x.status!=='pago').map(x=>({
+      label:x.desc,tag:null,color:'var(--text2)',due:toDate(x.date),total:expRemaining(x),late:isLate(x)
+    })).sort((a,b)=>(a.due&&b.due)?a.due-b.due:0).slice(0,8);
+
+    const allItems=[...cardInvoices,...otherBills].sort((a,b)=>{
+      if(!a.due) return 1; if(!b.due) return -1; return a.due-b.due;
+    });
+
+    const invoiceBody = allItems.length
+      ? `<div style="display:flex;flex-direction:column;gap:8px">${allItems.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.color}">${inv.label}${inv.tag?` <span style="font-weight:400;font-size:10px;opacity:.7">(${inv.tag})</span>`:''}</span><span style="font-size:11px;color:${inv.late?'var(--red)':'var(--text2)'}">${inv.due?(inv.late?'Venceu em ':'Vence em ')+fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div>`
+      : `<div class="empty" style="padding:24px">Nenhuma fatura ou conta a pagar pendente no momento. &#127881;</div>`;
+    invoiceHTML = renderDashboardSection('invoice','Próximos Vencimentos','(cartões e contas a pagar)',invoiceBody,'grid-column:span 2');
   }
 
   // Barra de filtros do Dashboard
