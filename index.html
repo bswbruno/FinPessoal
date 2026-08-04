@@ -228,6 +228,38 @@
   </div>
 </div>
 
+<!-- MODAL: ADICIONAR (botão + central do menu inferior mobile) -->
+<div class="modal-overlay" id="modal-quick-add">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-header">
+      <span class="modal-title">O que você quer adicionar?</span>
+      <button class="modal-close" onclick="closeModal('modal-quick-add')">×</button>
+    </div>
+    <div class="quick-add-list">
+      <button class="quick-add-item" onclick="closeModal('modal-quick-add');openExpModal();">
+        <i data-lucide="receipt"></i>
+        <span class="quick-add-text"><strong>Despesa (A Pagar)</strong><small>Uma conta pra pagar, à vista ou fixa</small></span>
+      </button>
+      <button class="quick-add-item" onclick="closeModal('modal-quick-add');openIncModal();">
+        <i data-lucide="wallet"></i>
+        <span class="quick-add-text"><strong>Receita (A Receber)</strong><small>Um dinheiro que vai entrar</small></span>
+      </button>
+      <button class="quick-add-item" onclick="closeModal('modal-quick-add');openDividaModal();">
+        <i data-lucide="layers"></i>
+        <span class="quick-add-text"><strong>Dívida parcelada</strong><small>Compra ou dívida em várias parcelas</small></span>
+      </button>
+      <button class="quick-add-item" onclick="closeModal('modal-quick-add');openMovModal();">
+        <i data-lucide="arrow-left-right"></i>
+        <span class="quick-add-text"><strong>Movimentação em conta</strong><small>Depósito, saque ou transferência</small></span>
+      </button>
+      <button class="quick-add-item" onclick="closeModal('modal-quick-add');goTo('patrimonio');">
+        <i data-lucide="target"></i>
+        <span class="quick-add-text"><strong>Guardar em Patrimônio</strong><small>Aporte num objetivo ou reserva</small></span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: PARCELAS -->
 <div class="modal-overlay" id="modal-parcelas">
   <div class="modal" style="max-width:620px;">
@@ -566,56 +598,21 @@
     <i data-lucide="layout-dashboard"></i>
     <span>Dashboard</span>
   </button>
-  <button class="mobile-nav-item" data-menu-item="contas" onclick="goTo('contas', this)">
-    <i data-lucide="landmark"></i>
-    <span>Contas</span>
-  </button>
-  <button class="mobile-add-center" onclick="openQuickExpenseModal()" aria-label="Adicionar gasto rápido">
-    <i data-lucide="plus"></i>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="patrimonio" onclick="goTo('patrimonio', this)">
-    <i data-lucide="target"></i>
-    <span>Metas</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="cartoes" onclick="goTo('cartoes', this)">
-    <i data-lucide="credit-card"></i>
-    <span>Cartões</span>
-  </button>
-  <button class="mobile-nav-more" data-menu-item="more" onclick="toggleSidebar()">
-    <i data-lucide="more-horizontal"></i>
-    <span>Mais</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="pagar" onclick="goTo('pagar', this)" style="display:none">
+  <button class="mobile-nav-item" data-menu-item="pagar" onclick="goTo('pagar', this)">
     <i data-lucide="receipt"></i>
     <span>A pagar</span>
   </button>
-  <button class="mobile-nav-item" data-menu-item="receber" onclick="goTo('receber', this)" style="display:none">
+  <button class="mobile-nav-add" onclick="openQuickAddMenu()" aria-label="Adicionar">
+    <span class="mobile-nav-add-circle"><i data-lucide="plus"></i></span>
+    <span>Adicionar</span>
+  </button>
+  <button class="mobile-nav-item" data-menu-item="receber" onclick="goTo('receber', this)">
     <i data-lucide="wallet"></i>
     <span>A receber</span>
   </button>
-  <button class="mobile-nav-item" data-menu-item="dividas" onclick="goTo('dividas', this)" style="display:none">
-    <i data-lucide="layers"></i>
-    <span>Dívidas</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="movimentacoes" onclick="goTo('movimentacoes', this)" style="display:none">
-    <i data-lucide="arrow-left-right"></i>
-    <span>Moviment.</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="agenda" onclick="goTo('agenda', this)" style="display:none">
-    <i data-lucide="calendar-days"></i>
-    <span>Agenda</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="relatorios" onclick="goTo('relatorios', this)" style="display:none">
-    <i data-lucide="bar-chart-3"></i>
-    <span>Relatórios</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="configuracoes" onclick="goTo('configuracoes', this)" style="display:none">
+  <button class="mobile-nav-item" data-menu-item="configuracoes" onclick="goTo('configuracoes', this)">
     <i data-lucide="settings"></i>
     <span>Config.</span>
-  </button>
-  <button class="mobile-nav-item" data-menu-item="suporte" onclick="goTo('suporte', this)" style="display:none">
-    <i data-lucide="message-circle"></i>
-    <span>Suporte</span>
   </button>
 </nav>
 

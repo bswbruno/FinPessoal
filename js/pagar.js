@@ -100,7 +100,7 @@ function setEF(f){eF=f;renderPagar();}
 //   depois de desfazer o pagamento (bug corrigido na v5.0).
 function toggleE(id){
   const x=ST.expenses.find(e=>e.id===id);if(!x)return;
-  if(x.status==='pago'){x.status='pendente';removeLinkedMovement(id);sv();render();}
+  if(x.status==='pago'){x.status='pendente';x.paidAmount=0;removeLinkedMovement(id);sv();render();notify('Pagamento desfeito — despesa voltou a pendente','info');}
   else{openPayModal(id,'pagar');}
 }
 function delE(id){confirm2('Remover esta despesa?',()=>{ST.expenses=ST.expenses.filter(x=>x.id!==id);removeLinkedMovement(id);sv();notify('Removida','err');render();});}
@@ -124,6 +124,15 @@ function openExpModal(){
   document.getElementById('exp-grp').value=ST.groups[0]||'';document.getElementById('exp-card').value='';
   document.getElementById('exp-status').value='pendente';document.getElementById('exp-recorrente').value='nao';
   toggleExpFields();openModal('modal-exp');
+}
+// Atalho do "+" central (mobile): mesma modal de despesa, só que já abre
+// com o tipo "Parcelada" selecionado, já que uma dívida parcelada em
+// Dívidas nada mais é do que uma despesa desse tipo (ver saveExp()).
+function openDividaModal(){
+  openExpModal();
+  document.getElementById('modal-exp-title').textContent='Nova Dívida Parcelada';
+  document.getElementById('exp-type').value='parcelada';
+  toggleExpFields();
 }
 function toggleExpFields(){const t=document.getElementById('exp-type').value;document.getElementById('exp-parc-wrap').style.display=t==='parcelada'?'flex':'none';document.getElementById('exp-recorr-wrap').style.display=t==='fixa'?'flex':'none';}
 function refreshCardSelect(){const s=document.getElementById('exp-card');if(!s)return;s.innerHTML='<option value="">Sem cartão (dinheiro/débito)</option>'+ST.cards.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');}

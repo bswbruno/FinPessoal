@@ -10,14 +10,6 @@ function renderConfig(){
   const showGraf6meses = ST.settings.showMonthlyChartSection !== false;
   const showGrafGrupo = ST.settings.showGroupChartSection !== false;
   const showAlertas = ST.settings.showAlertsSection !== false;
-  const mobileNavPagar = ST.settings.mobileNavPagar !== false;
-  const mobileNavReceber = ST.settings.mobileNavReceber !== false;
-  const mobileNavDividas = ST.settings.mobileNavDividas !== false;
-  const mobileNavMovimentacoes = ST.settings.mobileNavMovimentacoes !== false;
-  const mobileNavAgenda = ST.settings.mobileNavAgenda !== false;
-  const mobileNavRelatorios = ST.settings.mobileNavRelatorios !== false;
-  const mobileNavConfiguracoes = ST.settings.mobileNavConfiguracoes !== false;
-  const mobileNavSuporte = ST.settings.mobileNavSuporte !== false;
   document.getElementById('content').innerHTML=`<div class="settings-card"><h3>Preferências</h3><div class="form-grid"><div class="form-field"><label>Seu nome</label><input type="text" id="cfg-name" value="${ST.settings.name||''}" placeholder="Como prefere ser chamado?"></div><div class="form-field"><label>Meta mensal de economia (R$)</label><input type="number" id="cfg-meta" value="${ST.settings.meta||''}" placeholder="Ex: 500"></div><div class="form-field"><label>Alerta de vencimento (dias antes)</label><input type="number" id="cfg-alert" value="${ST.settings.alertDays||3}" min="1" max="30"></div><div class="form-field" style="display:flex;align-items:flex-end"><button class="btn btn-primary" onclick="saveSettings()">Salvar</button></div></div><p style="font-size:11px;color:var(--text3);margin-top:4px">💡 A Meta Mensal é comparada com o total guardado nos seus Objetivos (Patrimônio) durante o mês, não com o saldo de receitas menos despesas.</p></div>
 
   <div class="settings-card">
@@ -40,22 +32,7 @@ function renderConfig(){
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-fatura" ${showFatura?'checked':''}> Próximos Vencimentos (faturas de cartão e contas a pagar)</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-cartoes" ${showCartoes?'checked':''}> Meus Cartões</label>
     <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer"><input type="checkbox" id="cfg-show-graf6" ${showGraf6meses?'checked':''}> Gráfico "Últimos 6 meses"</label>
-    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>    <p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Botões do menu inferior (mobile)</p>
-    <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Você pode marcar até 4 itens. O botão de + fica sempre no centro.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px">
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-dashboard" ${ST.settings.mobileNavDashboard!==false?'checked':''}> Dashboard</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-contas" ${ST.settings.mobileNavContas!==false?'checked':''}> Contas</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-pagar" ${mobileNavPagar?'checked':''}> A Pagar</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-receber" ${mobileNavReceber?'checked':''}> A Receber</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-dividas" ${mobileNavDividas?'checked':''}> Dívidas</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-movimentacoes" ${mobileNavMovimentacoes?'checked':''}> Movimentações</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-patrimonio" ${ST.settings.mobileNavPatrimonio!==false?'checked':''}> Metas</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-agenda" ${mobileNavAgenda?'checked':''}> Agenda</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-cartoes" ${ST.settings.mobileNavCartoes!==false?'checked':''}> Cartões</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-relatorios" ${mobileNavRelatorios?'checked':''}> Relatórios</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-configuracoes" ${mobileNavConfiguracoes?'checked':''}> Configurações</label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input class="mobile-nav-option" type="checkbox" id="cfg-mobile-suporte" ${mobileNavSuporte?'checked':''}> Suporte</label>
-    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px;cursor:pointer"><input type="checkbox" id="cfg-show-grafgrupo" ${showGrafGrupo?'checked':''}> Gráfico "Gastos por grupo"</label>
     <button class="btn btn-primary" onclick="saveDashPrefs()">${icon('check')} Salvar preferências</button>
   </div>
 
@@ -85,7 +62,6 @@ function renderConfig(){
   </div>
 
   <div class="settings-card" style="border:1px dashed var(--border)"><h3 style="color:var(--text3)">FinPessoal v5.0</h3><p style="font-size:12px;color:var(--text3);line-height:1.8">Sistema financeiro pessoal · Uso local neste navegador<br>Todos os dados ficam salvos apenas neste dispositivo<br>Sem servidor, sem internet obrigatória</p></div>`;
-  initMobileNavOptionLimit();
 }
 function saveBudgets(){
   ST.groups.forEach((g,idx)=>{
@@ -107,39 +83,9 @@ function saveDashPrefs(){
   ST.settings.showMonthlyChartSection = document.getElementById('cfg-show-graf6').checked;
   ST.settings.showGroupChartSection = document.getElementById('cfg-show-grafgrupo').checked;
   ST.settings.showAlertsSection = document.getElementById('cfg-show-alertas').checked;
-  ST.settings.mobileNavDashboard = document.getElementById('cfg-mobile-dashboard').checked;
-  ST.settings.mobileNavContas = document.getElementById('cfg-mobile-contas').checked;
-  ST.settings.mobileNavPagar = document.getElementById('cfg-mobile-pagar').checked;
-  ST.settings.mobileNavReceber = document.getElementById('cfg-mobile-receber').checked;
-  ST.settings.mobileNavDividas = document.getElementById('cfg-mobile-dividas').checked;
-  ST.settings.mobileNavMovimentacoes = document.getElementById('cfg-mobile-movimentacoes').checked;
-  ST.settings.mobileNavPatrimonio = document.getElementById('cfg-mobile-patrimonio').checked;
-  ST.settings.mobileNavAgenda = document.getElementById('cfg-mobile-agenda').checked;
-  ST.settings.mobileNavCartoes = document.getElementById('cfg-mobile-cartoes').checked;
-  ST.settings.mobileNavRelatorios = document.getElementById('cfg-mobile-relatorios').checked;
-  ST.settings.mobileNavConfiguracoes = document.getElementById('cfg-mobile-configuracoes').checked;
-  ST.settings.mobileNavSuporte = document.getElementById('cfg-mobile-suporte').checked;
   sv();
   if (typeof _dashPrefsApplied !== 'undefined') _dashPrefsApplied = false;
-  if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
   notify('Preferências do Dashboard salvas!');
-}
-
-function syncMobileNavOptionLimit() {
-  const options = Array.from(document.querySelectorAll('.mobile-nav-option'));
-  if (!options.length) return;
-  const checkedCount = options.filter(opt => opt.checked).length;
-  options.forEach(opt => {
-    const isChecked = opt.checked;
-    opt.disabled = !isChecked && checkedCount >= 4;
-  });
-}
-
-function initMobileNavOptionLimit() {
-  const options = Array.from(document.querySelectorAll('.mobile-nav-option'));
-  if (!options.length) return;
-  options.forEach(opt => opt.addEventListener('change', syncMobileNavOptionLimit));
-  syncMobileNavOptionLimit();
 }
 function saveSettings(){ST.settings.name=document.getElementById('cfg-name').value;ST.settings.meta=document.getElementById('cfg-meta').value;ST.settings.alertDays=+document.getElementById('cfg-alert').value||3;sv();notify('Configurações salvas!');document.getElementById('sidebar-footer').textContent=ST.settings.name?'Olá, '+ST.settings.name:'FinPessoal v5.0';}
 function clearAll(){confirm2('ATENÇÃO: Isso apagará TODOS os dados permanentemente!',()=>{ST.expenses=[];ST.incomes=[];ST.cards=[];ST.accounts=[];ST.movements=[];ST.objectives=[];ST.objectiveEntries=[];ST.budgets={};sv();notify('Dados apagados','err');render();});}

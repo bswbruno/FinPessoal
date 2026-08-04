@@ -51,6 +51,5 @@ function render() {
   else if (curPage==='relatorios')    renderRelatorios();
   else if (curPage==='configuracoes') renderConfig();
   else if (curPage==='suporte')       renderSuporte();
-  if (typeof updateMobileBottomNav === 'function') updateMobileBottomNav();
   refreshIcons();
 }
