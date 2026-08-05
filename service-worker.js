@@ -2,7 +2,7 @@
 // Cuida do cache dos arquivos estáticos para o app funcionar offline
 // e poder ser instalado no celular (PWA).
 
-const CACHE_NAME = 'finpessoal-cache-v8';
+const CACHE_NAME = 'finpessoal-cache-v9';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -42,23 +42,17 @@ const ASSETS_TO_CACHE = [
 ];
 
 // Instala o SW e guarda os arquivos em cache.
-// IMPORTANTE: não chama mais self.skipWaiting() aqui — o novo SW fica
-// "esperando" até o usuário confirmar a atualização pelo botão no app
-// (ver index.html). Assim a atualização só acontece quando a pessoa quer,
-// não no meio do uso.
+// self.skipWaiting() aqui faz a atualização ser AUTOMÁTICA: assim que o
+// navegador termina de baixar essa nova versão, ela já assume — sem
+// esperar a pessoa fechar todas as abas/o app nem clicar em nada. Quem
+// cuida de recarregar a página (e mostrar o aviso "Aplicativo
+// atualizado") é o index.html, ao detectar o evento 'controllerchange'.
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
-});
-
-// Permite que a página peça pro SW novo assumir na hora (clique em "Atualizar agora").
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });
 
 // Ativa o SW e limpa caches antigos (de versões anteriores)

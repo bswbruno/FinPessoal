@@ -120,6 +120,19 @@ function applyHideValuesIcon() {
    recalcular quais botões mostrar a cada render. */
 function openQuickAddMenu(){ openModal('modal-quick-add'); }
 
+// Mensagem "app atualizado" (ver bloco de Service Worker no fim do
+// index.html): antes de recarregar a página depois de aplicar uma
+// atualização automática, a gente guarda um aviso aqui. No próximo
+// carregamento — já com o app novo no ar — essa função mostra o toast
+// avisando que a atualização foi aplicada, e limpa o aviso pra não
+// aparecer de novo à toa.
+function maybeShowUpdatedToast() {
+  if (localStorage.getItem('fp_just_updated') === '1') {
+    localStorage.removeItem('fp_just_updated');
+    notify('Aplicativo atualizado para a versão mais recente! 🎉');
+  }
+}
+
 /* ----------------------------------------------------------------------
    4) MODAL DE BOAS-VINDAS / AVISO DE PRIVACIDADE
    ------------------------------------------------------------------------

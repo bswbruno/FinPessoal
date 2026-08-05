@@ -325,6 +325,9 @@ body{
   padding:8px 15px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600;
   border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-family:inherit;
 }
+
+
+
 .btn:hover{background:var(--bg3);}
 .btn:active{transform:translateY(1px);}
 .btn-primary{background:var(--purple);color:#fff;border-color:var(--purple);box-shadow:var(--shadow-sm);}
@@ -625,6 +628,10 @@ tbody tr:hover td{background:var(--bg-hover);}
   table{min-width:560px;} /* mantém colunas legíveis; a rolagem horizontal cuida do resto */
 }
 
+.month-btn {
+  display: none;
+}
+
 /* Telas muito pequenas (celulares estreitos) */
 @media(max-width:380px){
   .kpi-grid{grid-template-columns:1fr;}
@@ -711,8 +718,9 @@ tbody tr:hover td{background:var(--bg-hover);}
 }
 
 /* ---------------------------------------------------------------------------
-   # 25. BANNER DE ATUALIZAÇÃO DO APP (PWA)
+   # 25. ATUALIZAÇÃO DO APP (PWA)
+   A atualização agora é automática (ver service-worker.js + o script de
+   registro no fim do index.html) — não tem mais banner/botão manual, só
+   o toast padrão (.notif) avisando depois que já atualizou.
 --------------------------------------------------------------------------- */
-#update-banner{animation:updateBannerIn .25s ease;}
-@keyframes updateBannerIn{from{opacity:0;transform:translate(-50%,12px);}to{opacity:1;transform:translate(-50%,0);}}
 
