@@ -1,4 +1,3 @@
-
 // FinPessoal v5.0 – Dashboard
 //
 // Filtros do Dashboard (não persistem entre sessões, resetam a cada
@@ -143,43 +142,75 @@ function renderDashboard(){
   const budgetBody = `<div style="display:flex;flex-direction:column;gap:10px">${budgets.map(b=>{const color=b.over?'var(--red)':b.warn?'var(--amber)':'var(--green)';return`<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">${b.grp}</span><span style="color:${color};font-weight:600">${fmt(b.spent)} / ${fmt(b.limit)}</span></div><div class="progress"><div class="progress-fill" style="background:${color};width:${b.pct}%"></div></div></div>`;}).join('')}</div><div style="text-align:right;margin-top:10px;font-size:11px;color:var(--text3)"><span style="color:var(--purple);cursor:pointer;text-decoration:underline" onclick="goTo('configuracoes')">Gerenciar orçamentos</span></div>`;
   const budgetHTML = (ST.settings.showBudgetSection!==false && budgets.length) ? renderDashboardSection('budget','Orçamento por Categoria','(mês atual)',budgetBody,'grid-column:span 2') : '';
 
-  // Próximos Vencimentos: junta a fatura de cada cartão (calculada para o
-  // MÊS SELECIONADO na topbar, ST.vy/ST.vm, usando o dia 15 daquele mês
-  // como referência pro cálculo do ciclo — ver cardCycleDates em
-  // js/utils.js) COM as demais contas a pagar (sem cartão) que ainda estão
-  // pendentes, não só as de cartão. Antes essa seção só existia quando
-  // havia fatura de cartão no período — quem não usa cartão via essa tela
-  // marcava a opção em Configurações e nunca via nada aqui. Agora, com a
-  // opção marcada, a seção sempre aparece (mesmo vazia, com uma mensagem),
-  // então "marquei e não aparece" deixa de acontecer.
+  // ============================================================
+  // PRÓXIMOS VENCIMENTOS - FILTRADO PELO MÊS SELECIONADO
+  // ============================================================
   let invoiceHTML='';
   if(ST.settings.showNextInvoiceSection!==false){
     const refDate=new Date(ST.vy,ST.vm,15);
+    
+    // ===== FATURAS DE CARTÃO (apenas do mês selecionado) =====
     const cardInvoices=ST.cards.filter(c=>c.fechamento).map(c=>{
       const cycle=cardCycleDates(c,refDate);
       if(!cycle) return null;
-      const items=ST.expenses.filter(x=>{if(x.cardId!==c.id)return false;const d=toDate(x.date);return d&&d>=cycle.cycleStart&&d<=cycle.cycleEnd;});
+      const items=ST.expenses.filter(x=>{
+        if(x.cardId!==c.id) return false;
+        const d=toDate(x.date);
+        if(!d) return false;
+        // FILTRA: apenas despesas NÃO PAGAS dentro do ciclo
+        return d>=cycle.cycleStart && d<=cycle.cycleEnd && x.status!=='pago';
+      });
       const total=items.reduce((s,x)=>s+(+x.value||0),0);
       const due=cardInvoiceDueDate(c,cycle.cycleEnd);
+      
+      // SÓ MOSTRA SE O VENCIMENTO FOR NO MÊS SELECIONADO
+      if(due) {
+        const dueMonth = due.getMonth();
+        const dueYear = due.getFullYear();
+        if(dueMonth !== ST.vm || dueYear !== ST.vy) return null;
+      }
+      
       return {label:c.name,tag:'Fatura',color:c.color,due,total,late:due?due<today:false};
     }).filter(Boolean);
 
-    // Contas a pagar sem cartão (ou de cartões sem dia de fechamento
-    // cadastrado) que ainda não foram pagas — mostra as que estão mais
-    // perto de vencer (incluindo as já atrasadas), até 8 itens pra não
-    // estourar o card.
-    const otherBills=ST.expenses.filter(x=>!x.cardId && x.status!=='pago').map(x=>({
-      label:x.desc,tag:null,color:'var(--text2)',due:toDate(x.date),total:expRemaining(x),late:isLate(x)
-    })).sort((a,b)=>(a.due&&b.due)?a.due-b.due:0).slice(0,8);
+    // ===== CONTAS SEM CARTÃO (apenas do mês selecionado) =====
+    const otherBills=ST.expenses
+      .filter(x => !x.cardId && x.status !== 'pago')
+      .map(x => {
+        const due = toDate(x.date);
+        // SÓ MOSTRA SE O VENCIMENTO FOR NO MÊS SELECIONADO
+        if(due) {
+          const dueMonth = due.getMonth();
+          const dueYear = due.getFullYear();
+          if(dueMonth !== ST.vm || dueYear !== ST.vy) return null;
+        }
+        return {
+          label:x.desc,
+          tag:null,
+          color:'var(--text2)',
+          due:due,
+          total:expRemaining(x),
+          late:isLate(x)
+        };
+      })
+      .filter(Boolean)
+      .sort((a,b)=>(a.due&&b.due)?a.due-b.due:0)
+      .slice(0,8);
 
-    const allItems=[...cardInvoices,...otherBills].sort((a,b)=>{
-      if(!a.due) return 1; if(!b.due) return -1; return a.due-b.due;
-    });
+    // ===== COMBINA E ORDENA =====
+    const allItems=[...cardInvoices,...otherBills]
+      .filter(item => item.total > 0)
+      .sort((a,b)=>{
+        if(!a.due) return 1;
+        if(!b.due) return -1;
+        return a.due-b.due;
+      });
 
     const invoiceBody = allItems.length
       ? `<div style="display:flex;flex-direction:column;gap:8px">${allItems.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.color}">${inv.label}${inv.tag?` <span style="font-weight:400;font-size:10px;opacity:.7">(${inv.tag})</span>`:''}</span><span style="font-size:11px;color:${inv.late?'var(--red)':'var(--text2)'}">${inv.due?(inv.late?'Venceu em ':'Vence em ')+fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div>`
-      : `<div class="empty" style="padding:24px">Nenhuma fatura ou conta a pagar pendente no momento. &#127881;</div>`;
-    invoiceHTML = renderDashboardSection('invoice','Próximos Vencimentos','(cartões e contas a pagar)',invoiceBody,'grid-column:span 2');
+      : `<div class="empty" style="padding:24px">Nenhuma conta a pagar neste mês. 🎉</div>`;
+
+    invoiceHTML = renderDashboardSection('invoice','Próximos Vencimentos',`(${MONTHS[ST.vm]}/${ST.vy})`,invoiceBody,'grid-column:span 2');
   }
 
   // Barra de filtros do Dashboard
