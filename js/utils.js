@@ -307,3 +307,25 @@ function pieChart(data) {
   }).join('');
   return `<div class="pie-wrap"><svg width="110" height="110" viewBox="0 0 110 110">${paths}<circle cx="55" cy="55" r="26" fill="var(--bg2)"/></svg><div class="pie-legend">${slices.slice(0,6).map(s=>`<div class="pie-legend-item"><div class="pie-dot" style="background:${s.color}"></div><span>${s.name}</span><span style="margin-left:auto;font-weight:600">${(s.p*100).toFixed(0)}%</span></div>`).join('')}</div></div>`;
 }
+
+/**
+ * forceAppUpdate()
+ * 
+ * Força a atualização do Service Worker e recarrega a página.
+ * Útil quando o app está com cache desatualizado.
+ */
+function forceAppUpdate() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let registration of registrations) {
+        registration.unregister();
+        console.log('✅ Service Worker desregistrado');
+      }
+    }).then(function() {
+      console.log('🔄 Recarregando página...');
+      window.location.reload(true);
+    });
+  } else {
+    window.location.reload(true);
+  }
+}
