@@ -206,9 +206,19 @@ function renderDashboard(){
         return a.due-b.due;
       });
 
-    const invoiceBody = allItems.length
-      ? `<div style="display:flex;flex-direction:column;gap:8px">${allItems.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:8px;flex-wrap:wrap"><span style="font-weight:600;font-size:13px;color:${inv.color}">${inv.label}${inv.tag?` <span style="font-weight:400;font-size:10px;opacity:.7">(${inv.tag})</span>`:''}</span><span style="font-size:11px;color:${inv.late?'var(--red)':'var(--text2)'}">${inv.due?(inv.late?'Venceu em ':'Vence em ')+fmtD(dateToStr(inv.due)):'—'}</span><span style="font-weight:700;font-size:13px">${fmt(inv.total)}</span></div>`).join('')}</div>`
-      : `<div class="empty" style="padding:24px">Nenhuma conta a pagar neste mês. 🎉</div>`;
+ const invoiceBody = allItems.length
+  ? `<div style="display:flex;flex-direction:column;gap:8px">${allItems.map(inv => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg3);border-radius:8px;gap:12px;">
+      <span style="font-weight:600;font-size:13px;color:${inv.color};flex:0 0 30%;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        ${inv.label}${inv.tag ? ` <span style="font-weight:400;font-size:10px;opacity:.7">(${inv.tag})</span>` : ''}
+      </span>
+      <span style="font-size:11px;color:${inv.late ? 'var(--red)' : 'var(--text2)'};flex:0 0 40%;text-align:center;">
+        ${inv.due ? (inv.late ? 'Venceu em ' : 'Vence em ') + fmtD(dateToStr(inv.due)) : '—'}
+      </span>
+      <span style="font-weight:700;font-size:13px;flex:0 0 20%;text-align:right;">${fmt(inv.total)}</span>
+    </div>
+  `).join('')}</div>`
+  : `<div class="empty" style="padding:24px">Nenhuma conta a pagar neste mês. 🎉</div>`;
 
     invoiceHTML = renderDashboardSection('invoice','Próximos Vencimentos',`(${MONTHS[ST.vm]}/${ST.vy})`,invoiceBody,'grid-column:span 2');
   }
