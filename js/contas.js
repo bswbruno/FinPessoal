@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Contas Bancárias
+// FinPessoal v9.3 – Contas Bancárias
 //
 // Regra de negócio importante: o saldo aqui mostrado é só informativo — ele
 // NÃO é somado/abatido automaticamente contra despesas ou dívidas pendentes

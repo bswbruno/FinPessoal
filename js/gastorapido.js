@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Gasto Rápido (dia a dia)
+// FinPessoal v9.3 – Gasto Rápido (dia a dia)
 //
 // Um jeito rápido de lançar pequenas despesas do cotidiano (lanchonete,
 // mercado, farmácia, Uber...) sem passar pelo formulário completo de "A

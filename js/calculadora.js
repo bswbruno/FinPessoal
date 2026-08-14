@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Calculadora
+// FinPessoal v9.3 – Calculadora
 // Calculadora simples de 4 operações, acessível pelo ícone 🧮 na topbar,
 // pra contas rápidas sem precisar sair da tela atual.
 

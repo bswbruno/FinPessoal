@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – A Pagar
+// FinPessoal v9.3 – A Pagar
 let eF='todos', eS='';
 let eSort='venc-asc';   // venc-asc (padrão) | venc-desc | valor-asc | valor-desc | desc-az
 let eView='junto';      // 'junto' (uma tabela só) | 'separado' (Atrasadas/Pendentes/Pagas)
@@ -97,7 +97,7 @@ function setEF(f){eF=f;renderPagar();}
 // - Se ela JÁ está paga: desfaz o pagamento (volta pra "pendente") e, se
 //   havia uma movimentação bancária vinculada (conta debitada), ela é
 //   removida — senão o saldo da conta ficaria descontado pra sempre mesmo
-//   depois de desfazer o pagamento (bug corrigido na v5.0).
+//   depois de desfazer o pagamento (bug corrigido na v9.3).
 function toggleE(id){
   const x=ST.expenses.find(e=>e.id===id);if(!x)return;
   if(x.status==='pago'){x.status='pendente';x.paidAmount=0;removeLinkedMovement(id);sv();render();notify('Pagamento desfeito — despesa voltou a pendente','info');}

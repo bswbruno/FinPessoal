@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Cartões
+// FinPessoal v9.3 – Cartões
 let sc='#6366f1';
 
 function renderCartoes(){

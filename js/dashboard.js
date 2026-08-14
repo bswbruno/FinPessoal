@@ -1,4 +1,4 @@
-// FinPessoal v5.0 – Dashboard
+// FinPessoal v9.3 – Dashboard
 //
 // Filtros do Dashboard (não persistem entre sessões, resetam a cada
 // carregamento — são só uma lente temporária de visualização):

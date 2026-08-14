@@ -1,7 +1,7 @@
-# FinPessoal v5.0
+# FinPessoal v9.3
 ## Sistema Financeiro Pessoal
 
-### 🔄 Novidade v5.0: aviso de atualização do app (PWA)
+### 🔄 Novidade v9.3: aviso de atualização do app (PWA)
 Quem **instalou o app** (celular ou computador, "Adicionar à tela inicial"/
 "Instalar app") agora recebe um aviso quando você publica uma versão nova:
 um banner discreto no rodapé — "🔄 Nova versão disponível" — com um botão

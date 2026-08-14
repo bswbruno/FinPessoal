@@ -1,5 +1,5 @@
 /* ============================================================================
-   FinPessoal v5.0 – js/categorias.js
+   FinPessoal v9.3 – js/categorias.js
    ============================================================================
    Responsabilidade deste arquivo: permitir que o usuário cadastre seus
    próprios GRUPOS (categorias de despesa, ex: "Pets", "Viagem") e STATUS

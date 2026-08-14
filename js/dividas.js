@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Dívidas Parceladas
+// FinPessoal v9.3 – Dívidas Parceladas
 function renderDividas(){
   const groups={};ST.expenses.filter(x=>x.type==='parcelada'&&x.gid).forEach(x=>{if(!groups[x.gid])groups[x.gid]=[];groups[x.gid].push(x);});
   const sorted=Object.values(groups).sort((a,b)=>b.filter(x=>x.status!=='pago').length-a.filter(x=>x.status!=='pago').length);

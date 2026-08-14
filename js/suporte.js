@@ -1,5 +1,5 @@
 
-// FinPessoal v5.0 – Suporte
+// FinPessoal v9.3 – Suporte
 // Página simples e estática com os canais de contato do desenvolvedor.
 // Se um dia esses dados mudarem, é só editar as constantes abaixo.
 
