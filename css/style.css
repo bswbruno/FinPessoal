@@ -542,6 +542,10 @@ body {
     font-size: 18px;
   }
 
+  #quick-exp-btn{
+    display: none;
+  }
+
 }
 
 /* Botão central "+" (menu inferior mobile) — abre o modal-quick-add com as
