@@ -26,6 +26,8 @@
    # 21. RESPONSIVO (tablet e celular)
    # 22. CALCULADORA
    # 23. OCULTAR VALORES
+   # 24. AGENDA FINANCEIRA
+   # 25. ATUALIZAÇÃO DO APP (PWA)
 
    COMO FUNCIONA O TEMA CLARO/ESCURO
    ----------------------------------
@@ -58,6 +60,9 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 html {
@@ -168,9 +173,6 @@ body {
 }
 
 /* Transição suave ao trocar de tema em qualquer elemento com cor/fundo */
-* {
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
-}
 
 /* ---------------------------------------------------------------------------
    # 3. LAYOUT BASE (app, sidebar, main, topbar)
@@ -468,7 +470,6 @@ body {
   display: block;
 }
 
-
 .mobile-bottom-nav {
   display: none;
   position: fixed;
@@ -525,27 +526,6 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-}
-
-@media (max-width: 700px) {
-  .mobile-bottom-nav {
-    display: flex;
-  }
-
-  .sidebar{
-    width: 100%;
-    
-  }
-
-  .sidebar .nav-item  {
-    color: rgb(212, 204, 204);
-    font-size: 18px;
-  }
-
-  #quick-exp-btn{
-    display: none;
-  }
-
 }
 
 /* Botão central "+" (menu inferior mobile) — abre o modal-quick-add com as
@@ -919,11 +899,7 @@ tbody tr:hover td {
   color: var(--amber);
 }
 
-.pill-pago {
-  background: var(--green-light);
-  color: var(--green);
-}
-
+.pill-pago,
 .pill-late {
   background: var(--red-light);
   color: var(--red);
@@ -942,11 +918,6 @@ tbody tr:hover td {
 .pill-purple {
   background: var(--purple-light);
   color: var(--purple);
-}
-
-.pill-green {
-  background: var(--green-light);
-  color: var(--green);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1425,11 +1396,6 @@ tbody tr:hover td {
   border-radius: 20px;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
 /* ---------------------------------------------------------------------------
    # 20. RECIBOS / COMPROVANTES (anexo em despesas — módulo A Pagar)
    Ver js/receipts.js para a lógica de upload, compressão e visualização.
@@ -1607,74 +1573,188 @@ tbody tr:hover td {
 }
 
 /* Celulares */
-@media (max-width: 700px) {
-  /* padding-bottom reserva o espaço da barra inferior fixa (~80px, mais a
-     área segura do notch/gesto do iPhone), pra ela nunca cobrir o fim do
-     conteúdo nem atrapalhar o scroll da última seção da página. */
-  .content {
-    padding: 14px 14px calc(90px + env(safe-area-inset-bottom)) 14px;
-  }
-
-  .topbar {
-    padding: 10px 14px;
-  }
-
-  .kpi-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .kpi {
-    padding: 12px 14px;
-  }
-
-  .kpi-value {
-    font-size: 16px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-full {
-    grid-column: span 1;
-  }
-
-  .modal {
-    padding: 18px;
-    width: 100%;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .toolbar > div {
-    flex-wrap: wrap;
-  }
-
-  .page-title {
-    font-size: 14px;
-  }
-
-  .month-label {
-    min-width: 96px;
-    font-size: 12px;
-  }
-
-  table {
-    min-width: 560px;
-  } /* mantém colunas legíveis; a rolagem horizontal cuida do resto */
-}
-
-
 
 /* Telas muito pequenas (celulares estreitos) */
+@media (max-width: 700px) {
+  .mobile-bottom-nav {
+
+      display: flex;
+
+    }
+
+    .sidebar {
+
+      width: 100%;
+
+    }
+
+    .sidebar .nav-item  {
+
+      color: rgb(212, 204, 204);
+
+      font-size: 18px;
+
+    }
+
+    #quick-exp-btn {
+
+      display: none;
+
+    }
+
+  /* padding-bottom reserva o espaço da barra inferior fixa (~80px, mais a
+
+       área segura do notch/gesto do iPhone), pra ela nunca cobrir o fim do
+
+       conteúdo nem atrapalhar o scroll da última seção da página. */
+
+    .content {
+
+      padding: 14px 14px calc(90px + env(safe-area-inset-bottom)) 14px;
+
+    }
+
+    .topbar {
+
+      padding: 10px 14px;
+
+    }
+
+    .kpi-grid {
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 10px;
+
+    }
+
+    .kpi {
+
+      padding: 12px 14px;
+
+    }
+
+    .kpi-value {
+
+      font-size: 16px;
+
+    }
+
+    .form-grid {
+
+      grid-template-columns: 1fr;
+
+    }
+
+    .form-full {
+
+      grid-column: span 1;
+
+    }
+
+    .modal {
+
+      padding: 18px;
+
+      width: 100%;
+
+    }
+
+    .search-box {
+
+      width: 100%;
+
+    }
+
+    .toolbar {
+
+      flex-direction: column;
+
+      align-items: stretch;
+
+    }
+
+    .toolbar > div {
+
+      flex-wrap: wrap;
+
+    }
+
+    .page-title {
+
+      font-size: 14px;
+
+    }
+
+    .month-label {
+
+      min-width: 96px;
+
+      font-size: 12px;
+
+    }
+
+    table {
+
+      min-width: 560px;
+
+    } /* mantém colunas legíveis; a rolagem horizontal cuida do resto */
+
+  button,
+
+    .btn,
+
+    .calc-btn,
+
+    .menu-toggle,
+
+    a.sidebar-footer,
+
+    .cat-chip button {
+
+      min-height: 38px;
+
+    }
+
+    input,
+
+    select,
+
+    textarea {
+
+      font-size: 16px;
+
+    } /* evita zoom automático no iOS ao focar campo */
+
+    .modal {
+
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+    }
+
+  .agenda-cell {
+
+      min-height: 46px;
+
+      padding: 4px;
+
+    }
+
+    .agenda-daynum {
+
+      font-size: 11px;
+
+    }
+
+    .agenda-weekday {
+
+      font-size: 9px;
+
+    }
+}
+
 @media (max-width: 380px) {
   .kpi-grid {
     grid-template-columns: 1fr;
@@ -1710,27 +1790,6 @@ tbody tr:hover td {
 }
 
 /* Ajustes de toque e usabilidade mobile (PWA/instalado) */
-@media (max-width: 700px) {
-  button,
-  .btn,
-  .calc-btn,
-  .menu-toggle,
-  a.sidebar-footer,
-  .cat-chip button {
-    min-height: 38px;
-  }
-
-  input,
-  select,
-  textarea {
-    font-size: 16px;
-  } /* evita zoom automático no iOS ao focar campo */
-
-  .modal {
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-}
 
 /* Modo standalone (app instalado): dá espaço pra área segura (notch/status bar) */
 @media (display-mode: standalone) {
@@ -1811,6 +1870,8 @@ tbody tr:hover td {
 
 /* ---------------------------------------------------------------------------
    # 23. OCULTAR VALORES
+   # 24. AGENDA FINANCEIRA
+   # 25. ATUALIZAÇÃO DO APP (PWA)
    O botão 👁️ na topbar chama toggleHideValues() (js/ui.js), que só alterna
    ST.settings.hideValues e chama render() de novo — a máscara em si acontece
    dentro da função fmt() (js/utils.js), então qualquer lugar do sistema que
@@ -1918,21 +1979,6 @@ tbody tr:hover td {
   font-size: 9px;
   font-weight: 700;
   padding: 0 4px;
-}
-
-@media (max-width: 700px) {
-  .agenda-cell {
-    min-height: 46px;
-    padding: 4px;
-  }
-
-  .agenda-daynum {
-    font-size: 11px;
-  }
-
-  .agenda-weekday {
-    font-size: 9px;
-  }
 }
 
 /* ---------------------------------------------------------------------------
