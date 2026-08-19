@@ -1,0 +1,400 @@
+
+
+/* ============================================================
+   1. TOOLBAR (barra de ferramentas)
+   ============================================================ */
+.toolbar-cards {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toolbar-cards-count {
+    font-size: 14px;
+    color: var(--text2);
+}
+
+/* ============================================================
+   2. LISTA DE CARTÕES
+   ============================================================ */
+.card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+/* ============================================================
+   3. SHELL DO CARTÃO (container completo)
+   ============================================================ */
+.card-shell {
+    background: var(--bg2);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.card-shell:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================================
+   4. CARTÃO VISUAL (a parte bonita com gradiente)
+   ============================================================ */
+.credit-card-visual {
+    padding: 20px 22px;
+    color: #fff;
+    border-radius: 16px 16px 0 0;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.credit-card-header-visual {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.credit-card-type {
+    font-size: 8px;
+    opacity: 0.7;
+    letter-spacing: 1.5px;
+}
+
+.credit-card-brand-visual {
+    font-size: 11px;
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+.credit-card-name-visual {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.credit-card-digits-visual {
+    font-size: 11px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.credit-card-progress-visual {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    height: 4px;
+    margin-bottom: 6px;
+}
+
+.credit-card-progress-fill-visual {
+    background: rgba(255, 255, 255, 0.85);
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.credit-card-footer-visual {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+}
+
+.credit-card-cycle-info {
+    font-size: 10px;
+    opacity: 0.65;
+    margin-top: 6px;
+}
+
+/* ============================================================
+   5. DETALHES DO CARTÃO (informações abaixo)
+   ============================================================ */
+.card-details {
+    padding: 10px 16px 0;
+}
+
+.sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sum-row:last-of-type {
+    border-bottom: none;
+}
+
+.sum-label {
+    color: var(--text2);
+}
+
+.sum-value-available {
+    color: var(--green);
+}
+
+.sum-value-committed {
+    color: var(--red);
+}
+
+.sum-value-invoice {
+    color: var(--text);
+}
+
+.sum-value-due {
+    color: var(--text2);
+}
+
+.sum-value-bestday {
+    color: var(--text);
+}
+
+.card-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+}
+
+/* ============================================================
+   6. AÇÕES DO CARTÃO (botões)
+   ============================================================ */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.card-actions-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+/* ============================================================
+   7. FATURA - RESUMO
+   ============================================================ */
+.invoice-summary {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.invoice-summary-item {
+    flex: 1;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.invoice-summary-label {
+    font-size: 10px;
+    color: var(--text2);
+    text-transform: uppercase;
+}
+
+.invoice-summary-value {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.invoice-pending {
+    color: var(--red);
+}
+
+.invoice-item-value {
+    font-weight: 600;
+}
+
+/* ============================================================
+   8. PILLS (status)
+   ============================================================ */
+.pill {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.pill-pago {
+    background: var(--green)25;
+    color: var(--green);
+}
+
+.pill-pend {
+    background: var(--amber)25;
+    color: var(--amber);
+}
+
+.pill-late {
+    background: var(--red)25;
+    color: var(--red);
+}
+
+/* ============================================================
+   9. EMPTY STATE (sem cartões)
+   ============================================================ */
+.empty-state-cards {
+    text-align: center;
+    padding: 80px;
+    color: var(--text3);
+    font-size: 14px;
+}
+
+.empty-invoice {
+    text-align: center;
+    padding: 24px;
+    color: var(--text3);
+}
+
+/* ============================================================
+   10. MODAL - CORES (color swatches)
+   ============================================================ */
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+}
+
+.color-picker {
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* ============================================================
+   11. RESPONSIVIDADE
+   ============================================================ */
+
+/* Tablets e telas médias */
+@media (max-width: 768px) {
+    .card-list {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .invoice-summary {
+        flex-wrap: wrap;
+    }
+
+    .invoice-summary-item {
+        flex: 1 1 calc(33.33% - 6px);
+        min-width: 100px;
+    }
+}
+
+/* Celulares grandes */
+@media (max-width: 480px) {
+    .card-list {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .toolbar-cards {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .toolbar-cards .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .credit-card-visual {
+        padding: 16px 18px;
+        min-height: 140px;
+    }
+
+    .credit-card-name-visual {
+        font-size: 15px;
+    }
+
+    .card-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .card-actions .btn-sm {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .card-actions-buttons {
+        justify-content: stretch;
+    }
+
+    .card-actions-buttons .btn-sm {
+        flex: 1;
+    }
+
+    .invoice-summary {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .invoice-summary-item {
+        flex: 1;
+        padding: 8px 12px;
+    }
+
+    .invoice-summary-value {
+        font-size: 14px;
+    }
+
+    .sum-row {
+        font-size: 14px;
+        padding: 3px 0;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+    .credit-card-visual {
+        padding: 12px 14px;
+        min-height: 120px;
+    }
+
+    .credit-card-name-visual {
+        font-size: 13px;
+    }
+
+    .credit-card-digits-visual {
+        font-size: 10px;
+    }
+
+    .credit-card-footer-visual {
+        font-size: 10px;
+    }
+
+    .card-details {
+        padding: 6px 12px 0;
+    }
+
+    .card-actions {
+        padding: 4px 12px 10px;
+    }
+
+    .sum-row {
+        font-size: 12px;
+    }
+}
