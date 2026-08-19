@@ -1,0 +1,492 @@
+/* ============================================================
+   RECEBER.CSS - ESTILOS DA PÁGINA "A RECEBER"
+   ============================================================ */
+
+/* ============================================================
+   1. TOOLBAR PRINCIPAL
+   ============================================================ */
+.receber-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.receber-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.receber-status {
+    font-size: 11px;
+    color: var(--text2);
+    white-space: nowrap;
+}
+
+.receber-status strong {
+    color: var(--green);
+}
+
+/* ============================================================
+   2. FILTROS SECUNDÁRIOS (Ordenação e Exibição)
+   ============================================================ */
+.receber-filters-secondary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.receber-filter-sort {
+    min-width: 190px;
+    flex: 1;
+}
+
+.receber-filter-view {
+    min-width: 170px;
+    flex: 1;
+}
+
+.receber-filters-secondary .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.receber-filters-secondary .form-field label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.receber-filters-secondary .form-field select {
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.receber-filters-secondary .form-field select:focus {
+    outline: none;
+    border-color: var(--purple);
+}
+
+/* ============================================================
+   3. TABELA (Desktop)
+   ============================================================ */
+.desktop-table {
+    display: block;
+}
+
+.desktop-table table {
+    min-width: 800px;
+}
+
+.desktop-table th,
+.desktop-table td {
+    padding: 8px 10px;
+}
+
+.desktop-table th:first-child,
+.desktop-table td:first-child {
+    padding-left: 12px;
+}
+
+.desktop-table th:last-child,
+.desktop-table td:last-child {
+    padding-right: 12px;
+}
+
+/* Estilos específicos das colunas */
+.inc-date {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.inc-date-late {
+    color: var(--red);
+    font-weight: 700;
+}
+
+.inc-desc {
+    font-weight: 600;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.inc-origem {
+    color: var(--text2);
+    font-size: 12px;
+}
+
+.inc-parcela {
+    color: var(--text2);
+    font-size: 12px;
+    text-align: center;
+}
+
+.inc-valor {
+    font-weight: 700;
+    color: var(--green);
+    white-space: nowrap;
+}
+
+.inc-acoes {
+    white-space: nowrap;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   4. CARDS (Mobile)
+   ============================================================ */
+.income-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.income-card {
+    background: var(--bg2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    transition: box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.income-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.income-card.card-atrasado::before {
+    background: var(--red);
+}
+
+.income-card.card-recebido::before {
+    background: var(--green);
+}
+
+.income-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Cabeçalho do card */
+.income-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.income-card-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.income-card-desc {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.income-card-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--green);
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Corpo do card */
+.income-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 0;
+}
+
+.income-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 2px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.income-card-row:last-child {
+    border-bottom: none;
+}
+
+.income-card-label {
+    color: var(--text3);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.income-card-row .pill {
+    font-size: 10px;
+    padding: 2px 8px;
+}
+
+/* Ações do card */
+.income-card-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.income-card-actions .btn-sm {
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+    justify-content: center;
+    font-size: 11px;
+    padding: 6px 8px;
+}
+
+/* ============================================================
+   5. SEÇÕES (quando exibição separada)
+   ============================================================ */
+.income-section {
+    margin-bottom: 16px;
+}
+
+.income-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 12px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--border);
+}
+
+.income-section:first-child .income-section-title {
+    margin-top: 0;
+}
+
+/* ============================================================
+   6. RODAPÉ
+   ============================================================ */
+.receber-footer {
+    text-align: right;
+    padding: 8px 4px;
+    font-size: 12px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+}
+
+.receber-footer strong {
+    color: var(--green);
+}
+
+/* ============================================================
+   7. PILL VERDE (para tipos de receita)
+   ============================================================ */
+.pill-green {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 10px;
+}
+
+/* ============================================================
+   8. MOBILE-FIRST - RESPONSIVIDADE
+   ============================================================ */
+
+/* Por padrão (mobile), esconde a tabela e mostra os cards */
+.desktop-table {
+    display: none;
+}
+
+.income-card-list {
+    display: flex;
+}
+
+/* Desktop: mostra a tabela e esconde os cards */
+@media (min-width: 701px) {
+    .desktop-table {
+        display: block;
+    }
+
+    .income-card-list {
+        display: none;
+    }
+
+    .receber-toolbar-right {
+        flex-wrap: nowrap;
+    }
+
+    .receber-filters-secondary {
+        flex-wrap: nowrap;
+    }
+
+    .receber-filter-sort,
+    .receber-filter-view {
+        flex: 0 1 auto;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 701px) {
+    .desktop-table table {
+        min-width: 680px;
+    }
+
+    .inc-desc {
+        max-width: 100px;
+    }
+
+    .inc-acoes .btn-sm {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+}
+
+/* Mobile (até 700px) */
+@media (max-width: 700px) {
+    /* Toolbar */
+    .receber-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .filter-pills {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .filter-pills .fpill {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .receber-toolbar-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .receber-toolbar-right .search-box {
+        width: 100%;
+    }
+
+    .receber-toolbar-right .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .receber-status {
+        text-align: center;
+    }
+
+    /* Filtros secundários */
+    .receber-filters-secondary {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 0;
+    }
+
+    .receber-filter-sort,
+    .receber-filter-view {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Cards */
+    .income-card {
+        padding: 12px 14px;
+    }
+
+    .income-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .income-card-value {
+        text-align: left;
+        font-size: 16px;
+    }
+
+    .income-card-actions .btn-sm {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 50px;
+        font-size: 10px;
+        padding: 5px 6px;
+    }
+
+    /* Seções */
+    .income-section-title {
+        font-size: 12px;
+        margin: 8px 0 6px;
+    }
+
+    /* Rodapé */
+    .receber-footer {
+        font-size: 11px;
+    }
+
+    /* Busca no mobile */
+    .search-box {
+        font-size: 16px !important;
+    }
+}
+
+/* Mobile muito pequeno */
+@media (max-width: 380px) {
+    .income-card {
+        padding: 10px 12px;
+    }
+
+    .income-card-desc {
+        font-size: 13px;
+    }
+
+    .income-card-value {
+        font-size: 14px;
+    }
+
+    .income-card-row {
+        font-size: 11px;
+    }
+
+    .income-card-actions .btn-sm {
+        flex: 1 1 100%;
+    }
+}

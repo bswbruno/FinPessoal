@@ -1,0 +1,530 @@
+/* ============================================================
+   PAGAR.CSS - ESTILOS DA PÁGINA "A PAGAR"
+   ============================================================ */
+
+/* ============================================================
+   1. TOOLBAR PRINCIPAL
+   ============================================================ */
+.pagar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.pagar-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pagar-pendente {
+    font-size: 11px;
+    color: var(--text2);
+    white-space: nowrap;
+}
+
+.pagar-pendente strong {
+    color: var(--red);
+}
+
+/* ============================================================
+   2. FILTROS SECUNDÁRIOS (Ordenação e Exibição)
+   ============================================================ */
+.pagar-filters-secondary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.pagar-filter-sort {
+    min-width: 190px;
+    flex: 1;
+}
+
+.pagar-filter-view {
+    min-width: 170px;
+    flex: 1;
+}
+
+.pagar-filters-secondary .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pagar-filters-secondary .form-field label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pagar-filters-secondary .form-field select {
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.pagar-filters-secondary .form-field select:focus {
+    outline: none;
+    border-color: var(--purple);
+}
+
+/* ============================================================
+   3. TABELA (Desktop)
+   ============================================================ */
+.desktop-table {
+    display: block;
+}
+
+/* Colunas da tabela com larguras fixas para melhor visualização */
+.desktop-table table {
+    min-width: 900px;
+}
+
+.desktop-table th,
+.desktop-table td {
+    padding: 8px 10px;
+}
+
+.desktop-table th:first-child,
+.desktop-table td:first-child {
+    padding-left: 12px;
+}
+
+.desktop-table th:last-child,
+.desktop-table td:last-child {
+    padding-right: 12px;
+}
+
+/* Estilos específicos das colunas */
+.exp-date {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.exp-date-late {
+    color: var(--red);
+    font-weight: 700;
+}
+
+.exp-desc {
+    font-weight: 600;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.exp-parcela {
+    text-align: center;
+    color: var(--text2);
+    font-size: 12px;
+}
+
+.exp-valor {
+    font-weight: 700;
+    color: var(--red);
+    white-space: nowrap;
+}
+
+.exp-grupo {
+    color: var(--text2);
+    font-size: 12px;
+}
+
+.exp-cartao {
+    font-size: 12px;
+}
+
+.exp-acoes {
+    white-space: nowrap;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.exp-partial-info {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text2);
+}
+
+/* Tag do cartão na tabela */
+.exp-card-tag {
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.exp-no-card {
+    color: var(--text3);
+    font-size: 12px;
+}
+
+/* ============================================================
+   4. CARDS (Mobile)
+   ============================================================ */
+.expense-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expense-card {
+    background: var(--bg2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    transition: box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.expense-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.expense-card.card-atrasado::before {
+    background: var(--red);
+}
+
+.expense-card.card-parcial::before {
+    background: var(--blue);
+}
+
+.expense-card.card-pago::before {
+    background: var(--green);
+}
+
+.expense-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* Cabeçalho do card */
+.expense-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.expense-card-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.expense-card-desc {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.expense-card-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--red);
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.expense-card-value .exp-partial-info {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text2);
+    text-align: right;
+}
+
+/* Corpo do card */
+.expense-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 0;
+}
+
+.expense-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 2px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.expense-card-row:last-child {
+    border-bottom: none;
+}
+
+.expense-card-label {
+    color: var(--text3);
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.expense-card-row .pill {
+    font-size: 10px;
+    padding: 2px 8px;
+}
+
+.expense-card-row .exp-card-tag {
+    padding: 1px 6px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Ações do card */
+.expense-card-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+
+.expense-card-actions .btn-sm {
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+    justify-content: center;
+    font-size: 11px;
+    padding: 6px 8px;
+}
+
+/* ============================================================
+   5. SEÇÕES (quando exibição separada)
+   ============================================================ */
+.expense-section {
+    margin-bottom: 16px;
+}
+
+.expense-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 12px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--border);
+}
+
+.expense-section:first-child .expense-section-title {
+    margin-top: 0;
+}
+
+/* ============================================================
+   6. RODAPÉ
+   ============================================================ */
+.pagar-footer {
+    text-align: right;
+    padding: 8px 4px;
+    font-size: 12px;
+    color: var(--text2);
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+}
+
+.pagar-footer strong {
+    color: var(--text);
+}
+
+/* ============================================================
+   7. MOBILE-FIRST - RESPONSIVIDADE
+   ============================================================ */
+
+/* Por padrão (mobile), esconde a tabela e mostra os cards */
+.desktop-table {
+    display: none;
+}
+
+.expense-card-list {
+    display: flex;
+}
+
+/* Desktop: mostra a tabela e esconde os cards */
+@media (min-width: 701px) {
+    .desktop-table {
+        display: block;
+    }
+
+    .expense-card-list {
+        display: none;
+    }
+
+    .pagar-toolbar-right {
+        flex-wrap: nowrap;
+    }
+
+    .pagar-filters-secondary {
+        flex-wrap: nowrap;
+    }
+
+    .pagar-filter-sort,
+    .pagar-filter-view {
+        flex: 0 1 auto;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 701px) {
+    .desktop-table table {
+        min-width: 750px;
+    }
+
+    .exp-desc {
+        max-width: 100px;
+    }
+
+    .exp-acoes .btn-sm {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+}
+
+/* Mobile (até 700px) */
+@media (max-width: 700px) {
+    /* Toolbar */
+    .pagar-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .filter-pills {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .filter-pills .fpill {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .pagar-toolbar-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .pagar-toolbar-right .search-box {
+        width: 100%;
+    }
+
+    .pagar-toolbar-right .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .pagar-pendente {
+        text-align: center;
+    }
+
+    /* Filtros secundários */
+    .pagar-filters-secondary {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 0;
+    }
+
+    .pagar-filter-sort,
+    .pagar-filter-view {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Cards */
+    .expense-card {
+        padding: 12px 14px;
+    }
+
+    .expense-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .expense-card-value {
+        text-align: left;
+        font-size: 16px;
+    }
+
+    .expense-card-value .exp-partial-info {
+        text-align: left;
+    }
+
+    .expense-card-actions .btn-sm {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 50px;
+        font-size: 10px;
+        padding: 5px 6px;
+    }
+
+    /* Seções */
+    .expense-section-title {
+        font-size: 12px;
+        margin: 8px 0 6px;
+    }
+
+    /* Rodapé */
+    .pagar-footer {
+        font-size: 11px;
+    }
+
+    /* Busca no mobile */
+    .search-box {
+        font-size: 16px !important;
+    }
+}
+
+/* Mobile muito pequeno */
+@media (max-width: 380px) {
+    .expense-card {
+        padding: 10px 12px;
+    }
+
+    .expense-card-desc {
+        font-size: 13px;
+    }
+
+    .expense-card-value {
+        font-size: 14px;
+    }
+
+    .expense-card-row {
+        font-size: 11px;
+    }
+
+    .expense-card-actions .btn-sm {
+        flex: 1 1 100%;
+    }
+}

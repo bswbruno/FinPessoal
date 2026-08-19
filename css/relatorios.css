@@ -1,0 +1,145 @@
+/* ============================================================
+   RELATÓRIOS
+   ============================================================ */
+
+/* Toolbar dos relatórios */
+.relatorios-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.relatorios-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.relatorios-acoes {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Legenda dos gráficos */
+.relatorios-legenda {
+    float: right;
+    font-size: 10px;
+    color: var(--text3);
+}
+
+/* Tabelas dos relatórios */
+.relatorios-tabela {
+    margin-bottom: 14px;
+}
+
+.relatorios-tabela table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.relatorios-tabela thead th {
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--bg3);
+    color: var(--text2);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+}
+
+.relatorios-tabela tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.relatorios-tabela tbody tr:hover {
+    background: var(--bg3);
+}
+
+/* Grupo com cor */
+.relatorios-grupo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.relatorios-cor {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Valores nas tabelas */
+.relatorios-valor-despesa {
+    font-weight: 700;
+    color: var(--red);
+}
+
+.relatorios-valor-receita {
+    font-weight: 700;
+    color: var(--green);
+}
+
+.relatorios-porcentagem {
+    color: var(--text2);
+}
+
+.relatorios-itens {
+    color: var(--text2);
+}
+
+/* ============================================================
+   RESPONSIVIDADE DOS RELATÓRIOS
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .relatorios-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .relatorios-acoes {
+        justify-content: stretch;
+    }
+    
+    .relatorios-acoes .btn {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .relatorios-tabela table {
+        font-size: 12px;
+    }
+    
+    .relatorios-tabela thead th,
+    .relatorios-tabela tbody td {
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .relatorios-tabela table {
+        font-size: 11px;
+    }
+    
+    .relatorios-tabela thead th,
+    .relatorios-tabela tbody td {
+        padding: 4px 6px;
+    }
+    
+    /* Esconde colunas menos importantes em telas muito pequenas */
+    .relatorios-tabela thead th:last-child,
+    .relatorios-tabela tbody td:last-child {
+        display: none;
+    }
+}
