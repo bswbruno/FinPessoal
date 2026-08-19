@@ -2,7 +2,7 @@
 // Cuida do cache dos arquivos estáticos para o app funcionar offline
 // e poder ser instalado no celular (PWA).
 
-const CACHE_NAME = 'finpessoal-cache-v9.3';
+const CACHE_NAME = 'finpessoal-cache-v9.5';
 
 const ASSETS_TO_CACHE = [
   './',
