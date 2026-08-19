@@ -1,0 +1,344 @@
+/* ============================================================
+   CONTAS.CSS - ESTILOS DA PÁGINA DE CONTAS BANCÁRIAS
+   ============================================================ */
+
+/* ============================================================
+   1. KPIs
+   ============================================================ */
+.accounts-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 18px;
+}
+
+/* ============================================================
+   2. HINT (dica)
+   ============================================================ */
+.accounts-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 14px;
+}
+
+/* ============================================================
+   3. TOOLBAR
+   ============================================================ */
+.accounts-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.accounts-count {
+    font-size: 12px;
+    color: var(--text2);
+}
+
+/* ============================================================
+   4. LISTA DE CONTAS
+   ============================================================ */
+.account-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+/* ============================================================
+   5. SHELL DA CONTA (container completo)
+   ============================================================ */
+.account-shell {
+    background: var(--bg2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s, opacity 0.2s;
+}
+
+.account-shell:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.account-inactive {
+    opacity: 0.5;
+}
+
+/* ============================================================
+   6. CARTÃO VISUAL DA CONTA
+   ============================================================ */
+.account-card-visual {
+    padding: 18px 20px 16px;
+    color: #fff;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.account-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.account-card-type {
+    font-size: 8px;
+    opacity: 0.7;
+    letter-spacing: 1.5px;
+}
+
+.account-card-status {
+    font-size: 11px;
+    opacity: 0.8;
+    font-weight: 600;
+}
+
+.status-active {
+    color: #fff;
+}
+
+.status-inactive {
+    opacity: 0.6;
+}
+
+.account-card-name {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.account-card-details {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 14px;
+}
+
+.account-card-balance-label {
+    font-size: 10px;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.account-card-balance-value {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* ============================================================
+   7. PIX
+   ============================================================ */
+.account-pix-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border-radius: var(--radius);
+    padding: 6px 8px;
+    margin: 8px 12px 0;
+}
+
+.account-pix-text {
+    font-size: 11px;
+    color: var(--text2);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   8. RODAPÉ DA CONTA
+   ============================================================ */
+.account-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px 12px;
+}
+
+.account-initial-balance {
+    font-size: 11px;
+    color: var(--text2);
+}
+
+.account-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* ============================================================
+   9. EMPTY STATE (sem contas)
+   ============================================================ */
+.empty-state-accounts {
+    text-align: center;
+    padding: 80px;
+    color: var(--text3);
+    font-size: 14px;
+}
+
+/* ============================================================
+   10. CONFIRMAÇÃO DE EXCLUSÃO (movimentações vinculadas)
+   ============================================================ */
+.account-movement-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.account-movement-item span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-movement-item span:last-child {
+    font-weight: 600;
+    flex: 0 0 auto;
+}
+
+.account-movement-more {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+}
+
+.account-confirm-message {
+    margin-bottom: 8px;
+}
+
+.account-confirm-warning {
+    margin-top: 12px;
+}
+
+/* ============================================================
+   11. RESPONSIVIDADE
+   ============================================================ */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .accounts-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .account-list {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .account-card-visual {
+        padding: 14px 16px;
+        min-height: 120px;
+    }
+
+    .account-card-name {
+        font-size: 15px;
+    }
+
+    .account-card-balance-value {
+        font-size: 18px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+    .account-list {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .accounts-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .accounts-toolbar .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .account-card-visual {
+        padding: 12px 14px;
+        min-height: 110px;
+    }
+
+    .account-card-name {
+        font-size: 14px;
+    }
+
+    .account-card-balance-value {
+        font-size: 16px;
+    }
+
+    .account-footer {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .account-actions {
+        justify-content: center;
+    }
+
+    .account-actions .btn-sm {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .account-pix-container {
+        margin: 6px 8px 0;
+        flex-wrap: wrap;
+    }
+
+    .account-pix-container .btn-sm {
+        width: 100%;
+        text-align: center;
+    }
+
+    .account-movement-item {
+        font-size: 11px;
+        flex-wrap: wrap;
+    }
+
+    .account-movement-item span:first-child {
+        flex: 1 1 100%;
+        white-space: normal;
+    }
+
+    .accounts-kpi-grid {
+        gap: 10px;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+    .account-card-visual {
+        padding: 10px 12px;
+        min-height: 100px;
+    }
+
+    .account-card-name {
+        font-size: 13px;
+    }
+
+    .account-card-balance-value {
+        font-size: 14px;
+    }
+
+    .account-card-details {
+        font-size: 10px;
+    }
+
+    .empty-state-accounts {
+        padding: 40px 20px;
+        font-size: 13px;
+    }
+}

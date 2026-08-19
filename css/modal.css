@@ -1,0 +1,313 @@
+/* ============================================================
+   CONFIGURACOES.CSS - ESTILOS DA PÁGINA DE CONFIGURAÇÕES
+   ============================================================ */
+
+/* ============================================================
+   1. CARDS DE CONFIGURAÇÃO
+   ============================================================ */
+.settings-card {
+    background: var(--bg2);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    max-width: 1200px;
+    margin: 1% auto;
+    
+
+}
+
+.settings-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+/* ============================================================
+   2. HINTS E DESCRIÇÕES
+   ============================================================ */
+.config-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+}
+
+.config-description {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.config-warning {
+    font-size: 11px;
+    color: var(--red);
+    margin-bottom: 12px;
+}
+
+.config-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 14px 0 8px;
+}
+
+/* ============================================================
+   3. BOTÃO DE SALVAR
+   ============================================================ */
+.config-save-btn {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* ============================================================
+   4. CHECKBOXES
+   ============================================================ */
+.config-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.config-checkbox-last {
+    margin-bottom: 12px;
+}
+
+.config-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--purple);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   5. ORÇAMENTO POR CATEGORIA (lista)
+   ============================================================ */
+.budget-list-config {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.budget-item-config {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.budget-item-name-config {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text);
+    min-width: 120px;
+}
+
+.budget-item-spent {
+    color: var(--text3);
+    font-size: 11px;
+}
+
+.budget-input-config {
+    width: 140px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg2);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.budget-input-config:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px var(--purple-light);
+}
+
+.budget-input-config::placeholder {
+    color: var(--text3);
+}
+
+/* ============================================================
+   6. SUM ROWS (dados do usuário)
+   ============================================================ */
+.config-sum-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+
+.config-sum-row span:first-child {
+    color: var(--text2);
+}
+
+.config-sum-row strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.config-sum-row-last {
+    border-bottom: none;
+}
+
+.config-storage {
+    font-size: 11px;
+    color: var(--text3);
+}
+
+/* ============================================================
+   7. AÇÕES (botões)
+   ============================================================ */
+.config-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.config-actions .btn {
+    flex: 0 1 auto;
+}
+
+/* ============================================================
+   8. CARDS ESPECIAIS
+   ============================================================ */
+.settings-card-demo {
+    border: 1px dashed var(--purple);
+}
+
+.settings-card-footer {
+    border: 1px dashed var(--border);
+}
+
+.settings-card-footer h3 {
+    color: var(--text3);
+}
+
+.settings-card-footer p {
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.8;
+}
+
+/* ============================================================
+   9. BOTÃO PERIGO (Apagar dados)
+   ============================================================ */
+.btn-danger {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+}
+
+.btn-danger:hover {
+    opacity: 0.85;
+}
+
+/* ============================================================
+   10. RESPONSIVIDADE
+   ============================================================ */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .settings-card {
+        max-width: 100%;
+        padding: 16px 18px;
+    }
+
+    .budget-item-config {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+    }
+
+    .budget-input-config {
+        width: 100%;
+    }
+
+    .config-actions {
+        flex-direction: column;
+    }
+
+    .config-actions .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .config-save-btn {
+        align-items: stretch;
+    }
+
+    .config-save-btn .btn {
+        width: 100%;
+    }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+    .settings-card {
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+    .settings-card h3 {
+        font-size: 12px;
+    }
+
+    .config-checkbox {
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .config-sum-row {
+        font-size: 12px;
+        padding: 4px 0;
+    }
+
+    .budget-item-name-config {
+        font-size: 12px;
+        min-width: unset;
+    }
+
+    .budget-input-config {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+    .config-description {
+        font-size: 11px;
+    }
+
+    .config-hint {
+        font-size: 10px;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+    .settings-card {
+        padding: 12px 14px;
+    }
+
+    .settings-card h3 {
+        font-size: 11px;
+        margin-bottom: 12px;
+    }
+
+    .config-checkbox {
+        font-size: 11px;
+    }
+}
