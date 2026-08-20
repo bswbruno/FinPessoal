@@ -106,6 +106,8 @@ function notify(msg, type, onConfirm, duration) {
         return;
     }
 
+    var overlay = document.getElementById('notif-overlay');
+
     if (_notifyTimeout) {
         clearTimeout(_notifyTimeout);
         _notifyTimeout = null;
@@ -128,13 +130,24 @@ function notify(msg, type, onConfirm, duration) {
     el.style.display = 'flex';
     el.style.opacity = '0';
 
+    // ============================================================
+    // MOSTRA O OVERLAY PARA TIPOS QUE BLOQUEIAM A TELA
+    // ============================================================
+    if (type === 'confirm' || type === 'update') {
+        if (overlay) {
+            overlay.style.display = 'block';
+            overlay.style.opacity = '0';
+            requestAnimationFrame(function() {
+                overlay.style.opacity = '1';
+            });
+        }
+    }
+
     requestAnimationFrame(function() {
         el.style.opacity = '1';
     });
 
-    // ============================================================
-    // SÓ FECHA AUTOMATICAMENTE SE NÃO FOR 'confirm' OU 'update'
-    // ============================================================
+    // Só fecha automaticamente se NÃO for 'confirm' ou 'update'
     if (type !== 'confirm' && type !== 'update') {
         _notifyTimeout = setTimeout(function() {
             if (!_notifyResolved) {
@@ -142,7 +155,6 @@ function notify(msg, type, onConfirm, duration) {
             }
         }, duration);
     }
-    // Se for 'confirm' ou 'update', FICA ABERTO ATÉ O USUÁRIO CLICAR
 
     if (onConfirm && typeof onConfirm === 'function') {
         window._notifyConfirm = onConfirm;
@@ -173,12 +185,25 @@ function resolveUpdate(accepted) {
 
 function closeNotify() {
     var el = document.getElementById('notif');
+    var overlay = document.getElementById('notif-overlay');
+
     if (el) {
         el.style.opacity = '0';
         setTimeout(function() {
             el.style.display = 'none';
         }, 300);
     }
+
+    // ============================================================
+    // OCULTA O OVERLAY
+    // ============================================================
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(function() {
+            overlay.style.display = 'none';
+        }, 300);
+    }
+
     if (_notifyTimeout) {
         clearTimeout(_notifyTimeout);
         _notifyTimeout = null;
