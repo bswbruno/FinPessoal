@@ -116,9 +116,6 @@ function notify(msg, type, onConfirm, duration) {
 
     var content = '<span class="notif-msg">' + msg + '</span>';
 
-    // ============================================================
-    // AQUI ESTÃO OS BOTOES DE ATUALIZACAO
-    // ============================================================
     if (type === 'confirm') {
         content += '<div class="notif-actions"><button class="notif-btn notif-btn-confirm" onclick="window.resolveNotify(true)">OK</button><button class="notif-btn notif-btn-cancel" onclick="window.resolveNotify(false)">Cancelar</button></div>';
     } else if (type === 'update') {
@@ -135,6 +132,9 @@ function notify(msg, type, onConfirm, duration) {
         el.style.opacity = '1';
     });
 
+    // ============================================================
+    // SÓ FECHA AUTOMATICAMENTE SE NÃO FOR 'confirm' OU 'update'
+    // ============================================================
     if (type !== 'confirm' && type !== 'update') {
         _notifyTimeout = setTimeout(function() {
             if (!_notifyResolved) {
@@ -142,6 +142,7 @@ function notify(msg, type, onConfirm, duration) {
             }
         }, duration);
     }
+    // Se for 'confirm' ou 'update', FICA ABERTO ATÉ O USUÁRIO CLICAR
 
     if (onConfirm && typeof onConfirm === 'function') {
         window._notifyConfirm = onConfirm;
