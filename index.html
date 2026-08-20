@@ -912,19 +912,20 @@
         })();
     </script>
 
-     <!-- ============================================================
+    <!-- ============================================================
      SERVICE WORKER (PWA) - COM NOTIFICAÇÃO DE ATUALIZAÇÃO
      ============================================================ -->
 <script>
     if ('serviceWorker' in navigator) {
-        let refreshing = false;
         let updateResolved = false;
 
+        // QUANDO O SERVICE WORKER NOVO ASSUME O CONTROLE
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            refreshing = true;
-            localStorage.setItem('fp_just_updated', '1');
-            window.location.reload();
+            // Só recarrega se o usuário já confirmou a atualização
+            if (updateResolved) {
+                localStorage.setItem('fp_just_updated', '1');
+                window.location.reload();
+            }
         });
 
         const isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
@@ -942,37 +943,36 @@
 
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('✅ Nova versão instalada!');
+                                    console.log('✅ Nova versão instalada, AGUARDANDO CONFIRMAÇÃO DO USUÁRIO');
 
+                                    // ============================================================
+                                    // MOSTRA A NOTIFICAÇÃO COM BOTÕES - NÃO RECARREGA AUTOMATICAMENTE
+                                    // ============================================================
                                     if (!updateResolved) {
                                         updateResolved = false;
 
-                                        // ============================================================
-                                        // CHAMA A NOTIFICAÇÃO COM BOTÕES
-                                        // ============================================================
-                                        // Usa setTimeout para garantir que a página está pronta
-                                        setTimeout(function() {
-                                            if (typeof window.notify === 'function') {
-                                                window.notify('🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.', 'update');
-                                                console.log('✅ Notificação com botões exibida!');
-                                            } else {
-                                                console.warn('⚠️ notify não disponível');
-                                            }
-                                        }, 500);
+                                        if (typeof window.notify === 'function') {
+                                            // EXIBE A NOTIFICAÇÃO COM BOTÕES
+                                            window.notify('🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.', 'update');
+                                            console.log('✅ Notificação com botões exibida!');
 
-                                        // Sobrescreve resolveUpdate para capturar o clique em "Atualizar"
-                                        if (typeof window.resolveUpdate === 'function') {
-                                            const originalResolve = window.resolveUpdate;
-                                            window.resolveUpdate = function(accepted) {
-                                                console.log('🔧 resolveUpdate chamado! accepted:', accepted);
-                                                if (accepted) {
-                                                    updateResolved = true;
-                                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                                }
-                                                if (typeof originalResolve === 'function') {
-                                                    originalResolve(accepted);
-                                                }
-                                            };
+                                            // SOBRESCREVE resolveUpdate PARA CAPTURAR O CLIQUE
+                                            if (typeof window.resolveUpdate === 'function') {
+                                                const originalResolve = window.resolveUpdate;
+                                                window.resolveUpdate = function(accepted) {
+                                                    console.log('🔧 resolveUpdate chamado! accepted:', accepted);
+                                                    if (accepted) {
+                                                        updateResolved = true;
+                                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                                        // O controllerchange vai recarregar a página
+                                                    }
+                                                    if (typeof originalResolve === 'function') {
+                                                        originalResolve(accepted);
+                                                    }
+                                                };
+                                            }
+                                        } else {
+                                            console.warn('⚠️ notify não disponível');
                                         }
                                     }
                                 }
