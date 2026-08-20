@@ -58,7 +58,9 @@
     <!-- ============================================================
          NOTIFICAÇÃO (TOAST)
     ============================================================ -->
-    <div id="notif"></div>
+      <div id="notif"></div>
+
+
 
     <!-- ============================================================
          MODAIS - DESPESA
@@ -910,59 +912,82 @@
         })();
     </script>
 
-    <!-- ============================================================
-         SERVICE WORKER (PWA)
-    ============================================================ -->
+      <!-- ============================================================
+         SERVICE WORKER (PWA) - COM NOTIFICAÇÃO DE ATUALIZAÇÃO
+         ============================================================ -->
     <script>
-        // Registra o Service Worker (PWA: cache offline + instalação no celular)
-        // e cuida da ATUALIZAÇÃO AUTOMÁTICA do app.
-        //
-        // Como funciona: o service-worker.js já assume sozinho assim que termina
-        // de baixar (self.skipWaiting() + self.clients.claim(), ver esse
-        // arquivo) — não depende de a pessoa clicar em nada. Aqui a gente só
-        // garante que o navegador REALMENTE VÁ CHECAR se tem versão nova (ao
-        // abrir o app e sempre que ele volta a ficar em primeiro plano — o
-        // navegador sozinho só checa de vez em quando, meio devagar pro nosso
-        // gosto) e, quando o SW novo assume, recarrega a página automaticamente
-        // e mostra o aviso "Aplicativo atualizado" assim que ela carrega de novo
-        // (ver maybeShowUpdatedToast() em js/ui.js).
         if ('serviceWorker' in navigator) {
-            let refreshedOnce = false;
-            navigator.serviceWorker.addEventListener('controllerchange', function() {
-                if (refreshedOnce) return; // alguns navegadores disparam esse evento mais de uma vez
-                refreshedOnce = true;
-                // Guarda o aviso pra próxima página já mostrar o toast de "atualizado"
-                // (esse reload troca a página inteira, então nada em memória sobrevive).
+            let refreshing = false;
+            let updateResolved = false;
+
+            // Quando o Service Worker novo assume o controle
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                
+                // Guarda a flag para mostrar o toast de sucesso
                 localStorage.setItem('fp_just_updated', '1');
                 window.location.reload();
             });
 
-            const isDevelopment =
-                location.hostname === 'localhost' ||
-                location.hostname === '127.0.0.1';
+            const isDevelopment = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
             if (!isDevelopment) {
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(function(reg) {
+                            // Verifica atualização imediatamente
+                            reg.update();
 
-                        // Força checar se tem versão nova agora — não espera o navegador
-                        // decidir sozinho quando checar.
-                        reg.update().catch(function() {});
+                            // Quando uma nova versão é encontrada
+                            reg.addEventListener('updatefound', () => {
+                                const newWorker = reg.installing;
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // Nova versão disponível!
+                                        if (!updateResolved) {
+                                            updateResolved = false;
+                                            
+                                            // Mostra a notificação de atualização
+                                            if (typeof window.notify === 'function') {
+                                                window.notify('🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.', 'update');
+                                                
+                                                if (typeof window.resolveUpdate === 'function') {
+                                                    const originalResolve = window.resolveUpdate;
+                                                    window.resolveUpdate = function(accepted) {
+                                                        if (accepted) {
+                                                            updateResolved = true;
+                                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                                        }
+                                                        if (typeof originalResolve === 'function') {
+                                                            originalResolve(accepted);
+                                                        }
+                                                    };
+                                                }
+                                            } else {
+                                                console.warn('⚠️ Função notify não disponível');
+                                            }
+                                        }
+                                    }
+                                });
+                            });
 
-                        // ...e de novo sempre que a pessoa volta pro app (ex: trocou de
-                        // aba/app e voltou), sem precisar fechar e abrir de novo.
-                        document.addEventListener('visibilitychange', function() {
-                            if (document.visibilityState === 'visible') reg.update().catch(function() {});
+                            // Verifica atualização quando a página volta a ficar visível
+                            document.addEventListener('visibilitychange', () => {
+                                if (document.visibilityState === 'visible') {
+                                    reg.update();
+                                }
+                            });
+
+                            // Verifica periodicamente (a cada 30 minutos)
+                            setInterval(() => {
+                                reg.update();
+                            }, 30 * 60 * 1000);
+
+                        })
+                        .catch(function(err) {
+                            console.warn('Falha ao registrar service worker:', err);
                         });
-                        window.addEventListener('focus', function() { reg.update().catch(function() {}); });
-
-                        // E também periodicamente, caso a pessoa deixe o app aberto por
-                        // muito tempo sem trocar de aba (comum em quem usa instalado).
-                        setInterval(function() { reg.update().catch(function() {}); }, 30 * 60 * 1000);
-
-                    }).catch(function(err) {
-                        console.warn('Falha ao registrar service worker:', err);
-                    });
                 });
             }
         }
@@ -970,3 +995,6 @@
 
 </body>
 </html>
+        
+    
+
