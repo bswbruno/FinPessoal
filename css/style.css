@@ -1359,22 +1359,39 @@ tbody tr:hover td {
 }
 
 /* ============================================================
-   21. NOTIFICAÇÃO (toast)
+   NOTIFICAÇÃO (TOAST)
    ============================================================ */
+
 #notif {
     position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 2000;
-    padding: 11px 18px;
-    border-radius: var(--radius-lg);
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 14px 20px;
+    border-radius: 12px;
     font-size: 13px;
     font-weight: 600;
     display: none;
     align-items: center;
-    gap: 8px;
-    box-shadow: var(--shadow-md);
+    gap: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    max-width: 480px;
+    width: 90%;
+    background: var(--bg2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    transition: opacity 0.3s ease;
+    opacity: 0;
 }
+
+#notif[style*="display: flex"] {
+    opacity: 1;
+}
+
+/* ============================================================
+   VARIANTES DE COR
+   ============================================================ */
 
 #notif.ok {
     background: var(--green-light);
@@ -1392,6 +1409,371 @@ tbody tr:hover td {
     background: var(--blue-light);
     color: var(--blue);
     border: 1px solid var(--blue);
+}
+
+#notif.confirm,
+#notif.update {
+    background: var(--bg2);
+    color: var(--text);
+    border: 2px solid var(--purple);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+}
+
+/* ============================================================
+   MENSAGEM
+   ============================================================ */
+.notif-msg {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   BOTÕES
+   ============================================================ */
+.notif-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.notif-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    line-height: 1.4;
+}
+
+.notif-btn-confirm,
+.notif-btn-update {
+    background: var(--purple);
+    color: #fff;
+}
+
+.notif-btn-confirm:hover,
+.notif-btn-update:hover {
+    background: var(--purple-hover);
+    transform: scale(1.02);
+}
+
+.notif-btn-cancel {
+    background: var(--bg3);
+    color: var(--text2);
+}
+
+.notif-btn-cancel:hover {
+    background: var(--bg4);
+    color: var(--text);
+}
+
+.notif-btn-close {
+    background: none;
+    color: var(--text3);
+    font-size: 20px;
+    padding: 0 4px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.notif-btn-close:hover {
+    opacity: 1;
+    color: var(--text);
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+@media (max-width: 480px) {
+    #notif {
+        bottom: 80px;
+        padding: 12px 16px;
+        font-size: 12px;
+        width: 95%;
+        border-radius: 10px;
+    }
+
+    #notif.confirm,
+    #notif.update {
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    #notif.confirm .notif-msg,
+    #notif.update .notif-msg {
+        text-align: center;
+        width: 100%;
+    }
+
+    .notif-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .notif-btn {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .notif-btn-close {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        font-size: 18px;
+        width: auto;
+    }
+
+    #notif:not(.confirm):not(.update) {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    #notif:not(.confirm):not(.update) .notif-msg {
+        flex: 1;
+        min-width: 60%;
+    }
+}
+
+/* ============================================================
+   VARIANTES DE COR
+   ============================================================ */
+
+/* Sucesso - Verde */
+#notif.ok {
+    background: var(--green-light);
+    color: var(--green);
+    border: 1px solid var(--green);
+}
+
+/* Erro - Vermelho */
+#notif.err {
+    background: var(--red-light);
+    color: var(--red);
+    border: 1px solid var(--red);
+}
+
+/* Informação - Azul */
+#notif.info {
+    background: var(--blue-light);
+    color: var(--blue);
+    border: 1px solid var(--blue);
+}
+
+/* Confirmação - Roxo */
+#notif.confirm {
+    background: var(--bg2);
+    color: var(--text);
+    border: 2px solid var(--purple);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25);
+}
+
+/* Atualização - Roxo com destaque */
+#notif.update {
+    background: var(--bg2);
+    color: var(--text);
+    border: 2px solid var(--purple);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+    padding: 16px 20px;
+}
+
+#notif.update .notif-msg {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#notif.update .notif-msg strong {
+    color: var(--purple);
+}
+
+/* ============================================================
+   MENSAGEM
+   ============================================================ */
+.notif-msg {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   BOTÕES
+   ============================================================ */
+.notif-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.notif-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    line-height: 1.4;
+}
+
+/* Botão OK (confirmação) */
+.notif-btn-confirm {
+    background: var(--purple);
+    color: #fff;
+}
+
+.notif-btn-confirm:hover {
+    background: var(--purple-hover);
+    transform: scale(1.02);
+}
+
+.notif-btn-confirm:active {
+    transform: scale(0.97);
+}
+
+/* Botão Atualizar */
+.notif-btn-update {
+    background: var(--purple);
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 13px;
+    min-width: 100px;
+}
+
+.notif-btn-update:hover {
+    background: var(--purple-hover);
+    transform: scale(1.02);
+}
+
+.notif-btn-update:active {
+    transform: scale(0.97);
+}
+
+/* Botão Cancelar */
+.notif-btn-cancel {
+    background: var(--bg3);
+    color: var(--text2);
+}
+
+.notif-btn-cancel:hover {
+    background: var(--bg4);
+    color: var(--text);
+}
+
+/* Botão Fechar (×) */
+.notif-btn-close {
+    background: none;
+    color: var(--text3);
+    font-size: 20px;
+    padding: 0 4px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.notif-btn-close:hover {
+    opacity: 1;
+    color: var(--text);
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+/* Celulares */
+@media (max-width: 480px) {
+    #notif {
+        bottom: 80px;
+        padding: 12px 16px;
+        font-size: 12px;
+        width: 95%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    #notif.confirm,
+    #notif.update {
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    #notif.confirm .notif-msg,
+    #notif.update .notif-msg {
+        text-align: center;
+        width: 100%;
+    }
+
+    .notif-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .notif-btn {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .notif-btn-update {
+        min-width: unset;
+        padding: 10px;
+    }
+
+    .notif-btn-close {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        font-size: 18px;
+        width: auto;
+    }
+
+    #notif:not(.confirm):not(.update) {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    #notif:not(.confirm):not(.update) .notif-msg {
+        flex: 1;
+        min-width: 60%;
+    }
+}
+
+/* Celulares muito pequenos */
+@media (max-width: 360px) {
+    #notif {
+        bottom: 72px;
+        padding: 10px 14px;
+        font-size: 11px;
+        border-radius: 10px;
+    }
+
+    #notif.confirm,
+    #notif.update {
+        padding: 12px 14px;
+    }
+
+    .notif-btn {
+        font-size: 12px;
+        padding: 7px;
+    }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 1024px) {
+    #notif {
+        bottom: 30px;
+        max-width: 420px;
+    }
 }
 
 /* ============================================================
