@@ -1,0 +1,205 @@
+/* ============================================================
+   CUSTOM.CSS - Estilos adicionais
+   ============================================================ */
+
+/* ============================================================
+   SIDEBAR - RODAPÉ COM USUÁRIO E LOGOUT
+   ============================================================ */
+
+/* Container do rodapé da sidebar */
+.sidebar-footer {
+    margin-top: auto;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Informações do usuário */
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+
+/* Avatar do usuário */
+.sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* Nome do usuário */
+.sidebar-username {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+/* Email do usuário */
+.sidebar-useremail {
+    font-size: 10px;
+    color: var(--text3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Botão Sair da sidebar */
+#btn-logout-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+#btn-logout-sidebar:hover {
+    background: var(--red-light);
+    color: var(--red);
+    border-color: var(--red);
+}
+
+#btn-logout-sidebar i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Versão (opcional, pequena) */
+.sidebar-version {
+    font-size: 9px;
+    color: var(--text3);
+    text-align: center;
+    padding-top: 4px;
+}
+
+/* ============================================================
+   BOTÃO DE LOGOUT FLUTUANTE (DESKTOP)
+   ============================================================ */
+#logout-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+}
+
+#btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+#btn-logout:hover {
+    background: #dc2626;
+}
+
+#btn-logout i {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================================
+   RESPONSIVIDADE - MOBILE
+   ============================================================ */
+@media (max-width: 480px) {
+    #logout-container {
+        top: 5px;
+        right: 5px;
+    }
+    
+    #btn-logout {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+    
+    #btn-logout i {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* ============================================================
+   MODAL DE BOAS-VINDAS COM TUTORIAL
+   ============================================================ */
+.modal-welcome-tutorial {
+    max-width: 460px;
+    padding: 24px 28px 20px;
+}
+
+.welcome-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.welcome-dot.active {
+    background: var(--purple);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .modal-welcome-tutorial {
+        padding: 18px 16px 16px;
+        max-width: 100%;
+        margin: 10px;
+    }
+    
+    .modal-welcome-tutorial #welcome-icon {
+        font-size: 40px !important;
+    }
+    
+    .modal-welcome-tutorial #welcome-title {
+        font-size: 16px !important;
+    }
+    
+    .modal-welcome-tutorial #welcome-text {
+        font-size: 13px !important;
+    }
+    
+    .modal-welcome-tutorial .modal-actions {
+        flex-wrap: wrap;
+    }
+    
+    #welcome-next {
+        padding: 6px 14px !important;
+        font-size: 12px !important;
+    }
+}

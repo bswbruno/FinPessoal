@@ -1,0 +1,24 @@
+{
+  "name": "finpessoal",
+  "version": "1.0.0",
+  "description": "Quem **instalou o app** (celular ou computador, \"Adicionar à tela inicial\"/ \"Instalar app\") agora recebe um aviso quando você publica uma versão nova: um banner discreto no rodapé — \"🔄 Nova versão disponível\" — com um botão **\"Atualizar agora\"**. Ao clicar, o app atualiza e recarrega sozinho, **sem precisar de F5 nem perder os dados cadastrados** (os dados ficam no `localStorage`, que é completamente separado do cache do Service Worker). Quem só acessa pelo navegador normal (sem instalar) não vê esse aviso.",
+  "main": "service-worker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bswbruno/FinPessoal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bswbruno/FinPessoal/issues"
+  },
+  "homepage": "https://github.com/bswbruno/FinPessoal#readme",
+  "dependencies": {
+    "firebase": "^12.18.0"
+  }
+}

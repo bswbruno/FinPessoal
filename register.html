@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinPessoal — Cadastro</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- ============================================================
+         🔥 FIREBASE - CDN
+    ============================================================ -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- ============================================================
+         🔥 FIREBASE - CONFIGURAÇÃO
+    ============================================================ -->
+    <script src="js/firebase-config.js"></script>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <!-- Logo -->
+            <div class="auth-logo">
+                Fin<span>Pessoal</span>
+            </div>
+
+            <!-- Título -->
+            <h1 class="auth-title">Crie sua conta 👋</h1>
+            <p class="auth-subtitle">Comece a controlar suas finanças agora mesmo.</p>
+
+            <!-- Mensagem de erro -->
+            <div id="register-mensagem" class="auth-message"></div>
+
+            <!-- Botão Google -->
+            <button id="btn-google-register" class="btn-google">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Cadastrar com Google
+            </button>
+
+            <div class="auth-divider">
+                <hr>
+                <span>ou</span>
+                <hr>
+            </div>
+
+            <!-- Formulário de Cadastro -->
+            <form id="form-register" class="auth-form" onsubmit="return false;">
+                <div class="form-field">
+                    <label>Nome completo <span class="required">*</span></label>
+                    <input type="text" id="reg-name" placeholder="Ex: João Silva" required>
+                </div>
+
+                <div class="form-field">
+                    <label>Telefone <span class="required">*</span></label>
+                    <input type="tel" id="reg-phone" placeholder="(00) 00000-0000" required>
+                    <div class="input-hint">📱 Com DDD, apenas números</div>
+                </div>
+
+                <div class="form-field">
+                    <label>E-mail <span class="required">*</span></label>
+                    <input type="email" id="reg-email" placeholder="voce@email.com" required>
+                </div>
+
+                <div class="form-field">
+                    <label>Senha <span class="required">*</span></label>
+                    <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+                    <div class="input-hint">🔒 Mínimo 6 caracteres, use números e letras</div>
+                </div>
+
+                <div class="form-field">
+                    <label>Confirmar senha <span class="required">*</span></label>
+                    <input type="password" id="reg-confirm" placeholder="Digite a senha novamente" minlength="6" required>
+                </div>
+
+                <button type="submit" id="register-btn" class="btn-auth">
+                    📝 Criar conta
+                </button>
+            </form>
+
+            <!-- Link para login -->
+            <div class="auth-links auth-links-divider">
+                <span class="text">Já tem uma conta?</span>
+                <a href="login.html" class="link">Faça login</a>
+            </div>
+
+            <!-- Termos -->
+            <div class="auth-terms">
+                Ao criar uma conta, você concorda com os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a>.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================
+         🔥 SCRIPT DE CADASTRO
+    ============================================================ -->
+    <script>
+        // ============================================================
+        // ELEMENTOS
+        // ============================================================
+        const form = document.getElementById('form-register');
+        const nameInput = document.getElementById('reg-name');
+        const phoneInput = document.getElementById('reg-phone');
+        const emailInput = document.getElementById('reg-email');
+        const passwordInput = document.getElementById('reg-password');
+        const confirmInput = document.getElementById('reg-confirm');
+        const btn = document.getElementById('register-btn');
+        const msgDiv = document.getElementById('register-mensagem');
+        const googleBtn = document.getElementById('btn-google-register');
+
+        // ============================================================
+        // FUNÇÕES
+        // ============================================================
+        function mostrarMensagem(texto, tipo) {
+            msgDiv.textContent = texto;
+            msgDiv.className = 'auth-message show';
+            if (tipo === 'error') {
+                msgDiv.classList.add('error');
+            } else if (tipo === 'success') {
+                msgDiv.classList.add('success');
+            }
+            console.log('📢 Mensagem:', texto);
+        }
+
+        function formatPhone(value) {
+            const numbers = value.replace(/\D/g, '');
+            if (numbers.length <= 2) return numbers;
+            if (numbers.length <= 7) return '(' + numbers.slice(0, 2) + ') ' + numbers.slice(2);
+            return '(' + numbers.slice(0, 2) + ') ' + numbers.slice(2, 7) + '-' + numbers.slice(7, 11);
+        }
+
+        // ============================================================
+        // MÁSCARA PARA TELEFONE
+        // ============================================================
+        phoneInput.addEventListener('input', function() {
+            const cursorPos = this.selectionStart;
+            const raw = this.value.replace(/\D/g, '');
+            const formatted = formatPhone(raw);
+            this.value = formatted;
+            if (cursorPos !== this.selectionStart) {
+                this.setSelectionRange(cursorPos + 1, cursorPos + 1);
+            }
+        });
+
+        // ============================================================
+        // CADASTRO COM E-MAIL/SENHA
+        // ============================================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+
+            // Validações
+            if (!name || name.length < 2) {
+                mostrarMensagem('❌ Preencha seu nome completo.', 'error');
+                nameInput.focus();
+                return;
+            }
+
+            if (!phone || phone.replace(/\D/g, '').length < 10) {
+                mostrarMensagem('❌ Preencha um telefone válido com DDD.', 'error');
+                phoneInput.focus();
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                mostrarMensagem('❌ Preencha um e-mail válido.', 'error');
+                emailInput.focus();
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                mostrarMensagem('❌ A senha deve ter no mínimo 6 caracteres.', 'error');
+                passwordInput.focus();
+                return;
+            }
+
+            if (password !== confirm) {
+                mostrarMensagem('❌ As senhas não coincidem.', 'error');
+                confirmInput.focus();
+                return;
+            }
+
+            // Desabilita botão
+            btn.disabled = true;
+            btn.textContent = '⏳ Criando conta...';
+
+            try {
+                // 1. Cria o usuário no Firebase Auth
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // 2. Atualiza o nome do usuário
+                await user.updateProfile({
+                    displayName: name
+                });
+
+                // 3. Salva os dados do usuário no Firestore
+                await salvarUsuarioFirestore(user.uid, {
+                    nome: name,
+                    email: email,
+                    telefone: phone,
+                    criadoEm: new Date().toISOString()
+                });
+
+                console.log('✅ Conta criada com sucesso!');
+                mostrarMensagem('✅ Conta criada com sucesso!', 'success');
+                btn.textContent = '✅ Conta criada!';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Erro:', error.code, error.message);
+                let msg = '❌ Erro ao criar conta.';
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = '❌ Este e-mail já está em uso. Faça login ou use outro e-mail.';
+                } else if (error.code === 'auth/invalid-email') {
+                    msg = '❌ E-mail inválido. Verifique o formato.';
+                } else if (error.code === 'auth/weak-password') {
+                    msg = '❌ Senha muito fraca. Use pelo menos 6 caracteres.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    msg = '❌ Erro de rede. Verifique sua conexão.';
+                }
+                mostrarMensagem(msg, 'error');
+                btn.disabled = false;
+                btn.textContent = '📝 Criar conta';
+            }
+        });
+
+        // ============================================================
+        // CADASTRO COM GOOGLE
+        // ============================================================
+        googleBtn.addEventListener('click', async function() {
+            googleBtn.disabled = true;
+            googleBtn.textContent = '⏳ Aguarde...';
+            mostrarMensagem('', '');
+
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+
+                // Verifica se o usuário já existe no Firestore
+                const docRef = firebase.firestore().collection('usuarios').doc(user.uid);
+                const doc = await docRef.get();
+
+                if (!doc.exists) {
+                    await salvarUsuarioFirestore(user.uid, {
+                        nome: user.displayName || 'Usuário Google',
+                        email: user.email,
+                        telefone: user.phoneNumber || '',
+                        fotoURL: user.photoURL || '',
+                        criadoEm: new Date().toISOString()
+                    });
+                }
+
+                console.log('✅ Login com Google realizado!');
+                mostrarMensagem('✅ Cadastro com Google realizado!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('❌ Erro:', error.code, error.message);
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    mostrarMensagem('❌ Erro ao cadastrar com Google: ' + error.message, 'error');
+                }
+                googleBtn.disabled = false;
+                googleBtn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Cadastrar com Google
+                `;
+            }
+        });
+
+        // ============================================================
+        // FUNÇÃO PARA SALVAR USUÁRIO NO FIRESTORE
+        // ============================================================
+        async function salvarUsuarioFirestore(uid, dados) {
+            const db = firebase.firestore();
+            await db.collection('usuarios').doc(uid).set({
+                nome: dados.nome || '',
+                email: dados.email || '',
+                telefone: dados.telefone || '',
+                fotoURL: dados.fotoURL || '',
+                criadoEm: dados.criadoEm || new Date().toISOString(),
+                ultimoAcesso: new Date().toISOString()
+            }, { merge: true });
+        }
+
+        // ============================================================
+        // ENTER PARA SUBMIT
+        // ============================================================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active && active.tagName === 'INPUT') {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+
+        console.log('✅ Página de cadastro carregada!');
+    </script>
+
+</body>
+</html>

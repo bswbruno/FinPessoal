@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * FinPessoal v9.3 – js/ui.js
+ * FinPessoal v10.1 – js/ui.js
  * ============================================================
  * 
  * Responsabilidade deste arquivo: apenas comportamento "de interface" que
@@ -11,8 +11,7 @@
  *    tablet/celular, aberto/fechado pelo botao hamburguer
  * 3) Ocultar/mostrar valores monetarios em toda a interface
  * 4) Notificacoes (toast) com botao de confirmacao
- * 5) Modal de boas-vindas / aviso de privacidade
- * 6) Atualizacao do app (PWA)
+ * 5) Atualizacao do app (PWA)
  * 
  * Por que um arquivo separado?
  * Assim, qualquer ajuste futuro de tema ou de menu mobile fica isolado aqui,
@@ -270,24 +269,7 @@ function maybeShowUpdatedToast() {
 
 
 // ============================================================
-// 6. MODAL DE BOAS-VINDAS / AVISO DE PRIVACIDADE
-// ============================================================
-
-const WELCOME_SEEN_KEY = 'fp-welcome-seen';
-
-function maybeShowWelcomeModal() {
-    if (localStorage.getItem(WELCOME_SEEN_KEY)) return;
-    openModal('modal-welcome');
-}
-
-function closeWelcomeModal() {
-    localStorage.setItem(WELCOME_SEEN_KEY, '1');
-    closeModal('modal-welcome');
-}
-
-
-// ============================================================
-// 7. FUNCAO NOTIFY LEGACY (para compatibilidade)
+// 6. FUNCAO NOTIFY LEGACY (para compatibilidade)
 // ============================================================
 
 // Mantem a funcao original para compatibilidade com codigo existente
@@ -309,5 +291,6 @@ window.closeNotify = closeNotify;
 window.showUpdatedToast = showUpdatedToast;
 window.maybeShowUpdatedToast = maybeShowUpdatedToast;
 window.resolveNotify = resolveNotify;
+// NOTA: maybeShowWelcomeModal agora está em modals.js
 
 console.log('✅ ui.js carregado com sucesso!');

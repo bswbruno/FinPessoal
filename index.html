@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FinPessoal – Sistema Financeiro Pessoal</title>
 
     <!-- ============================================================
@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="css/receber.css">
     <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/patrimonio.css">
+    <link rel="stylesheet" href="css/custom.css">
 
     <!-- ============================================================
          JAVASCRIPT - BIBLIOTECAS
@@ -42,29 +43,42 @@
     <script src="js/lib/lucide.min.js"></script>
 
     <!-- ============================================================
-         GUARDA DE ACESSO (LOGIN)
+         🔥 FIREBASE - CDN
     ============================================================ -->
-    <script>
-        // Guarda de acesso: se este navegador ainda não se identificou
-        // (localStorage 'fp_usuario'), manda direto pro login antes de o
-        // conteúdo da página aparecer. Ver js/acesso.js.
-        if (!localStorage.getItem('fp_usuario')) {
-            window.location.href = 'login.html';
-        }
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- ============================================================
+         🔥 FIREBASE - CONFIGURAÇÃO
+    ============================================================ -->
+    <script src="js/firebase-config.js"></script>
+
+    <!-- ============================================================
+         🔥 FIRESTORE - FUNÇÕES
+    ============================================================ -->
+    <script src="js/firebase-db.js"></script>
 </head>
 <body>
 
     <!-- ============================================================
          NOTIFICAÇÃO (TOAST)
     ============================================================ -->
-      <div id="notif"></div>
-
-
+    <div id="notif"></div>
 
     <!-- ============================================================
-         MODAIS - DESPESA
+         BOTÃO DE LOGOUT (FLUTUANTE - OPÇÃO PARA DESKTOP)
     ============================================================ -->
+    <div id="logout-container">
+        <button id="btn-logout" onclick="fazerLogout()">
+            <i data-lucide="log-out"></i> Sair
+        </button>
+    </div>
+
+    <!-- ============================================================
+         TODOS OS MODAIS (mantidos do original)
+         ============================================================ -->
+    <!-- MODAL: DESPESA -->
     <div class="modal-overlay" id="modal-exp">
         <div class="modal">
             <div class="modal-header">
@@ -130,9 +144,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: CONFIRMAR PAGAMENTO
-    ============================================================ -->
+    <!-- MODAL: CONFIRMAR PAGAMENTO -->
     <div class="modal-overlay" id="modal-pay-confirm">
         <div class="modal modal-sm">
             <div class="modal-header">
@@ -162,9 +174,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: RECEITA
-    ============================================================ -->
+    <!-- MODAL: RECEITA -->
     <div class="modal-overlay" id="modal-inc">
         <div class="modal">
             <div class="modal-header">
@@ -228,9 +238,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: CARTÃO
-    ============================================================ -->
+    <!-- MODAL: CARTÃO -->
     <div class="modal-overlay" id="modal-card">
         <div class="modal">
             <div class="modal-header">
@@ -290,9 +298,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: FATURA ATUAL DO CARTÃO
-    ============================================================ -->
+    <!-- MODAL: FATURA ATUAL DO CARTÃO -->
     <div class="modal-overlay" id="modal-card-invoice">
         <div class="modal">
             <div class="modal-header">
@@ -306,46 +312,72 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: BEM-VINDO
-    ============================================================ -->
-    <div class="modal-overlay" id="modal-welcome">
-        <div class="modal modal-center">
-            <div class="welcome-icon">
-                <i data-lucide="lock-keyhole"></i>
-            </div>
-            <h2 class="welcome-title">Bem-vindo(a) ao FinPessoal 👋</h2>
-            <p class="welcome-text">Este é um projeto de portfólio — um sistema completo de controle financeiro pessoal.</p>
-            <p class="welcome-text welcome-privacy"><strong>Seus dados ficam só neste navegador</strong> (armazenamento local do próprio Chrome/Firefox/Edge). Nada é enviado pra nenhum servidor — ninguém mais tem acesso ao que você digitar aqui, nem o desenvolvedor.</p>
-            <div class="modal-actions modal-actions-center">
-                <button class="btn" onclick="closeWelcomeModal()">Explorar sem dados</button>
-                <button class="btn btn-primary" onclick="closeWelcomeModal();seedDemoData();">
-                    <i data-lucide="sparkles" class="ic-lucide"></i> Ver com dados de exemplo
+  <!-- ============================================================
+     MODAL: BEM-VINDO COM TUTORIAL
+============================================================ -->
+<div class="modal-overlay" id="modal-welcome">
+    <div class="modal modal-welcome-tutorial">
+        <div class="modal-header" style="border-bottom:none;padding-bottom:0;">
+            <span class="modal-title" style="font-size:13px;color:var(--text3);font-weight:400;">
+                Tutorial
+            </span>
+            <button class="modal-close" onclick="welcomePular()" title="Pular tutorial">×</button>
+        </div>
+        
+        <div style="text-align:center;padding:10px 0 20px;">
+            <div id="welcome-icon" style="font-size:52px;display:block;margin-bottom:12px;">📊</div>
+            <h2 id="welcome-title" style="font-size:18px;font-weight:700;margin-bottom:10px;">Bem-vindo ao FinPessoal!</h2>
+            <p id="welcome-text" style="font-size:14px;color:var(--text2);line-height:1.6;max-width:400px;margin:0 auto;">
+                Gerencie suas finanças pessoais de forma simples e intuitiva.
+            </p>
+        </div>
+
+        <!-- Dots de navegação -->
+        <div style="display:flex;justify-content:center;gap:8px;margin:4px 0 12px;">
+            <span class="welcome-dot active" style="width:8px;height:8px;border-radius:50%;background:var(--purple);cursor:pointer;transition:all 0.3s;"></span>
+            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);">
+            <button id="welcome-prev" onclick="welcomeAnterior()" style="display:none;background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;">
+                ← Anterior
+            </button>
+            <span id="welcome-counter" style="font-size:12px;color:var(--text3);">1 / 6</span>
+            <div style="display:flex;gap:8px;">
+                <button onclick="welcomePular()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">
+                    Pular
+                </button>
+                <button id="welcome-next" onclick="welcomeProximo()" style="padding:8px 20px;background:var(--purple);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">
+                    Próximo
                 </button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ============================================================
-         MODAL: CONFIRMAR
-    ============================================================ -->
-    <div class="modal-overlay" id="modal-confirm">
-        <div class="modal modal-confirm">
-            <div class="modal-header">
-                <span class="modal-title">Confirmar</span>
-                <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
-            </div>
-            <div id="confirm-msg"></div>
-            <div class="modal-actions">
-                <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
-                <button class="btn btn-danger" id="confirm-ok-btn">Confirmar</button>
-            </div>
+    
+  <!-- ============================================================
+     MODAL: CONFIRMAR
+============================================================ -->
+<div class="modal-overlay" id="modal-confirm">
+    <div class="modal modal-confirm">
+        <div class="modal-header">
+            <span class="modal-title" id="confirm-title">Confirmar</span>
+            <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
+        </div>
+        <div id="confirm-msg" style="color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:18px;text-align:center;padding:8px 0;"></div>
+        <div class="modal-actions" style="justify-content:center;gap:10px;">
+            <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
+            <button class="btn btn-primary" id="confirm-ok-btn">Confirmar</button>
         </div>
     </div>
+</div>
 
-    <!-- ============================================================
-         MODAL: ADIÇÃO RÁPIDA
-    ============================================================ -->
+    <!-- MODAL: ADIÇÃO RÁPIDA -->
     <div class="modal-overlay" id="modal-quick-add">
         <div class="modal modal-quick-add">
             <div class="modal-header">
@@ -377,9 +409,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: PARCELAS
-    ============================================================ -->
+    <!-- MODAL: PARCELAS -->
     <div class="modal-overlay" id="modal-parcelas">
         <div class="modal modal-parcelas">
             <div class="modal-header">
@@ -393,9 +423,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: VISUALIZAR RECIBO
-    ============================================================ -->
+    <!-- MODAL: VISUALIZAR RECIBO -->
     <div class="modal-overlay" id="modal-receipt">
         <div class="modal modal-receipt">
             <div class="modal-header">
@@ -410,9 +438,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: CONFIRMAR RECEBIMENTO
-    ============================================================ -->
+    <!-- MODAL: CONFIRMAR RECEBIMENTO -->
     <div class="modal-overlay" id="modal-receive-confirm">
         <div class="modal modal-sm">
             <div class="modal-header">
@@ -431,9 +457,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: CONTA BANCÁRIA
-    ============================================================ -->
+    <!-- MODAL: CONTA BANCÁRIA -->
     <div class="modal-overlay" id="modal-acc">
         <div class="modal">
             <div class="modal-header">
@@ -493,9 +517,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: MOVIMENTAÇÃO
-    ============================================================ -->
+    <!-- MODAL: MOVIMENTAÇÃO -->
     <div class="modal-overlay" id="modal-mov">
         <div class="modal">
             <div class="modal-header">
@@ -543,9 +565,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: OBJETIVO (Patrimônio)
-    ============================================================ -->
+    <!-- MODAL: OBJETIVO (Patrimônio) -->
     <div class="modal-overlay" id="modal-obj">
         <div class="modal">
             <div class="modal-header">
@@ -573,9 +593,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: APORTE/RETIRADA (Patrimônio)
-    ============================================================ -->
+    <!-- MODAL: APORTE/RETIRADA (Patrimônio) -->
     <div class="modal-overlay" id="modal-obj-entry">
         <div class="modal modal-sm">
             <div class="modal-header">
@@ -607,9 +625,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: HISTÓRICO DO OBJETIVO
-    ============================================================ -->
+    <!-- MODAL: HISTÓRICO DO OBJETIVO -->
     <div class="modal-overlay" id="modal-obj-history">
         <div class="modal">
             <div class="modal-header">
@@ -623,9 +639,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: DETALHES DO DIA (Agenda)
-    ============================================================ -->
+    <!-- MODAL: DETALHES DO DIA (Agenda) -->
     <div class="modal-overlay" id="modal-agenda-day">
         <div class="modal">
             <div class="modal-header">
@@ -639,9 +653,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: CALCULADORA
-    ============================================================ -->
+    <!-- MODAL: CALCULADORA -->
     <div class="modal-overlay" id="modal-calc">
         <div class="modal modal-calc">
             <div class="modal-header">
@@ -677,9 +689,7 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         MODAL: GASTO RÁPIDO
-    ============================================================ -->
+    <!-- MODAL: GASTO RÁPIDO -->
     <div class="modal-overlay" id="modal-quick-exp">
         <div class="modal modal-quick-exp">
             <div class="modal-header">
@@ -774,7 +784,22 @@
                 <span class="ic"><i data-lucide="message-circle"></i></span>Suporte
             </button>
 
-            <div class="sidebar-footer" id="sidebar-footer">FinPessoal v9.3</div>
+            <!-- ============================================================
+                 SIDEBAR - RODAPÉ COM USUÁRIO
+            ============================================================ -->
+            <div class="sidebar-footer" id="sidebar-footer">
+                <div class="sidebar-user" id="sidebar-user-info">
+                    <div class="sidebar-avatar" id="sidebar-avatar">?</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="sidebar-username" id="sidebar-username">Usuário</div>
+                        <div class="sidebar-useremail" id="sidebar-useremail">email@email.com</div>
+                    </div>
+                </div>
+                <button id="btn-logout-sidebar" onclick="fazerLogout()">
+                    <i data-lucide="log-out"></i> Sair
+                </button>
+                <div class="sidebar-version">v10.1</div>
+            </div>
         </nav>
 
         <!-- ============================================================
@@ -861,7 +886,6 @@
     <!-- ============================================================
          JAVASCRIPT - SCRIPTS
     ============================================================ -->
-    <script src="js/acesso.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/categorias.js"></script>
     <script src="js/contas.js"></script>
@@ -884,48 +908,144 @@
     <script src="js/ui.js"></script>
 
     <!-- ============================================================
-         INICIALIZAÇÃO
+         🔥 FIREBASE - INICIALIZAÇÃO COM FIRESTORE
     ============================================================ -->
     <script>
-        // INICIALIZAÇÃO
-        // A guarda no <head> já redireciona pro login.html se ainda não houver
-        // usuário identificado. Aqui só confirmamos (defesa extra) e registramos
-        // mais um acesso na planilha antes de carregar os dados financeiros.
-        //
-        // IMPORTANTE (correção de bug): antes, essa inicialização chamava
-        // seedDemoData(true) — o "true" força a substituição dos dados TODA VEZ
-        // que a página carrega, apagando qualquer coisa que a pessoa tivesse
-        // cadastrado. Os dados fictícios agora só aparecem UMA VEZ (primeiro
-        // acesso deste navegador, via maybeShowWelcomeModal — ver js/ui.js), e
-        // "Apagar todos os dados" em Configurações passa a funcionar de verdade:
-        // depois de apagar, os dados continuam apagados mesmo recarregando.
-        (function init() {
-            if (!verificarAcessoOuRedirecionar()) return;
-            ld();
-            applyHideValuesIcon();
-            buildSwatches('#6366f1');
-            updMth();
-            if (ST.settings.name) document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
-            render();
-            maybeShowWelcomeModal();
-            maybeShowUpdatedToast();
-        })();
+        // ============================================================
+        // ATUALIZA INFORMAÇÕES DO USUÁRIO NA SIDEBAR
+        // ============================================================
+        function atualizarUsuarioSidebar(user) {
+            const nome = user.displayName || user.email?.split('@')[0] || 'Usuário';
+            const email = user.email || '';
+            const inicial = nome.charAt(0).toUpperCase();
+
+            document.getElementById('sidebar-username').textContent = nome;
+            document.getElementById('sidebar-useremail').textContent = email;
+            document.getElementById('sidebar-avatar').textContent = inicial;
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO COM FIREBASE + FIRESTORE
+        // ============================================================
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log('✅ Usuário logado:', user.email);
+                
+                // ATUALIZA O NOME NA SIDEBAR
+                atualizarUsuarioSidebar(user);
+                
+                // Carrega dados do Firestore
+                carregarDadosFirestore(user.uid).then(function(dados) {
+                    if (dados) {
+                        // Carrega dados do Firestore
+                        ST.expenses = dados.despesas || [];
+                        ST.incomes = dados.receitas || [];
+                        ST.cards = dados.cartoes || [];
+                        ST.accounts = dados.contas || [];
+                        ST.movements = dados.movimentacoes || [];
+                        ST.objectives = dados.objetivos || [];
+                        ST.objectiveEntries = dados.entriesObjetivos || [];
+                        ST.budgets = dados.orcamentos || {};
+                        ST.groups = dados.grupos || [];
+                        ST.expStatuses = dados.statusDespesas || [];
+                        ST.incStatuses = dados.statusReceitas || [];
+                        ST.settings = dados.configuracoes || {};
+                        console.log('✅ Dados carregados do Firestore');
+                    } else {
+                        console.log('ℹ️ Nenhum dado encontrado. Usando localStorage.');
+                        // Tenta carregar do localStorage como fallback
+                        ld();
+                    }
+                    
+                    // Continua com a inicialização normal
+                    applyHideValuesIcon();
+                    buildSwatches('#6366f1');
+                    updMth();
+                    if (ST.settings.name) {
+                        document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
+                    }
+                    render();
+                    maybeShowWelcomeModal();
+                    maybeShowUpdatedToast();
+                });
+            } else {
+                console.log('⏳ Redirecionando para login...');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // ============================================================
+        // SUBSTITUI A FUNÇÃO sv() - CORRIGIDA
+        // ============================================================
+        const originalSv = sv;
+
+        sv = function() {
+            // 1. Salva no localStorage (sempre funciona)
+            if (originalSv) {
+                try { 
+                    originalSv(); 
+                } catch(e) { 
+                    console.warn('⚠️ Erro no salvamento local:', e); 
+                }
+            }
+            
+            // 2. Salva no Firestore (em segundo plano)
+            const user = firebase.auth().currentUser;
+            if (user) {
+                salvarDadosFirestore(user.uid, {
+                    expenses: ST.expenses || [],
+                    incomes: ST.incomes || [],
+                    cards: ST.cards || [],
+                    accounts: ST.accounts || [],
+                    movements: ST.movements || [],
+                    objectives: ST.objectives || [],
+                    objectiveEntries: ST.objectiveEntries || [],
+                    budgets: ST.budgets || {},
+                    groups: ST.groups || [],
+                    expStatuses: ST.expStatuses || [],
+                    incStatuses: ST.incStatuses || [],
+                    settings: ST.settings || {}
+                }).catch(function(err) {
+                    console.warn('⚠️ Erro ao salvar no Firestore:', err);
+                });
+            }
+        };
+
+        console.log('✅ sv() substituída com sucesso!');
+
+        // ============================================================
+        // FUNÇÃO DE LOGOUT (COM MODAL)
+        // ============================================================
+        function fazerLogout() {
+            confirmarComModal(
+                'Deseja realmente sair?<br><span style="font-size:12px;color:var(--text3);">Você será redirecionado para a tela de login.</span>',
+                function() {
+                    firebase.auth().signOut().then(function() {
+                        console.log('✅ Logout realizado!');
+                        localStorage.clear();
+                        window.location.href = 'login.html';
+                    }).catch(function(error) {
+                        console.error('❌ Erro no logout:', error);
+                        alertarComModal('Erro ao sair: ' + error.message, 'error');
+                    });
+                },
+                'Sair',
+                'btn-danger'
+            );
+        }
     </script>
 
-      <!-- ============================================================
-         SERVICE WORKER (PWA) - COM NOTIFICAÇÃO DE ATUALIZAÇÃO
-         ============================================================ -->
+    <!-- ============================================================
+         SERVICE WORKER (PWA)
+    ============================================================ -->
     <script>
         if ('serviceWorker' in navigator) {
             let refreshing = false;
             let updateResolved = false;
 
-            // Quando o Service Worker novo assume o controle
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
                 refreshing = true;
-                
-                // Guarda a flag para mostrar o toast de sucesso
                 localStorage.setItem('fp_just_updated', '1');
                 window.location.reload();
             });
@@ -936,19 +1056,15 @@
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('service-worker.js')
                         .then(function(reg) {
-                            // Verifica atualização imediatamente
                             reg.update();
 
-                            // Quando uma nova versão é encontrada
                             reg.addEventListener('updatefound', () => {
                                 const newWorker = reg.installing;
                                 newWorker.addEventListener('statechange', () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // Nova versão disponível!
                                         if (!updateResolved) {
                                             updateResolved = false;
                                             
-                                            // Mostra a notificação de atualização
                                             if (typeof window.notify === 'function') {
                                                 window.notify('🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.', 'update');
                                                 
@@ -972,14 +1088,12 @@
                                 });
                             });
 
-                            // Verifica atualização quando a página volta a ficar visível
                             document.addEventListener('visibilitychange', () => {
                                 if (document.visibilityState === 'visible') {
                                     reg.update();
                                 }
                             });
 
-                            // Verifica periodicamente (a cada 30 minutos)
                             setInterval(() => {
                                 reg.update();
                             }, 30 * 60 * 1000);
@@ -995,6 +1109,3 @@
 
 </body>
 </html>
-        
-    
-

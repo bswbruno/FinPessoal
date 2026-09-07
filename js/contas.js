@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * FinPessoal v9.3 – Contas Bancárias
+ * FinPessoal v10.1 – Contas Bancárias
  * ============================================================
  * 
  * Regra de negócio importante: o saldo aqui mostrado é só informativo — ele
