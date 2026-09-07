@@ -2395,19 +2395,310 @@ tbody tr:hover td {
 }
 
 /* ============================================================
-   OVERLAY DA NOTIFICAÇÃO
+   AUTH - ESTILOS PARA LOGIN E CADASTRO
    ============================================================ */
-#notif-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 9998;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    transition: opacity 0.3s ease;
-    opacity: 0;
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg);
 }
 
-#notif-overlay[style*="display: block"] {
-    opacity: 1;
+.auth-card {
+    background: var(--bg2);
+    border-radius: 14px;
+    padding: 32px 28px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--shadow-md);
 }
+
+.auth-logo {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.auth-logo span {
+    color: var(--purple);
+}
+
+.auth-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.auth-subtitle {
+    font-size: 13px;
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.auth-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 1px solid var(--border);
+}
+
+.auth-divider span {
+    font-size: 11px;
+    color: var(--text3);
+}
+
+.auth-message {
+    font-size: 13px;
+    margin-bottom: 12px;
+    text-align: center;
+    min-height: 20px;
+    color: var(--text2);
+    display: none;
+}
+
+.auth-message.show {
+    display: block;
+}
+
+.auth-message.error {
+    color: var(--red);
+    background: var(--red-light);
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.auth-message.success {
+    color: var(--green);
+    background: var(--green-light);
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
+.auth-form .form-field {
+    margin-bottom: 14px;
+}
+
+.auth-form .form-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.auth-form .form-field label .required {
+    color: var(--red);
+}
+
+.auth-form .form-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.auth-form .form-field input:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px var(--purple-light);
+}
+
+.auth-form .form-field .input-hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+}
+
+.btn-auth {
+    width: 100%;
+    padding: 11px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.btn-auth:hover {
+    background: var(--purple-hover);
+    transform: translateY(-1px);
+}
+
+.btn-auth:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-google {
+    width: 100%;
+    padding: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg2);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.btn-google:hover {
+    background: var(--bg3);
+    border-color: var(--purple);
+}
+
+.btn-google:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-google svg {
+    flex-shrink: 0;
+}
+
+.auth-links {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.auth-links a {
+    font-size: 12px;
+    color: var(--purple);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.auth-links-divider {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    margin-top: 12px;
+}
+
+.auth-links-divider .text {
+    font-size: 13px;
+    color: var(--text2);
+}
+
+.auth-links-divider .link {
+    font-weight: 600;
+    color: var(--purple);
+    text-decoration: none;
+}
+
+.auth-links-divider .link:hover {
+    text-decoration: underline;
+}
+
+.auth-terms {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.auth-terms a {
+    color: var(--purple);
+    text-decoration: none;
+}
+
+.auth-terms a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================
+   RESPONSIVIDADE - AUTH
+   ============================================================ */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 20px 16px;
+        margin: 10px;
+    }
+    .auth-title {
+        font-size: 16px;
+    }
+}
+
+/* ============================================================
+   MODAL DE CONFIRMAÇÃO (estilos específicos)
+   ============================================================ */
+.modal-confirm {
+    max-width: 420px;
+}
+
+#confirm-msg {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    text-align: center;
+    padding: 8px 0;
+}
+
+#confirm-msg strong {
+    color: var(--text);
+}
+
+#confirm-ok-btn.btn-danger {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+}
+
+#confirm-ok-btn.btn-danger:hover {
+    background: var(--red-hover);
+    opacity: 0.85;
+}
+
+@media (max-width: 480px) {
+    .modal-confirm {
+        max-width: 98%;
+        padding: 18px 16px;
+    }
+    
+    .modal-confirm .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-confirm .modal-actions .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* TELA DE LOGIN */
+

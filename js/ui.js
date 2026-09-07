@@ -1,6 +1,22 @@
 /**
  * ============================================================
- * FinPessoal v9.3 – js/ui.js
+ * FinPessoal v10.1 – js/ui.js
+ * ============================================================
+ * 
+ * Responsabilidade deste arquivo: apenas comportamento "de interface" que
+ * nao depende de nenhuma regra de negocio (financas, cartoes, etc.):
+ * 
+ * 1) Tema claro/escuro (salvo no navegador e lembrado na proxima visita)
+ * 2) Menu lateral (sidebar) em modo "gaveta" (off-canvas) para
+ *    tablet/celular, aberto/fechado pelo botao hamburguer
+ * 3) Ocultar/mostrar valores monetarios em toda a interface
+ * 4) Notificacoes (toast) com botao de confirmacao
+ * 5) Atualizacao do app (PWA)
+ * 
+ * Por que um arquivo separado?
+ * Assim, qualquer ajuste futuro de tema ou de menu mobile fica isolado aqui,
+ * sem precisar mexer em nav.js, dashboard.js, etc. — que cuidam so da logica
+ * financeira do app.
  * ============================================================
  */
 
@@ -231,24 +247,18 @@ function maybeShowUpdatedToast() {
 
 
 // ============================================================
-// 6. MODAL DE BOAS-VINDAS
+// 6. FUNCAO NOTIFY LEGACY (para compatibilidade)
 // ============================================================
 
-var WELCOME_SEEN_KEY = 'fp-welcome-seen';
-
-function maybeShowWelcomeModal() {
-    if (localStorage.getItem(WELCOME_SEEN_KEY)) return;
-    openModal('modal-welcome');
+// Mantem a funcao original para compatibilidade com codigo existente
+// que chama notify() sem o novo parametro
+function notifyLegacy(msg, type) {
+    type = type || 'ok';
+    return notify(msg, type);
 }
-
-function closeWelcomeModal() {
-    localStorage.setItem(WELCOME_SEEN_KEY, '1');
-    closeModal('modal-welcome');
-}
-
 
 // ============================================================
-// 7. EXPORTA FUNCOES PARA O ESCOPO GLOBAL
+// EXPORTA FUNCOES PARA O ESCOPO GLOBAL
 // ============================================================
 
 window.notify = notify;
@@ -258,5 +268,6 @@ window.closeNotify = closeNotify;
 window.showUpdatedToast = showUpdatedToast;
 window.maybeShowUpdatedToast = maybeShowUpdatedToast;
 window.resolveNotify = resolveNotify;
+// NOTA: maybeShowWelcomeModal agora está em modals.js
 
 console.log('✅ ui.js carregado com sucesso!');

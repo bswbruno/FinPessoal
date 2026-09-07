@@ -1,5 +1,5 @@
 
-// FinPessoal v9.3 – Agenda Financeira
+// FinPessoal v10.1 – Agenda Financeira
 //
 // Calendário do mês navegado na topbar (ST.vm/ST.vy — o mesmo usado em A
 // Pagar, A Receber e Dashboard), mostrando em cada dia: despesas, receitas

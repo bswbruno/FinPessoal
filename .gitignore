@@ -1,0 +1,10 @@
+# Dependências
+node_modules/
+
+# Backups
+*.backup
+js/backup/
+
+# Arquivos de ambiente
+.env
+.env.local
