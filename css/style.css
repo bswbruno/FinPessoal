@@ -2216,12 +2216,14 @@ tbody tr:hover td {
         height: 100dvh;
         max-height: 100dvh;
         overflow-y: auto;
+        padding-bottom: calc(90px + env(safe-area-inset-bottom));
+        scroll-padding-bottom: calc(90px + env(safe-area-inset-bottom));
         overscroll-behavior: contain;
     }
 
     .sidebar .nav-item {
         color: rgb(212, 204, 204);
-        font-size: 18px;
+        font-size: 16px;
     }
 
     #quick-exp-btn {
