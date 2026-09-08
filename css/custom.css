@@ -89,6 +89,10 @@
     height: 16px;
 }
 
+.mobile-logout-item {
+    display: none;
+}
+
 /* Versão (opcional, pequena) */
 .sidebar-version {
     font-size: 9px;
@@ -134,20 +138,14 @@
 /* ============================================================
    RESPONSIVIDADE - MOBILE
    ============================================================ */
-@media (max-width: 480px) {
+@media (max-width: 700px) {
+    .mobile-logout-item {
+        display: flex;
+        color: var(--red);
+    }
+
     #logout-container {
-        top: 5px;
-        right: 5px;
-    }
-    
-    #btn-logout {
-        padding: 6px 12px;
-        font-size: 10px;
-    }
-    
-    #btn-logout i {
-        width: 14px;
-        height: 14px;
+        display: none;
     }
 }
 

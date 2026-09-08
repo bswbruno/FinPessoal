@@ -113,8 +113,8 @@ function saveSettings() {
   ST.settings.alertDays = +document.getElementById('cfg-alert').value || 3;
   sv();
   notify('Configurações salvas!');
-  document.getElementById('sidebar-footer').textContent =
-    ST.settings.name ? 'Olá, ' + ST.settings.name : 'FinPessoal v2.0';
+  document.getElementById('sidebar-username').textContent =
+    ST.settings.name || 'Usuário';
 }
 
 function clearAllData() {
@@ -127,12 +127,4 @@ function clearAllData() {
 /* ---- INICIALIZAÇÃO ---- */
 (function init() {
   ld();
-  seedDemoData(true);
-  return;
-  buildSwatches(_selectedColor);
-  updateMonthUI();
-  if (ST.settings.name) {
-    document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
-  }
-  render();
 })();

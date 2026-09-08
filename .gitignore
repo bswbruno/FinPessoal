@@ -8,3 +8,6 @@ js/backup/
 # Arquivos de ambiente
 .env
 .env.local
+
+# Cache local do Firebase CLI (Hosting não é usado neste projeto)
+.firebase/

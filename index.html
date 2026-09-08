@@ -16,8 +16,8 @@
     ============================================================ -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
-    <link rel="icon" href="icons/icon-192.png">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="icon" href="icons/favicon-32.ico">
+    <link rel="apple-touch-icon" href="icons/icon-512.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" type="image/x-icon" href="icons/favicon-32.ico">
@@ -744,7 +744,7 @@
         ============================================================ -->
         <nav class="sidebar">
             <div class="logo">
-                <img class="logo-icon" src="icons/icon-192.png" alt="FinPessoal">
+                <img class="logo-icon" src="icons/icon-512.png" alt="FinPessoal">
             </div>
 
             <div class="nav-sec">Visão Geral</div>
@@ -787,6 +787,9 @@
             </button>
             <button class="nav-item" onclick="goTo('suporte',this)">
                 <span class="ic"><i data-lucide="message-circle"></i></span>Suporte
+            </button>
+            <button class="nav-item mobile-logout-item" onclick="fazerLogout()">
+                <span class="ic"><i data-lucide="log-out"></i></span>Sair
             </button>
 
             <!-- ============================================================
@@ -932,6 +935,27 @@
         // ============================================================
         // INICIALIZAÇÃO COM FIREBASE + FIRESTORE
         // ============================================================
+        const appBaseUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+            ? location.origin
+            : 'https://bswbruno.github.io/FinPessoal';
+
+        function dadosAtuaisParaFirestore() {
+            return {
+                expenses: ST.expenses || [],
+                incomes: ST.incomes || [],
+                cards: ST.cards || [],
+                accounts: ST.accounts || [],
+                movements: ST.movements || [],
+                objectives: ST.objectives || [],
+                objectiveEntries: ST.objectiveEntries || [],
+                budgets: ST.budgets || {},
+                groups: ST.groups || [],
+                expStatuses: ST.expStatuses || [],
+                incStatuses: ST.incStatuses || [],
+                settings: ST.settings || {}
+            };
+        }
+
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 console.log('✅ Usuário logado:', user.email);
@@ -960,22 +984,21 @@
                         console.log('ℹ️ Nenhum dado encontrado. Usando localStorage.');
                         // Tenta carregar do localStorage como fallback
                         ld();
+                        // Migra os dados locais existentes para a conta na nuvem.
+                        salvarDadosFirestore(user.uid, dadosAtuaisParaFirestore());
                     }
                     
                     // Continua com a inicialização normal
                     applyHideValuesIcon();
                     buildSwatches('#6366f1');
                     updMth();
-                    if (ST.settings.name) {
-                        document.getElementById('sidebar-footer').textContent = 'Olá, ' + ST.settings.name;
-                    }
                     render();
                     maybeShowWelcomeModal();
                     maybeShowUpdatedToast();
                 });
             } else {
                 console.log('⏳ Redirecionando para login...');
-                window.location.href = 'login.html';
+                window.location.href = appBaseUrl + '/login.html';
             }
         });
 
@@ -997,20 +1020,7 @@
             // 2. Salva no Firestore (em segundo plano)
             const user = firebase.auth().currentUser;
             if (user) {
-                salvarDadosFirestore(user.uid, {
-                    expenses: ST.expenses || [],
-                    incomes: ST.incomes || [],
-                    cards: ST.cards || [],
-                    accounts: ST.accounts || [],
-                    movements: ST.movements || [],
-                    objectives: ST.objectives || [],
-                    objectiveEntries: ST.objectiveEntries || [],
-                    budgets: ST.budgets || {},
-                    groups: ST.groups || [],
-                    expStatuses: ST.expStatuses || [],
-                    incStatuses: ST.incStatuses || [],
-                    settings: ST.settings || {}
-                }).catch(function(err) {
+                salvarDadosFirestore(user.uid, dadosAtuaisParaFirestore()).catch(function(err) {
                     console.warn('⚠️ Erro ao salvar no Firestore:', err);
                 });
             }
@@ -1028,7 +1038,7 @@
                     firebase.auth().signOut().then(function() {
                         console.log('✅ Logout realizado!');
                         localStorage.clear();
-                        window.location.href = 'login.html';
+                        window.location.href = appBaseUrl + '/login.html';
                     }).catch(function(error) {
                         console.error('❌ Erro no logout:', error);
                         alertarComModal('Erro ao sair: ' + error.message, 'error');
