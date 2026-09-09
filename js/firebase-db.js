@@ -1,8 +1,87 @@
 /**
  * ============================================================
- * FinPessoal – Firestore Database
+ * FinPessoal – Firestore Database (COM TEMPO REAL)
  * ============================================================
  */
+
+// ============================================================
+// VARIÁVEL PARA GUARDAR O LISTENER
+// ============================================================
+let unsubscribeListener = null;
+let listenerAtivo = false;
+
+// ============================================================
+// FUNÇÃO PARA INICIAR LISTENER EM TEMPO REAL
+// ============================================================
+function iniciarListenerFirestore(uid, callback) {
+    if (!uid) {
+        console.warn('⚠️ Nenhum usuário logado para escutar');
+        return;
+    }
+
+    // Remove listener anterior se existir
+    if (unsubscribeListener) {
+        unsubscribeListener();
+        unsubscribeListener = null;
+        listenerAtivo = false;
+        console.log('🛑 Listener anterior removido');
+    }
+
+    console.log('👂 Iniciando listener em tempo real...');
+
+    // CRIA O LISTENER
+    unsubscribeListener = firebase.firestore()
+        .collection('usuarios')
+        .doc(uid)
+        .collection('dados')
+        .doc('financeiro')
+        .onSnapshot(
+            (doc) => {
+                listenerAtivo = true;
+                
+                if (doc.exists) {
+                    const dados = doc.data();
+                    console.log('🔄 Dados atualizados em TEMPO REAL!', new Date().toLocaleTimeString());
+                    
+                    // Chama o callback com os dados
+                    if (typeof callback === 'function') {
+                        callback(dados);
+                    }
+                } else {
+                    console.log('ℹ️ Documento ainda não existe. Aguardando criação...');
+                    if (typeof callback === 'function') {
+                        callback(null);
+                    }
+                }
+            },
+            (error) => {
+                console.error('❌ Erro no listener:', error);
+                listenerAtivo = false;
+                
+                // Tenta reconectar após 5 segundos
+                setTimeout(() => {
+                    if (!listenerAtivo && uid) {
+                        console.log('🔄 Tentando reconectar listener...');
+                        iniciarListenerFirestore(uid, callback);
+                    }
+                }, 5000);
+            }
+        );
+
+    console.log('✅ Listener iniciado com sucesso!');
+}
+
+// ============================================================
+// FUNÇÃO PARA REMOVER O LISTENER
+// ============================================================
+function removerListenerFirestore() {
+    if (unsubscribeListener) {
+        unsubscribeListener();
+        unsubscribeListener = null;
+        listenerAtivo = false;
+        console.log('🛑 Listener removido');
+    }
+}
 
 // ============================================================
 // FUNÇÃO PARA SALVAR DADOS NO FIRESTORE
@@ -43,13 +122,12 @@ function salvarDadosFirestore(uid, dados) {
         })
         .catch((error) => {
             console.error('❌ Erro ao salvar no Firestore:', error);
-            // Não propaga o erro para não quebrar o app
             return Promise.resolve();
         });
 }
 
 // ============================================================
-// FUNÇÃO PARA CARREGAR DADOS DO FIRESTORE
+// FUNÇÃO PARA CARREGAR DADOS DO FIRESTORE (UMA VEZ)
 // ============================================================
 function carregarDadosFirestore(uid) {
     if (!uid) {
@@ -104,8 +182,10 @@ function limparDadosFirestore(uid) {
 // ============================================================
 // EXPORTA FUNÇÕES PARA O ESCOPO GLOBAL
 // ============================================================
+window.iniciarListenerFirestore = iniciarListenerFirestore;
+window.removerListenerFirestore = removerListenerFirestore;
 window.salvarDadosFirestore = salvarDadosFirestore;
 window.carregarDadosFirestore = carregarDadosFirestore;
 window.limparDadosFirestore = limparDadosFirestore;
 
-console.log('✅ Firestore Database carregado!');
+console.log('✅ Firestore Database (com tempo real) carregado!');

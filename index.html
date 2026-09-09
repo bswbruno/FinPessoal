@@ -55,7 +55,7 @@
     <script src="js/firebase-config.js"></script>
 
     <!-- ============================================================
-         🔥 FIRESTORE - FUNÇÕES
+         🔥 FIRESTORE - FUNÇÕES (COM TEMPO REAL)
     ============================================================ -->
     <script src="js/firebase-db.js"></script>
 </head>
@@ -66,10 +66,10 @@
     ============================================================ -->
     <div id="notif"></div>
 
-      <!-- ============================================================
-     OVERLAY DA NOTIFICAÇÃO (bloqueia a tela)
-     ============================================================ -->
-<div id="notif-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;backdrop-filter:blur(4px);"></div>
+    <!-- ============================================================
+         OVERLAY DA NOTIFICAÇÃO (bloqueia a tela)
+    ============================================================ -->
+    <div id="notif-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;backdrop-filter:blur(4px);"></div>
 
     <!-- ============================================================
          BOTÃO DE LOGOUT (FLUTUANTE - OPÇÃO PARA DESKTOP)
@@ -82,7 +82,7 @@
 
     <!-- ============================================================
          TODOS OS MODAIS (mantidos do original)
-         ============================================================ -->
+    ============================================================ -->
     <!-- MODAL: DESPESA -->
     <div class="modal-overlay" id="modal-exp">
         <div class="modal">
@@ -317,70 +317,69 @@
         </div>
     </div>
 
-  <!-- ============================================================
-     MODAL: BEM-VINDO COM TUTORIAL
-============================================================ -->
-<div class="modal-overlay" id="modal-welcome">
-    <div class="modal modal-welcome-tutorial">
-        <div class="modal-header" style="border-bottom:none;padding-bottom:0;">
-            <span class="modal-title" style="font-size:13px;color:var(--text3);font-weight:400;">
-                Tutorial
-            </span>
-            <button class="modal-close" onclick="welcomePular()" title="Pular tutorial">×</button>
-        </div>
-        
-        <div style="text-align:center;padding:10px 0 20px;">
-            <div id="welcome-icon" style="font-size:52px;display:block;margin-bottom:12px;">📊</div>
-            <h2 id="welcome-title" style="font-size:18px;font-weight:700;margin-bottom:10px;">Bem-vindo ao FinPessoal!</h2>
-            <p id="welcome-text" style="font-size:14px;color:var(--text2);line-height:1.6;max-width:400px;margin:0 auto;">
-                Gerencie suas finanças pessoais de forma simples e intuitiva.
-            </p>
-        </div>
+    <!-- ============================================================
+         MODAL: BEM-VINDO COM TUTORIAL
+    ============================================================ -->
+    <div class="modal-overlay" id="modal-welcome">
+        <div class="modal modal-welcome-tutorial">
+            <div class="modal-header" style="border-bottom:none;padding-bottom:0;">
+                <span class="modal-title" style="font-size:13px;color:var(--text3);font-weight:400;">
+                    Tutorial
+                </span>
+                <button class="modal-close" onclick="welcomePular()" title="Pular tutorial">×</button>
+            </div>
+            
+            <div style="text-align:center;padding:10px 0 20px;">
+                <div id="welcome-icon" style="font-size:52px;display:block;margin-bottom:12px;">📊</div>
+                <h2 id="welcome-title" style="font-size:18px;font-weight:700;margin-bottom:10px;">Bem-vindo ao FinPessoal!</h2>
+                <p id="welcome-text" style="font-size:14px;color:var(--text2);line-height:1.6;max-width:400px;margin:0 auto;">
+                    Gerencie suas finanças pessoais de forma simples e intuitiva.
+                </p>
+            </div>
 
-        <!-- Dots de navegação -->
-        <div style="display:flex;justify-content:center;gap:8px;margin:4px 0 12px;">
-            <span class="welcome-dot active" style="width:8px;height:8px;border-radius:50%;background:var(--purple);cursor:pointer;transition:all 0.3s;"></span>
-            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
-            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
-            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
-            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
-            <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
-        </div>
+            <!-- Dots de navegação -->
+            <div style="display:flex;justify-content:center;gap:8px;margin:4px 0 12px;">
+                <span class="welcome-dot active" style="width:8px;height:8px;border-radius:50%;background:var(--purple);cursor:pointer;transition:all 0.3s;"></span>
+                <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+                <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+                <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+                <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+                <span class="welcome-dot" style="width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;"></span>
+            </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);">
-            <button id="welcome-prev" onclick="welcomeAnterior()" style="display:none;background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;">
-                ← Anterior
-            </button>
-            <span id="welcome-counter" style="font-size:12px;color:var(--text3);">1 / 6</span>
-            <div style="display:flex;gap:8px;">
-                <button onclick="welcomePular()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">
-                    Pular
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border);">
+                <button id="welcome-prev" onclick="welcomeAnterior()" style="display:none;background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;">
+                    ← Anterior
                 </button>
-                <button id="welcome-next" onclick="welcomeProximo()" style="padding:8px 20px;background:var(--purple);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">
-                    Próximo
-                </button>
+                <span id="welcome-counter" style="font-size:12px;color:var(--text3);">1 / 6</span>
+                <div style="display:flex;gap:8px;">
+                    <button onclick="welcomePular()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">
+                        Pular
+                    </button>
+                    <button id="welcome-next" onclick="welcomeProximo()" style="padding:8px 20px;background:var(--purple);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">
+                        Próximo
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-    
-  <!-- ============================================================
-     MODAL: CONFIRMAR
-============================================================ -->
-<div class="modal-overlay" id="modal-confirm">
-    <div class="modal modal-confirm">
-        <div class="modal-header">
-            <span class="modal-title" id="confirm-title">Confirmar</span>
-            <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
-        </div>
-        <div id="confirm-msg" style="color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:18px;text-align:center;padding:8px 0;"></div>
-        <div class="modal-actions" style="justify-content:center;gap:10px;">
-            <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
-            <button class="btn btn-primary" id="confirm-ok-btn">Confirmar</button>
+    <!-- ============================================================
+         MODAL: CONFIRMAR
+    ============================================================ -->
+    <div class="modal-overlay" id="modal-confirm">
+        <div class="modal modal-confirm">
+            <div class="modal-header">
+                <span class="modal-title" id="confirm-title">Confirmar</span>
+                <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
+            </div>
+            <div id="confirm-msg" style="color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:18px;text-align:center;padding:8px 0;"></div>
+            <div class="modal-actions" style="justify-content:center;gap:10px;">
+                <button class="btn" onclick="closeModal('modal-confirm')">Cancelar</button>
+                <button class="btn btn-primary" id="confirm-ok-btn">Confirmar</button>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- MODAL: ADIÇÃO RÁPIDA -->
     <div class="modal-overlay" id="modal-quick-add">
@@ -802,7 +801,7 @@
                 <button id="btn-logout-sidebar" onclick="fazerLogout()">
                     <i data-lucide="log-out"></i> Sair
                 </button>
-                <div class="sidebar-version">v10.3</div>
+                <div class="sidebar-version">v10.4</div>
             </div>
         </nav>
 
@@ -912,7 +911,7 @@
     <script src="js/ui.js"></script>
 
     <!-- ============================================================
-         🔥 FIREBASE - INICIALIZAÇÃO COM FIRESTORE
+         🔥 FIREBASE - INICIALIZAÇÃO COM FIRESTORE (COM TEMPO REAL)
     ============================================================ -->
     <script>
         // ============================================================
@@ -929,7 +928,7 @@
         }
 
         // ============================================================
-        // INICIALIZAÇÃO COM FIREBASE + FIRESTORE
+        // INICIALIZAÇÃO COM FIREBASE + FIRESTORE (TEMPO REAL)
         // ============================================================
         const appBaseUrl = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
             ? location.origin
@@ -952,6 +951,9 @@
             };
         }
 
+        // ============================================================
+        // 🔥 AUTH STATE CHANGED - COM SINCRONIZAÇÃO EM TEMPO REAL
+        // ============================================================
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 console.log('✅ Usuário logado:', user.email);
@@ -959,7 +961,9 @@
                 // ATUALIZA O NOME NA SIDEBAR
                 atualizarUsuarioSidebar(user);
                 
-                // Carrega dados do Firestore
+                // ============================================================
+                // 1. CARREGA DADOS INICIAIS (UMA VEZ - PARA MOSTRAR RÁPIDO)
+                // ============================================================
                 carregarDadosFirestore(user.uid).then(function(dados) {
                     if (dados) {
                         // Carrega dados do Firestore
@@ -984,7 +988,7 @@
                         salvarDadosFirestore(user.uid, dadosAtuaisParaFirestore());
                     }
                     
-                    // Continua com a inicialização normal
+                    // Renderiza a tela pela primeira vez
                     applyHideValuesIcon();
                     buildSwatches('#6366f1');
                     updMth();
@@ -992,6 +996,43 @@
                     maybeShowWelcomeModal();
                     maybeShowUpdatedToast();
                 });
+                
+                // ============================================================
+                // 2. INICIA LISTENER EM TEMPO REAL (SINCRONIZAÇÃO AUTOMÁTICA)
+                // ============================================================
+                console.log('👂 Iniciando sincronização em tempo real...');
+                
+                iniciarListenerFirestore(user.uid, function(dadosAtualizados) {
+                    console.log('🔄 Dados sincronizados em tempo real!', new Date().toLocaleTimeString());
+                    
+                    if (dadosAtualizados) {
+                        // ATUALIZA TODOS OS DADOS EM TEMPO REAL
+                        ST.expenses = dadosAtualizados.despesas || ST.expenses || [];
+                        ST.incomes = dadosAtualizados.receitas || ST.incomes || [];
+                        ST.cards = dadosAtualizados.cartoes || ST.cards || [];
+                        ST.accounts = dadosAtualizados.contas || ST.accounts || [];
+                        ST.movements = dadosAtualizados.movimentacoes || ST.movements || [];
+                        ST.objectives = dadosAtualizados.objetivos || ST.objectives || [];
+                        ST.objectiveEntries = dadosAtualizados.entriesObjetivos || ST.objectiveEntries || [];
+                        ST.budgets = dadosAtualizados.orcamentos || ST.budgets || {};
+                        ST.groups = dadosAtualizados.grupos || ST.groups || [];
+                        ST.expStatuses = dadosAtualizados.statusDespesas || ST.expStatuses || [];
+                        ST.incStatuses = dadosAtualizados.statusReceitas || ST.incStatuses || [];
+                        ST.settings = dadosAtualizados.configuracoes || ST.settings || {};
+                        
+                        // Salva no localStorage para fallback
+                        try {
+                            localStorage.setItem('finpessoal_data', JSON.stringify(ST));
+                        } catch(e) {
+                            console.warn('⚠️ Erro ao salvar no localStorage:', e);
+                        }
+                        
+                        // RE-RENDERIZA A TELA ATUAL AUTOMATICAMENTE
+                        console.log('🔄 Re-renderizando página atual...');
+                        render();
+                    }
+                });
+                
             } else {
                 console.log('⏳ Redirecionando para login...');
                 window.location.href = appBaseUrl + '/login.html';
@@ -1025,12 +1066,18 @@
         console.log('✅ sv() substituída com sucesso!');
 
         // ============================================================
-        // FUNÇÃO DE LOGOUT (COM MODAL)
+        // FUNÇÃO DE LOGOUT (COM MODAL E REMOÇÃO DO LISTENER)
         // ============================================================
         function fazerLogout() {
             confirmarComModal(
                 'Deseja realmente sair?<br><span style="font-size:12px;color:var(--text3);">Você será redirecionado para a tela de login.</span>',
                 function() {
+                    // REMOVE O LISTENER ANTES DE SAIR
+                    if (typeof removerListenerFirestore === 'function') {
+                        removerListenerFirestore();
+                        console.log('🛑 Listener removido antes do logout');
+                    }
+                    
                     firebase.auth().signOut().then(function() {
                         console.log('✅ Logout realizado!');
                         localStorage.clear();
@@ -1046,108 +1093,108 @@
         }
     </script>
 
-   <!-- ============================================================
-     SERVICE WORKER (PWA)
+    <!-- ============================================================
+         SERVICE WORKER (PWA)
     ============================================================ -->
-<script>
-    if ('serviceWorker' in navigator) {
-        let refreshing = false;
-        let updateResolved = false;
+    <script>
+        if ('serviceWorker' in navigator) {
+            let refreshing = false;
+            let updateResolved = false;
 
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
 
-            refreshing = true;
-            localStorage.setItem('fp_just_updated', '1');
-            window.location.reload();
-        });
+                refreshing = true;
+                localStorage.setItem('fp_just_updated', '1');
+                window.location.reload();
+            });
 
-        const isDevelopment =
-            location.hostname === 'localhost' ||
-            location.hostname === '127.0.0.1';
+            const isDevelopment =
+                location.hostname === 'localhost' ||
+                location.hostname === '127.0.0.1';
 
-        if (!isDevelopment) {
-            window.addEventListener('load', function() {
+            if (!isDevelopment) {
+                window.addEventListener('load', function() {
 
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(function(reg) {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(function(reg) {
 
-                        reg.update();
+                            reg.update();
 
-                        reg.addEventListener('updatefound', () => {
-                            const newWorker = reg.installing;
+                            reg.addEventListener('updatefound', () => {
+                                const newWorker = reg.installing;
 
-                            if (!newWorker) return;
+                                if (!newWorker) return;
 
-                            newWorker.addEventListener('statechange', () => {
+                                newWorker.addEventListener('statechange', () => {
 
-                                if (
-                                    newWorker.state === 'installed' &&
-                                    navigator.serviceWorker.controller
-                                ) {
+                                    if (
+                                        newWorker.state === 'installed' &&
+                                        navigator.serviceWorker.controller
+                                    ) {
 
-                                    if (!updateResolved) {
+                                        if (!updateResolved) {
 
-                                        if (typeof window.notify === 'function') {
+                                            if (typeof window.notify === 'function') {
 
-                                            window.notify(
-                                                '🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.',
-                                                'update'
-                                            );
+                                                window.notify(
+                                                    '🔄 Nova versão disponível! Clique em "Atualizar" para receber as últimas melhorias.',
+                                                    'update'
+                                                );
 
-                                            if (typeof window.resolveUpdate === 'function') {
+                                                if (typeof window.resolveUpdate === 'function') {
 
-                                                const originalResolve =
-                                                    window.resolveUpdate;
+                                                    const originalResolve =
+                                                        window.resolveUpdate;
 
-                                                window.resolveUpdate = function(accepted) {
+                                                    window.resolveUpdate = function(accepted) {
 
-                                                    if (accepted) {
-                                                        updateResolved = true;
+                                                        if (accepted) {
+                                                            updateResolved = true;
 
-                                                        newWorker.postMessage({
-                                                            type: 'SKIP_WAITING'
-                                                        });
-                                                    }
+                                                            newWorker.postMessage({
+                                                                type: 'SKIP_WAITING'
+                                                            });
+                                                        }
 
-                                                    if (typeof originalResolve === 'function') {
-                                                        originalResolve(accepted);
-                                                    }
-                                                };
+                                                        if (typeof originalResolve === 'function') {
+                                                            originalResolve(accepted);
+                                                        }
+                                                    };
+                                                }
+
+                                            } else {
+                                                console.warn(
+                                                    '⚠️ Função notify não disponível'
+                                                );
                                             }
-
-                                        } else {
-                                            console.warn(
-                                                '⚠️ Função notify não disponível'
-                                            );
                                         }
                                     }
+                                });
+                            });
+
+                            document.addEventListener('visibilitychange', () => {
+                                if (document.visibilityState === 'visible') {
+                                    reg.update();
                                 }
                             });
-                        });
 
-                        document.addEventListener('visibilitychange', () => {
-                            if (document.visibilityState === 'visible') {
+                            // Verifica atualizações a cada 30 minutos
+                            setInterval(() => {
                                 reg.update();
-                            }
+                            }, 30 * 60 * 1000);
+
+                        })
+                        .catch(function(err) {
+                            console.warn(
+                                'Falha ao registrar service worker:',
+                                err
+                            );
                         });
-
-                        // Verifica atualizações a cada 30 minutos
-                        setInterval(() => {
-                            reg.update();
-                        }, 30 * 60 * 1000);
-
-                    })
-                    .catch(function(err) {
-                        console.warn(
-                            'Falha ao registrar service worker:',
-                            err
-                        );
-                    });
-            });
+                });
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>
