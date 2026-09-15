@@ -718,7 +718,7 @@
 /* Grid que organiza as seções em 2 colunas */
 .chart-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;  /* 2 colunas iguais */
+    grid-template-columns: 1fr ;  /* 2 colunas iguais */
     gap: 16px;                  /* Espaço entre as colunas */
     margin-bottom: 16px;        /* Espaço abaixo da linha */
 }
