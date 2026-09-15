@@ -270,8 +270,60 @@ function confirmHTML(html, cb) {
   document.getElementById('confirm-ok-btn').onclick = () => { closeModal('modal-confirm'); cb(); };
   openModal('modal-confirm');
 }
-function openModal(id)  { document.getElementById(id).classList.add('open'); refreshIcons(); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); _editId = null; }
+// ============================================================
+// CONTROLE DE SCROLL DOS MODAIS (mobile/PWA)
+// ============================================================
+// Guarda a posição do scroll da página antes de travar o body,
+// para restaurá-la exatamente igual quando o modal fechar.
+let _scrollLockY = 0;
+
+function openModal(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // Detecta se já existe um modal aberto (modais empilhados).
+    // Nesse caso NÃO travamos o body de novo, senão perdemos a
+    // posição original do scroll.
+    const jaTemModalAberto = document.querySelector('.modal-overlay.open');
+
+    el.classList.add('open');
+    refreshIcons();
+
+    if (!jaTemModalAberto) {
+        _scrollLockY = window.scrollY || window.pageYOffset || 0;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${_scrollLockY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.classList.remove('open');
+    _editId = null;
+    refreshIcons();
+
+    // Só destrava o body quando NÃO houver mais nenhum modal aberto
+    // (importante porque tem modais que abrem em cima de outros, ex.:
+    // modal-quick-add → modal-exp).
+    const aindaTemModalAberto = document.querySelector('.modal-overlay.open');
+    if (aindaTemModalAberto) return;
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+
+    // Restaura a página exatamente onde o usuário parou
+    window.scrollTo(0, _scrollLockY);
+}
 
 // Data padrão do mês corrente
 function dd() { return `${ST.vy}-${String(ST.vm+1).padStart(2,'0')}-10`; }
