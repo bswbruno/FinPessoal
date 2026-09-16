@@ -1020,12 +1020,7 @@
                         ST.incStatuses = dadosAtualizados.statusReceitas || ST.incStatuses || [];
                         ST.settings = dadosAtualizados.configuracoes || ST.settings || {};
                         
-                        // Salva no localStorage para fallback
-                        try {
-                            localStorage.setItem('finpessoal_data', JSON.stringify(ST));
-                        } catch(e) {
-                            console.warn('⚠️ Erro ao salvar no localStorage:', e);
-                        }
+                       
                         
                         // RE-RENDERIZA A TELA ATUAL AUTOMATICAMENTE
                         console.log('🔄 Re-renderizando página atual...');

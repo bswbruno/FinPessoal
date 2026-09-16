@@ -47,16 +47,27 @@ const ST = {
   vy: today.getFullYear()
 };
 
-// Chave do localStorage onde os dados financeiros ficam guardados. O login
-// multiusuário (que deixaria isso variável por conta) está pausado por
-// decisão do usuário — por enquanto é sempre a mesma chave, uso único.
+
+// Chave do localStorage onde os dados financeiros ficam guardados.
+// É única por usuário autenticado (usa o UID do Firebase Auth), então
+// contas diferentes no mesmo navegador NÃO compartilham dados.
+//
+// Se não houver usuário logado, retorna null — e aí sv()/ld() não fazem
+// nada (evita gravar dados privados sem dono).
 function storageKey() {
-  return 'fp3';
+  const user = (typeof firebase !== 'undefined' && firebase.auth)
+    ? firebase.auth().currentUser
+    : null;
+  if (!user || !user.uid) return null;
+  return 'fp3_' + user.uid;
 }
 
 // Persistência localStorage
+// Obs.: só grava se houver usuário logado (storageKey() !== null).
 function sv() {
-  localStorage.setItem(storageKey(), JSON.stringify({
+  const key = storageKey();
+  if (!key) return;   // não logado → não grava
+  localStorage.setItem(key, JSON.stringify({
     expenses: ST.expenses,
     incomes:  ST.incomes,
     cards:    ST.cards,
@@ -71,9 +82,26 @@ function sv() {
     incStatuses: ST.incStatuses
   }));
 }
+
+// Só lê se houver usuário logado. Se ainda não houver dados na chave nova,
+// tenta migrar da chave antiga 'fp3' (dados salvos antes dessa correção).
 function ld() {
+  const key = storageKey();
+  if (!key) return;   // não logado → não lê
   try {
-    const raw = localStorage.getItem(storageKey());
+    let raw = localStorage.getItem(key);
+
+    // Migração única: dados antigos da chave 'fp3' → 'fp3_<uid>'
+    if (!raw) {
+      const legacy = localStorage.getItem('fp3');
+      if (legacy) {
+        localStorage.setItem(key, legacy);
+        localStorage.removeItem('fp3');
+        raw = legacy;
+        console.log('📦 Dados migrados da chave antiga "fp3" para a chave do usuário.');
+      }
+    }
+
     const d = JSON.parse(raw || '{}');
     if (d.expenses) ST.expenses = d.expenses;
     if (d.incomes)  ST.incomes  = d.incomes;
@@ -91,6 +119,7 @@ function ld() {
     if (d.incStatuses && d.incStatuses.length) ST.incStatuses = d.incStatuses;
   } catch(e) {}
 }
+
 
 /* ----------------------------------------------------------------------
    SALDO DE CONTAS BANCÁRIAS
