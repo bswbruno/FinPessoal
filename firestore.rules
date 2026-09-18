@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // Documento de perfil do usuário
+    // usuarios/{userId}
+    // ============================================
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null 
+                         && request.auth.uid == userId;
+
+      // ============================================
+      // Dados financeiros do usuário
+      // usuarios/{userId}/dados/{docId}
+      // ============================================
+      match /dados/{docId} {
+        allow read, write: if request.auth != null 
+                           && request.auth.uid == userId;
+      }
+    }
+
+    // ============================================
+    // Bloqueia qualquer outra coleção (padrão)
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
