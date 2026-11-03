@@ -23,6 +23,13 @@ const fmtD = s => { if(!s) return '-'; const [y,m,d]=s.split('-'); return `${d}/
 // Data utils
 const today = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
 const toDate = s => { if(!s) return null; const d = new Date(s+'T00:00'); d.setHours(0,0,0,0); return d; };
+function addMonthsToDate(dateString, monthOffset) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const target = new Date(year, month - 1 + monthOffset, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  target.setDate(Math.min(day, lastDay));
+  return dateToStr(target);
+}
 const isLate = r => r.status !== 'pago' && r.status !== 'recebido' && toDate(r.date) && toDate(r.date) < today;
 // Quanto ainda falta pagar de uma despesa, considerando pagamentos parciais já feitos.
 const expRemaining = x => Math.max(0, (+x.value||0) - (+x.paidAmount||0));
@@ -335,6 +342,7 @@ function closeModal(id) {
 
     el.classList.remove('open');
     _editId = null;
+    if (id === 'modal-exp') _editGroupId = null;
     refreshIcons();
 
     // Só destrava o body quando NÃO houver mais nenhum modal aberto
@@ -361,6 +369,7 @@ function dateToStr(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padSta
 
 // ID em edição
 let _editId = null;
+let _editGroupId = null;
 
 // Charts helpers
 function barChart(data, c1, c2) {
