@@ -8,7 +8,7 @@ function goTo(page, btn) {
   if (btn) btn.classList.add('active');
   const titles = {
     dashboard:'Dashboard', contas:'Contas Bancárias', pagar:'A Pagar', receber:'A Receber',
-    dividas:'Dívidas Parceladas', movimentacoes:'Movimentações', patrimonio:'Patrimônio', agenda:'Agenda Financeira', cartoes:'Cartões',
+    dividas:'Dívidas', movimentacoes:'Movimentações', patrimonio:'Patrimônio', agenda:'Agenda Financeira', cartoes:'Cartões',
     relatorios:'Relatórios', configuracoes:'Configurações', suporte:'Suporte'
   };
   document.getElementById('page-title').textContent = titles[page] || page;
@@ -38,6 +38,7 @@ function updMth() {
 }
 
 function render() {
+  ensureRecurringExpenses();
   updMth();
   if      (curPage==='dashboard')     renderDashboard();
   else if (curPage==='contas')        renderContas();

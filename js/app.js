@@ -13,7 +13,7 @@ function goTo(page, btn) {
     dashboard:     'Dashboard',
     pagar:         'A Pagar',
     receber:       'A Receber',
-    dividas:       'Dívidas Parceladas',
+    dividas:       'Dívidas',
     cartoes:       'Cartões',
     relatorios:    'Relatórios',
     configuracoes: 'Configurações'
