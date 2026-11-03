@@ -97,11 +97,149 @@
     color: var(--text2);
 }
 
+.relatorios-insight {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg2);
+    color: var(--text);
+}
+
+.relatorios-insight-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border-radius: 10px;
+    color: var(--purple);
+    background: var(--bg3);
+}
+
+.relatorios-insight-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.relatorios-insight p {
+    margin: 4px 0 0;
+    color: var(--text2);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.relatorios-insight p b {
+    color: var(--text);
+}
+
+.relatorios-alerta {
+    color: var(--red);
+    font-weight: 600;
+}
+
+.relatorios-chart-row {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.relatorios-section {
+    min-width: 0;
+    margin-bottom: 18px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg2);
+}
+
+.relatorios-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.relatorios-section-heading h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.relatorios-section-heading p {
+    margin: 4px 0 0;
+    color: var(--text3);
+    font-size: 12px;
+}
+
+.relatorios-section-total {
+    color: var(--text);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.relatorios-section .relatorios-tabela {
+    margin-bottom: 0;
+}
+
+.relatorios-share {
+    margin-bottom: 5px;
+}
+
+.relatorios-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.relatorios-detail-grid .relatorios-section {
+    margin-bottom: 4px;
+}
+
+.relatorios-empty {
+    padding: 18px 10px;
+    color: var(--text3);
+    font-size: 13px;
+    text-align: center;
+}
+
+.relatorios-budget-list {
+    display: grid;
+    gap: 14px;
+}
+
+.relatorios-budget-heading,
+.relatorios-budget-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.relatorios-budget-heading {
+    margin-bottom: 7px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.relatorios-budget-foot {
+    margin-top: 5px;
+    color: var(--text3);
+    font-size: 11px;
+}
+
 /* ============================================================
    RESPONSIVIDADE DOS RELATÓRIOS
    ============================================================ */
 
 @media (max-width: 768px) {
+    .relatorios-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
     .relatorios-toolbar {
         flex-direction: column;
         align-items: stretch;
@@ -128,6 +266,20 @@
 }
 
 @media (max-width: 480px) {
+    .relatorios-section {
+        padding: 12px;
+    }
+
+    .relatorios-section-heading {
+        align-items: flex-start;
+    }
+
+    .relatorios-budget-heading,
+    .relatorios-budget-foot {
+        flex-direction: column;
+        gap: 3px;
+    }
+
     .relatorios-tabela table {
         font-size: 11px;
     }
