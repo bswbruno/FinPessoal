@@ -8,6 +8,7 @@ function renderRelatorios() {
         sum + (item.status === 'pago' ? (+item.value || 0) : (+item.paidAmount || 0)), 0);
     const incomeReceived = incomes.reduce((sum, item) =>
         sum + (item.status === 'recebido' ? (+item.value || 0) : (+item.receivedAmount || 0)), 0);
+    const incomePending = Math.max(0, incomeTotal - incomeReceived);
     const expensePending = expenses.reduce((sum, item) =>
         sum + (item.status === 'pago' ? 0 : expRemaining(item)), 0);
     const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -68,16 +69,23 @@ function renderRelatorios() {
     });
     const cards = [...cardTotals.values()].sort((a, b) => b.total - a.total);
 
-    const incomeSources = new Map();
-    incomes.forEach(item => {
-        const name = item.src || item.type || 'Outros';
-        const current = incomeSources.get(name) || { name, total: 0, received: 0, count: 0 };
-        current.total += +item.value || 0;
-        current.received += item.status === 'recebido' ? (+item.value || 0) : (+item.receivedAmount || 0);
-        current.count++;
-        incomeSources.set(name, current);
-    });
-    const sources = [...incomeSources.values()].sort((a, b) => b.total - a.total);
+    const groupIncomes = getName => {
+        const groups = new Map();
+        incomes.forEach(item => {
+            const name = getName(item);
+            const current = groups.get(name) || { name, total: 0, received: 0, count: 0 };
+            current.total += +item.value || 0;
+            current.received += item.status === 'recebido' ? (+item.value || 0) : (+item.receivedAmount || 0);
+            current.count++;
+            groups.set(name, current);
+        });
+        return [...groups.values()]
+            .map(item => ({ ...item, pending: Math.max(0, item.total - item.received) }))
+            .sort((a, b) => b.total - a.total)
+            .map((item, idx) => ({ ...item, color: COLORS[idx % COLORS.length] }));
+    };
+    const sources = groupIncomes(item => item.src || item.type || 'Sem origem');
+    const incomeTypes = groupIncomes(item => item.type || 'Outros');
 
     const budgets = ST.groups.map((group, idx) => {
         const limit = +ST.budgets[group] || 0;
@@ -88,8 +96,11 @@ function renderRelatorios() {
 
     const topCategory = categories[0];
     const topCard = cards[0];
+    const topSource = sources[0];
+    const topIncomeType = incomeTypes[0];
     const overdueCount = expenses.filter(item => isLate(item)).length;
     const paidPercent = expenseTotal ? Math.min(100, (expensePaid / expenseTotal) * 100) : 0;
+    const receivedPercent = incomeTotal ? Math.min(100, (incomeReceived / incomeTotal) * 100) : 0;
 
     document.getElementById('content').innerHTML = `
         <div class="relatorios-toolbar">
@@ -108,6 +119,8 @@ function renderRelatorios() {
                     ? `Maior gasto em <b>${escapeHtml(topCategory.name)}</b> (${fmt(topCategory.total)}${expenseTotal ? `, ${(topCategory.total / expenseTotal * 100).toFixed(1)}% das despesas` : ''})`
                     : 'Ainda não há despesas lançadas neste mês.'}
                     ${topCard ? ` · Maior volume por ${topCard.name === 'Sem cartão (dinheiro/débito)' ? 'forma de pagamento' : 'cartão'}: <b>${escapeHtml(topCard.name)}</b> (${fmt(topCard.total)}).` : ''}
+                    ${topSource ? ` Maior origem de ganhos: <b>${escapeHtml(topSource.name)}</b> (${fmt(topSource.total)}${incomeTotal ? `, ${(topSource.total / incomeTotal * 100).toFixed(1)}% das receitas` : ''}).` : ' Ainda não há receitas lançadas neste mês.'}
+                    ${topIncomeType && topIncomeType.name !== topSource?.name ? ` Tipo de receita com maior valor: <b>${escapeHtml(topIncomeType.name)}</b> (${fmt(topIncomeType.total)}).` : ''}
                     ${overdueCount ? ` <span class="relatorios-alerta">${overdueCount} despesa(s) vencida(s).</span>` : ''}
                 </p>
             </div>
@@ -117,7 +130,7 @@ function renderRelatorios() {
             <div class="kpi kpi-success">
                 <div class="kpi-label">Receitas lançadas</div>
                 <div class="kpi-value">${fmt(incomeTotal)}</div>
-                <div class="kpi-sub">${fmt(incomeReceived)} recebidos</div>
+                <div class="kpi-sub">${fmt(incomeReceived)} recebidos · ${receivedPercent.toFixed(0)}% · ${fmt(incomePending)} pendentes</div>
             </div>
             <div class="kpi kpi-danger">
                 <div class="kpi-label">Despesas lançadas</div>
@@ -155,6 +168,14 @@ function renderRelatorios() {
                 <div class="chart-title">Despesas por cartão/forma</div>
                 ${pieChart(cards.map(item => ({ name: escapeHtml(item.name), v: item.total })))}
             </div>
+            <div class="chart-card">
+                <div class="chart-title">Ganhos por origem</div>
+                ${pieChart(sources.map(item => ({ name: escapeHtml(item.name), v: item.total })))}
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Ganhos por tipo</div>
+                ${pieChart(incomeTypes.map(item => ({ name: escapeHtml(item.name), v: item.total })))}
+            </div>
         </div>
 
         <section class="relatorios-section">
@@ -184,6 +205,36 @@ function renderRelatorios() {
             ` : '<div class="relatorios-empty">Nenhuma despesa lançada neste período.</div>'}
         </section>
 
+        <section class="relatorios-section">
+            <div class="relatorios-section-heading">
+                <div><h2>De onde vêm seus ganhos</h2><p>Distribuição das receitas por origem no mês selecionado.</p></div>
+                <span class="relatorios-section-total relatorios-valor-receita">${fmt(incomeTotal)}</span>
+            </div>
+            ${sources.length ? `
+                <div class="table-wrap relatorios-tabela">
+                    <table>
+                        <thead><tr><th>Origem</th><th>Total</th><th>% receitas</th><th>Recebido</th><th>Pendente</th><th>Itens</th></tr></thead>
+                        <tbody>${sources.map(item => {
+                            const percentage = incomeTotal ? item.total / incomeTotal * 100 : 0;
+                            return `
+                                <tr>
+                                    <td class="relatorios-grupo"><span class="relatorios-cor" style="background:${item.color}"></span>${escapeHtml(item.name)}</td>
+                                    <td class="relatorios-valor-receita">${fmt(item.total)}</td>
+                                    <td class="relatorios-porcentagem">
+                                        <div class="relatorios-share">${percentage.toFixed(1)}%</div>
+                                        <div class="progress"><div class="progress-fill" style="background:${item.color};width:${percentage}%"></div></div>
+                                    </td>
+                                    <td class="relatorios-valor-receita">${fmt(item.received)}</td>
+                                    <td>${fmt(item.pending)}</td>
+                                    <td class="relatorios-itens">${item.count}</td>
+                                </tr>`;
+                        }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : '<div class="relatorios-empty">Nenhuma receita lançada neste período.</div>'}
+        </section>
+
         <div class="relatorios-detail-grid">
             <section class="relatorios-section">
                 <div class="relatorios-section-heading">
@@ -210,20 +261,24 @@ function renderRelatorios() {
 
             <section class="relatorios-section">
                 <div class="relatorios-section-heading">
-                    <div><h2>De onde vêm suas receitas</h2><p>Valores lançados e já recebidos por origem.</p></div>
-                    <span class="relatorios-section-total relatorios-valor-receita">${fmt(incomeTotal)}</span>
+                    <div><h2>Ganhos por tipo de receita</h2><p>Salário, aluguel, investimentos e outras categorias.</p></div>
                 </div>
-                ${sources.length ? `
+                ${incomeTypes.length ? `
                     <div class="table-wrap relatorios-tabela">
                         <table>
-                            <thead><tr><th>Origem</th><th>Total</th><th>% receitas</th><th>Recebido</th></tr></thead>
-                            <tbody>${sources.map(item => `
-                                <tr>
-                                    <td>${escapeHtml(item.name)}</td>
-                                    <td class="relatorios-valor-receita">${fmt(item.total)}</td>
-                                    <td class="relatorios-porcentagem">${incomeTotal ? (item.total / incomeTotal * 100).toFixed(1) : 0}%</td>
-                                    <td>${fmt(item.received)}</td>
-                                </tr>`).join('')}
+                            <thead><tr><th>Tipo</th><th>Total</th><th>% receitas</th><th>Recebido</th><th>Pendente</th><th>Itens</th></tr></thead>
+                            <tbody>${incomeTypes.map(item => {
+                                const percentage = incomeTotal ? item.total / incomeTotal * 100 : 0;
+                                return `
+                                    <tr>
+                                        <td class="relatorios-grupo"><span class="relatorios-cor" style="background:${item.color}"></span>${escapeHtml(item.name)}</td>
+                                        <td class="relatorios-valor-receita">${fmt(item.total)}</td>
+                                        <td class="relatorios-porcentagem">${percentage.toFixed(1)}%</td>
+                                        <td class="relatorios-valor-receita">${fmt(item.received)}</td>
+                                        <td>${fmt(item.pending)}</td>
+                                        <td class="relatorios-itens">${item.count}</td>
+                                    </tr>`;
+                            }).join('')}
                             </tbody>
                         </table>
                     </div>
