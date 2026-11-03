@@ -873,29 +873,15 @@ tbody tr:hover td {
     background: var(--bg2);
     border-radius: var(--radius-lg);
     padding: 24px 26px;
-    width: 520px;
+    width: 760px;
     max-width: 96vw;
-
-    /* ✅ dvh respeita a barra dinâmica do navegador mobile */
-    /* ✅ Desconto maior (48px) para dar respiro ao rodapé */
-    max-height: calc(100dvh - 48px);
-
-    /* ✅ Scroll interno + trava contra scroll chaining */
-    overflow-y: auto;
+    max-height: none;
+    overflow-y: visible;
     overflow-x: hidden;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
 
     box-shadow: var(--shadow-lg);
     animation: modalIn .18s ease;
     position: relative;
-}
-
-/* Fallback para navegadores que não suportam dvh */
-@supports not (height: 100dvh) {
-    .modal {
-        max-height: calc(100vh - 48px);
-    }
 }
 
 /* Variantes de tamanho */
@@ -2012,6 +1998,26 @@ tbody tr:hover td {
     .app.sidebar-open .sidebar {
         transform: translateX(0);
     }
+
+    .modal-overlay {
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0;
+    }
+
+    .modal-overlay .modal {
+        width: 100%;
+        max-width: none;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        margin: 0;
+        border-radius: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
 /* Celulares */
@@ -2068,32 +2074,10 @@ tbody tr:hover td {
         grid-column: span 1;
     }
 
-    /* ⬇️ ALTERAÇÃO 2 — modal em mobile com mais respiro */
     .modal {
         padding: 18px;
-        width: 100%;
-        max-width: 100%;
-        max-height: calc(100dvh - 180px);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-
-        /* ✅ A MÁGICA: centraliza quando cabe, rola quando não cabe */
-        margin: auto;
-    }
-
-    /* ⬇️ ALTERAÇÃO 3 — overlay rola e começa no topo */
-     .modal-overlay {
-        /* ✅ Centraliza quando cabe; rola quando não cabe */
-        align-items: center;
-        justify-content: center;
-
-        /* ✅ Permite rolar o overlay inteiro se o modal for maior */
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        padding: 12px;
-        padding-top: calc(12px + env(safe-area-inset-top));
-        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        padding-top: calc(18px + env(safe-area-inset-top));
+        padding-bottom: calc(18px + env(safe-area-inset-bottom));
     }
 
     .modal-sm,

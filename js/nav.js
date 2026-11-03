@@ -39,6 +39,7 @@ function updMth() {
 
 function render() {
   ensureRecurringExpenses();
+  ensureRecurringIncomes();
   updMth();
   if      (curPage==='dashboard')     renderDashboard();
   else if (curPage==='contas')        renderContas();

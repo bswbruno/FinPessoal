@@ -13,6 +13,63 @@ let iS = '';                // Busca
 let iSort = 'venc-asc';     // Ordenação: venc-asc | venc-desc | valor-asc | valor-desc | desc-az
 let iView = 'junto';        // 'junto' | 'separado'
 
+function ensureRecurringIncomes() {
+    const groups = new Map();
+    ST.incomes.filter(x => x.gid && x.rec === 'continua')
+        .forEach(income => {
+            if (!groups.has(income.gid)) groups.set(income.gid, []);
+            groups.get(income.gid).push(income);
+        });
+
+    const targetMonth = ST.vy * 12 + ST.vm;
+    let changed = false;
+    groups.forEach((rows, groupId) => {
+        const first = rows.find(row => (+row.recurrenceIndex || 0) === 0) ||
+            [...rows].sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+        const startDate = first.recurrenceStartDate || first.date;
+        const [year, month] = startDate.split('-').map(Number);
+        const startMonth = year * 12 + month - 1;
+        const lastIndex = targetMonth - startMonth;
+        if (lastIndex < 0) return;
+
+        for (let index = 0; index <= lastIndex; index++) {
+            const exists = rows.some(row =>
+                (+row.recurrenceIndex === index) || (!Number.isInteger(row.recurrenceIndex) && +row.num === index + 1)
+            );
+            if (exists) continue;
+
+            const occurrence = {
+                id: gid(),
+                gid: groupId,
+                desc: first.desc,
+                src: first.src,
+                value: first.value,
+                date: addMonthsToDate(startDate, index),
+                type: first.type,
+                rec: 'continua',
+                totalInstallments: 0,
+                num: index + 1,
+                recurrenceStartDate: startDate,
+                recurrenceIndex: index,
+                status: 'pendente',
+                obs: first.obs
+            };
+            ST.incomes.push(occurrence);
+            rows.push(occurrence);
+            changed = true;
+        }
+    });
+
+    if (changed) sv();
+}
+
+function incomeRecurrenceLabel(income) {
+    if (income.rec === 'parcelada') return `${income.num}/${income.totalInstallments}`;
+    if (income.rec === 'mensal') return '12 meses';
+    if (income.rec === 'continua') return 'Contínua';
+    return '—';
+}
+
 
 // ============================================================
 // 2. FUNÇÕES DE STATUS E ORDENAÇÃO
@@ -54,8 +111,7 @@ function incomeRowHTML(x) {
     const rowBg = x.status === 'recebido' ? 'background:var(--green-light)' :
                   la ? 'background:var(--red-light)' : '';
 
-    const parcelaInfo = x.rec === 'parcelada' ? x.num + '/' + x.totalInstallments :
-                        x.rec === 'mensal' ? 'Mensal' : '—';
+    const parcelaInfo = incomeRecurrenceLabel(x);
 
     return `
         <tr style="${rowBg}">
@@ -94,7 +150,7 @@ function incomeTableHTML(rowsArr, emptyMsg) {
                         <th>Descrição</th>
                         <th>Origem</th>
                         <th>Tipo</th>
-                        <th>Parc.</th>
+                        <th>Recorrência</th>
                         <th>Valor</th>
                         <th>Status</th>
                         <th>Ações</th>
@@ -118,8 +174,7 @@ function incomeCardHTML(x) {
     const { cls: sp, label: st } = incStatusPill(x);
     const la = isLate(x);
 
-    const parcelaInfo = x.rec === 'parcelada' ? x.num + '/' + x.totalInstallments :
-                        x.rec === 'mensal' ? 'Mensal' : '—';
+    const parcelaInfo = incomeRecurrenceLabel(x);
 
     const cardBg = x.status === 'recebido' ? 'card-recebido' :
                    la ? 'card-atrasado' : '';
@@ -148,7 +203,7 @@ function incomeCardHTML(x) {
                 </div>
                 ${x.rec !== 'unico' ? `
                     <div class="income-card-row">
-                        <span class="income-card-label">Parcela</span>
+                        <span class="income-card-label">${x.rec === 'parcelada' ? 'Parcela' : 'Recorrência'}</span>
                         <span>${parcelaInfo}</span>
                     </div>
                 ` : ''}
@@ -311,6 +366,19 @@ function toggleI(id) {
 }
 
 function delI(id) {
+    const income = ST.incomes.find(x => x.id === id);
+    if (income && income.rec === 'continua' && income.gid) {
+        const ids = new Set(ST.incomes.filter(x => x.gid === income.gid).map(x => x.id));
+        confirm2(`Remover a receita recorrente "${income.desc}" e todos os lançamentos relacionados?`, () => {
+            ST.incomes = ST.incomes.filter(x => !ids.has(x.id));
+            ST.movements = ST.movements.filter(m => !ids.has(m.linkedId));
+            sv();
+            notify('Receita recorrente e lançamentos relacionados removidos', 'err');
+            render();
+        });
+        return;
+    }
+
     confirm2('Remover esta receita?', () => {
         ST.incomes = ST.incomes.filter(x => x.id !== id);
         removeLinkedMovement(id);
@@ -391,6 +459,11 @@ function saveInc() {
     const status = document.getElementById('inc-status').value;
     const obs = document.getElementById('inc-obs').value;
 
+    if (!date) {
+        notify('Informe a data', 'err');
+        return;
+    }
+
     if (_editId) {
         const x = ST.incomes.find(i => i.id === _editId);
         if (x) {
@@ -410,18 +483,35 @@ function saveInc() {
     } else {
         const cnt = rec === 'mensal' ? 12 : rec === 'parcelada' ? parc : 1;
 
-        if (cnt > 1) {
+        if (rec === 'continua') {
+            const groupId = gid();
+            ST.incomes.push({
+                id: gid(),
+                gid: groupId,
+                desc,
+                src,
+                value: val,
+                date,
+                type,
+                rec,
+                totalInstallments: 0,
+                num: 1,
+                recurrenceStartDate: date,
+                recurrenceIndex: 0,
+                status: 'pendente',
+                obs
+            });
+            notify('Receita fixa contínua cadastrada!', 'info');
+        } else if (cnt > 1) {
             const g = gid();
             for (let i = 0; i < cnt; i++) {
-                const d = new Date(date + 'T00:00');
-                d.setMonth(d.getMonth() + i);
                 ST.incomes.push({
                     id: gid(),
                     gid: g,
                     desc,
                     src,
                     value: val,
-                    date: d.toISOString().split('T')[0],
+                    date: addMonthsToDate(date, i),
                     type,
                     rec,
                     totalInstallments: cnt,
