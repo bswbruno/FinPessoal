@@ -43,6 +43,57 @@ function sortExpenseRows(rows) {
     return arr;
 }
 
+function ensureRecurringExpenses() {
+    const groups = new Map();
+    ST.expenses.filter(x => x.gid && x.type === 'fixa' && x.recurrence === 'continua')
+        .forEach(expense => {
+            if (!groups.has(expense.gid)) groups.set(expense.gid, []);
+            groups.get(expense.gid).push(expense);
+        });
+
+    const targetMonth = ST.vy * 12 + ST.vm;
+    let changed = false;
+    groups.forEach((rows, groupId) => {
+        const first = rows.find(row => (+row.recurrenceIndex || 0) === 0) ||
+            [...rows].sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+        const startDate = first.recurrenceStartDate || first.date;
+        const [year, month] = startDate.split('-').map(Number);
+        const startMonth = year * 12 + month - 1;
+        const lastIndex = targetMonth - startMonth;
+        if (lastIndex < 0) return;
+
+        for (let index = 0; index <= lastIndex; index++) {
+            const exists = rows.some(row =>
+                (+row.recurrenceIndex === index) || (!Number.isInteger(row.recurrenceIndex) && +row.num === index + 1)
+            );
+            if (exists) continue;
+
+            const occurrence = {
+                id: gid(),
+                gid: groupId,
+                desc: first.desc,
+                value: first.value,
+                date: addMonthsToDate(startDate, index),
+                type: 'fixa',
+                totalInstallments: 0,
+                num: index + 1,
+                recurrence: 'continua',
+                recurrenceStartDate: startDate,
+                recurrenceIndex: index,
+                grp: first.grp,
+                cardId: first.cardId,
+                status: 'pendente',
+                obs: first.obs
+            };
+            ST.expenses.push(occurrence);
+            rows.push(occurrence);
+            changed = true;
+        }
+    });
+
+    if (changed) sv();
+}
+
 
 // ============================================================
 // 3. FUNÇÕES DE RENDERIZAÇÃO (Desktop - Tabela)
@@ -351,6 +402,12 @@ function toggleE(id) {
 }
 
 function delE(id) {
+    const expense = ST.expenses.find(x => x.id === id);
+    if (expense && expense.recurrence === 'continua' && expense.gid) {
+        deleteDebt(expense.gid);
+        return;
+    }
+
     confirm2('Remover esta despesa?', () => {
         ST.expenses = ST.expenses.filter(x => x.id !== id);
         removeLinkedMovement(id);
@@ -360,11 +417,12 @@ function delE(id) {
     });
 }
 
-function editE(id) {
+function editE(id, editSeries = false) {
     const x = ST.expenses.find(e => e.id === id);
     if (!x) return;
 
     _editId = id;
+    _editGroupId = editSeries ? (x.gid || x.id) : null;
     document.getElementById('modal-exp-title').textContent = 'Editar Despesa';
     refreshGroupSelect();
     refreshExpStatusSelect();
@@ -378,8 +436,14 @@ function editE(id) {
     document.getElementById('exp-card').value = x.cardId || '';
     document.getElementById('exp-status').value = x.status || 'pendente';
     document.getElementById('exp-obs').value = x.obs || '';
+    const seriesRows = x.gid ? ST.expenses.filter(e => e.gid === x.gid) : [x];
+    document.getElementById('exp-recorrente').value = x.recurrence ||
+        (x.type === 'fixa' && seriesRows.length === 12 ? '12' : 'nao');
 
     toggleExpFields();
+    if (!editSeries && x.type === 'fixa') {
+        document.getElementById('exp-recorr-wrap').style.display = 'none';
+    }
     openModal('modal-exp');
 }
 
@@ -403,6 +467,7 @@ function openExpModal() {
     document.getElementById('exp-card').value = '';
     document.getElementById('exp-status').value = 'pendente';
     document.getElementById('exp-recorrente').value = 'nao';
+    _editGroupId = null;
 
     toggleExpFields();
     openModal('modal-exp');
@@ -452,26 +517,95 @@ function saveExp() {
     const cardId = document.getElementById('exp-card').value;
     const status = document.getElementById('exp-status').value;
     const obs = document.getElementById('exp-obs').value;
-    const recorr = document.getElementById('exp-recorrente').value === 'sim';
+    const recurrence = document.getElementById('exp-recorrente').value;
+
+    if (!date) {
+        notify('Informe o vencimento', 'err');
+        return;
+    }
 
     if (_editId) {
         const x = ST.expenses.find(e => e.id === _editId);
         if (x) {
-            Object.assign(x, {
-                desc,
-                value: val,
-                date,
-                type,
-                grp,
-                cardId,
-                status,
-                obs,
-                totalInstallments: parc
+            const seriesRows = _editGroupId
+                ? ST.expenses.filter(e => e.gid === _editGroupId || e.id === _editGroupId)
+                : [x];
+            const editedNum = +x.num || 1;
+            const startDate = addMonthsToDate(date, -(editedNum - 1));
+
+            seriesRows.forEach((row, index) => {
+                const rowNum = +row.num || index + 1;
+                Object.assign(row, {
+                    desc,
+                    value: val,
+                    date: _editGroupId ? addMonthsToDate(startDate, rowNum - 1) : date,
+                    type,
+                    grp,
+                    cardId,
+                    obs,
+                    totalInstallments: type === 'parcelada' ? parc : row.totalInstallments
+                });
             });
 
-            // Atualiza movimentações vinculadas
-            ST.movements.filter(m => m.linkedId === _editId).forEach(m => {
+            if (_editGroupId) x.status = status;
+            if (_editGroupId && type === 'fixa') {
+                if (recurrence === 'nao') {
+                    seriesRows.forEach(row => {
+                        row.recurrence = 'nao';
+                        delete row.recurrenceStartDate;
+                        delete row.recurrenceIndex;
+                    });
+                    const removeIds = seriesRows
+                        .filter(row => (+row.num || 1) > editedNum && row.status !== 'pago' && !(+row.paidAmount > 0))
+                        .map(row => row.id);
+                    ST.expenses = ST.expenses.filter(row => !removeIds.includes(row.id));
+                    ST.movements = ST.movements.filter(m => !removeIds.includes(m.linkedId));
+                } else {
+                    seriesRows.forEach(row => { row.gid = _editGroupId; });
+                    const occurrenceCount = recurrence === '12'
+                        ? 12
+                        : Math.max(editedNum, ...seriesRows.map(row => +row.num || 1));
+                    for (let i = 0; i < occurrenceCount; i++) {
+                        let row = seriesRows.find(item => (+item.num || 0) === i + 1);
+                        if (!row) {
+                            row = {
+                                id: gid(), gid: _editGroupId, desc, value: val, date: addMonthsToDate(startDate, i),
+                                type: 'fixa', totalInstallments: recurrence === '12' ? 12 : 0,
+                                num: i + 1, grp, cardId, status: 'pendente', obs
+                            };
+                            ST.expenses.push(row);
+                            seriesRows.push(row);
+                        }
+                        row.date = addMonthsToDate(startDate, i);
+                        row.num = i + 1;
+                        row.recurrence = recurrence;
+                        row.recurrenceStartDate = startDate;
+                        row.recurrenceIndex = i;
+                        row.totalInstallments = recurrence === '12' ? 12 : 0;
+                    }
+                    if (recurrence === '12') {
+                        const removeIds = seriesRows
+                            .filter(row => (+row.num || 0) > 12 && row.status !== 'pago' && !(+row.paidAmount > 0))
+                            .map(row => row.id);
+                        ST.expenses = ST.expenses.filter(row => !removeIds.includes(row.id));
+                        ST.movements = ST.movements.filter(m => !removeIds.includes(m.linkedId));
+                        seriesRows.filter(row => (+row.num || 0) > 12).forEach(row => {
+                            row.recurrence = '12';
+                            row.recurrenceStartDate = startDate;
+                            row.recurrenceIndex = (+row.num || 1) - 1;
+                            row.totalInstallments = 12;
+                        });
+                    }
+                }
+            } else {
+                x.status = status;
+            }
+
+            const updatedIds = new Set(seriesRows.map(row => row.id));
+            ST.movements.filter(m => updatedIds.has(m.linkedId)).forEach(m => {
                 const wasPartial = / \(pagamento parcial\)$/.test(m.desc);
+                const expense = ST.expenses.find(row => row.id === m.linkedId);
+                if (!expense) return;
                 m.desc = desc + (wasPartial ? ' (pagamento parcial)' : '');
                 m.category = grp;
             });
@@ -482,14 +616,12 @@ function saveExp() {
         if (type === 'parcelada' && parc > 1) {
             const g = gid();
             for (let i = 0; i < parc; i++) {
-                const d = new Date(date + 'T00:00');
-                d.setMonth(d.getMonth() + i);
                 ST.expenses.push({
                     id: gid(),
                     gid: g,
                     desc,
                     value: val,
-                    date: d.toISOString().split('T')[0],
+                    date: addMonthsToDate(date, i),
                     type,
                     totalInstallments: parc,
                     num: i + 1,
@@ -500,20 +632,21 @@ function saveExp() {
                 });
             }
             notify(`${parc} parcelas criadas!`, 'info');
-        } else if (type === 'fixa' && recorr) {
+        } else if (type === 'fixa' && recurrence === '12') {
             const g = gid();
             for (let i = 0; i < 12; i++) {
-                const d = new Date(date + 'T00:00');
-                d.setMonth(d.getMonth() + i);
                 ST.expenses.push({
                     id: gid(),
                     gid: g,
                     desc,
                     value: val,
-                    date: d.toISOString().split('T')[0],
+                    date: addMonthsToDate(date, i),
                     type: 'fixa',
                     totalInstallments: 12,
                     num: i + 1,
+                    recurrence: '12',
+                    recurrenceStartDate: date,
+                    recurrenceIndex: i,
                     grp,
                     cardId,
                     status: 'pendente',
@@ -521,6 +654,26 @@ function saveExp() {
                 });
             }
             notify('Despesa fixa gerada para 12 meses!', 'info');
+        } else if (type === 'fixa' && recurrence === 'continua') {
+            const g = gid();
+            ST.expenses.push({
+                id: gid(),
+                gid: g,
+                desc,
+                value: val,
+                date,
+                type: 'fixa',
+                totalInstallments: 0,
+                num: 1,
+                recurrence: 'continua',
+                recurrenceStartDate: date,
+                recurrenceIndex: 0,
+                grp,
+                cardId,
+                status: 'pendente',
+                obs
+            });
+            notify('Dívida fixa recorrente cadastrada!', 'info');
         } else {
             ST.expenses.push({
                 id: gid(),
